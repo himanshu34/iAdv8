@@ -1,5 +1,6 @@
 package com.agl.product.adw8_new.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -20,11 +21,15 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
+import com.agl.product.adw8_new.model.AdListingData;
 import com.agl.product.adw8_new.model.CampaignData;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
+import com.agl.product.adw8_new.service.data.RequestDataAds;
 import com.agl.product.adw8_new.service.data.RequestDataCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataCampaignDetails;
+import com.agl.product.adw8_new.service.data.RequestDataKeywords;
+import com.agl.product.adw8_new.service.data.ResponseDataAds;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaignDetails;
 import com.agl.product.adw8_new.utils.Session;
 
@@ -35,7 +40,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CampaignActivity extends AppCompatActivity implements View.OnClickListener, Callback<ResponseDataCampaignDetails> {
+public class CampaignActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TableLayout ll;
     private PopupWindow filterPopup, customDatePopup;
@@ -43,6 +48,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout llDateLayout;
     Session session;
     HashMap<String, String> userData;
+    private String campaignType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,24 +87,270 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         llDateLayout.setOnClickListener(this);
 
+        Intent intent = getIntent();
+        if( intent != null ) campaignType = intent.getStringExtra("type");
+
+
         userData = session.getUsuarioDetails();
         requestCampaign();
     }
 
     private void requestCampaign() {
+
+        switch (campaignType){
+            case "ads":
+                getAdsData();
+                break;
+            case "keywords":
+                getKeywordsData();
+                break;
+            case "campaign":
+                getCampaignData();
+                break;
+            case "adgroup":
+                break;
+
+        }
+
+    }
+
+    private void getKeywordsData() {
+        Post apiAddClientService = ApiClient.getClient().create(Post.class);
+        RequestDataKeywords requestKeywords = new RequestDataKeywords();
+        requestKeywords.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
+
+        requestKeywords.setpId("1");
+        requestKeywords.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
+        requestKeywords.setfDate("2017-06-02");
+        requestKeywords.settDate("2017-06-08");
+        requestKeywords.setLimit("2");
+        requestKeywords.setOrderBy("ASC");
+        requestKeywords.setSortBy("clicks");
+        requestKeywords.setpId("1");
+        requestKeywords.setOffset(1);
+
+        Call<ResponseDataAds> adsCall = apiAddClientService.getKeywordsList(requestKeywords);
+        adsCall.enqueue(new Callback<ResponseDataAds>() {
+            @Override
+            public void onResponse(Call<ResponseDataAds> call, Response<ResponseDataAds> response) {
+                try {
+
+                }catch (Exception e ){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDataAds> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getAdsData() {
+        Post apiAddClientService = ApiClient.getClient().create(Post.class);
+        RequestDataAds requestDataAds = new RequestDataAds();
+        requestDataAds.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
+
+        requestDataAds.setpId("1");
+        requestDataAds.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
+        requestDataAds.setfDate("2017-06-02");
+        requestDataAds.settDate("2017-06-08");
+        requestDataAds.setLimit("2");
+        requestDataAds.setOrderBy("DESC");
+        requestDataAds.setSortBy("clicks");
+        requestDataAds.setpId("1");
+
+
+        Call<ResponseDataAds> adsCall = apiAddClientService.getAdsData(requestDataAds);
+        adsCall.enqueue(new Callback<ResponseDataAds>() {
+            @Override
+            public void onResponse(Call<ResponseDataAds> call, Response<ResponseDataAds> response) {
+                try {
+                    ResponseDataAds adsData = response.body();
+                    ArrayList<AdListingData> adListingData =  adsData.getData();
+                    if( adListingData != null && adListingData.size() > 0) createAdsTable(adListingData);
+                }catch (Exception e ){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDataAds> call, Throwable t) {
+
+            }
+        });
+
+
+    }
+
+    private void createAdsTable(ArrayList<AdListingData> adListingData) {
+        for (int i = 0; i < adListingData.size(); i++) {
+            TableRow row1 = new TableRow(this);
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+            lp.span = 1;
+            row1.setLayoutParams(lp);
+            setAdsOtherRow(row1, lp, i,adListingData.get(i));
+        }
+
+        TableRow row1 = new TableRow(this);
+        TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        lp1.span = 1;
+        row1.setLayoutParams(lp1);
+        setAdsHeaderRow(row1, lp1);
+
+    }
+
+    private void setAdsOtherRow(TableRow row, TableRow.LayoutParams lp, int i, AdListingData adListingData) {
+
+        TextView textView = new TextView(this);
+        textView.setBackgroundResource(R.drawable.cell_shape);
+        textView.setPadding(20, 20, 20, 20);
+        textView.setLayoutParams(lp);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
+        textView.setText(adListingData.getAd());
+        row.addView(textView, lp);
+
+        TextView textView1 = new TextView(this);
+        textView1.setBackgroundResource(R.drawable.cell_shape);
+        textView1.setPadding(20, 20, 20, 20);
+        textView1.setLayoutParams(lp);
+        textView1.setGravity(Gravity.CENTER_VERTICAL);
+        textView1.setText(adListingData.getImpressions());
+        row.addView(textView1, lp);
+
+        TextView textView2 = new TextView(this);
+        textView2.setBackgroundResource(R.drawable.cell_shape);
+        textView2.setPadding(20, 20, 20, 20);
+        textView2.setLayoutParams(lp);
+        textView2.setGravity(Gravity.CENTER_VERTICAL);
+        textView2.setText(adListingData.getCtr());
+        row.addView(textView2, lp);
+
+        TextView textView3 = new TextView(this);
+        textView3.setBackgroundResource(R.drawable.cell_shape);
+        textView3.setPadding(20, 20, 20, 20);
+        textView3.setLayoutParams(lp);
+        textView3.setGravity(Gravity.CENTER_VERTICAL);
+        textView3.setText(adListingData.getClicks());
+        row.addView(textView3, lp);
+
+        TextView textView4 = new TextView(this);
+        textView4.setBackgroundResource(R.drawable.cell_shape);
+        textView4.setPadding(20, 20, 20, 20);
+        textView4.setLayoutParams(lp);
+        textView4.setGravity(Gravity.CENTER_VERTICAL);
+        textView4.setText(adListingData.getCost());
+        row.addView(textView4, lp);
+
+
+        TextView textView5 = new TextView(this);
+        textView5.setBackgroundResource(R.drawable.cell_shape);
+        textView5.setPadding(20, 20, 20, 20);
+        textView5.setLayoutParams(lp);
+        textView5.setGravity(Gravity.CENTER_VERTICAL);
+        textView5.setText(adListingData.getConverted_clicks());
+        row.addView(textView5, lp);
+
+        ll.addView(row, i);
+
+    }
+
+    private void setAdsHeaderRow(TableRow row, TableRow.LayoutParams lp) {
+        TextView textView = new TextView(this);
+        textView.setTextColor(getResources().getColor(R.color.black));
+        textView.setPadding(20, 20, 20, 20);
+        textView.setLayoutParams(lp);
+        textView.setText("Name");
+        textView.setGravity(Gravity.CENTER);
+        row.addView(textView, lp);
+
+        TextView textView1 = new TextView(this);
+        textView1.setTextColor(getResources().getColor(R.color.black));
+        textView1.setPadding(20, 20, 20, 20);
+        textView1.setLayoutParams(lp);
+        textView1.setText("Impressions");
+        textView1.setGravity(Gravity.CENTER);
+        row.addView(textView1, lp);
+
+        TextView textView2 = new TextView(this);
+        textView2.setTextColor(getResources().getColor(R.color.black));
+        textView2.setPadding(20, 20, 20, 20);
+        textView2.setLayoutParams(lp);
+        textView2.setText("CTR");
+        textView2.setGravity(Gravity.CENTER);
+        row.addView(textView2, lp);
+
+
+        TextView textView3 = new TextView(this);
+        textView3.setTextColor(getResources().getColor(R.color.black));
+        textView3.setPadding(20, 20, 20, 20);
+        textView3.setLayoutParams(lp);
+        textView3.setText("Clicks");
+        textView3.setGravity(Gravity.CENTER);
+        row.addView(textView3, lp);
+
+
+        TextView textView4 = new TextView(this);
+        textView4.setTextColor(getResources().getColor(R.color.black));
+        textView4.setPadding(20, 20, 20, 20);
+        textView4.setLayoutParams(lp);
+        textView4.setText("Cost");
+        textView4.setGravity(Gravity.CENTER);
+        row.addView(textView4, lp);
+
+
+        TextView textView5 = new TextView(this);
+        textView5.setTextColor(getResources().getColor(R.color.black));
+        textView5.setPadding(20, 20, 20, 20);
+        textView5.setLayoutParams(lp);
+        textView5.setText("Conv.");
+        textView5.setGravity(Gravity.CENTER);
+        row.addView(textView5, lp);
+
+
+
+        ll.addView(row, 0);
+    }
+
+    private void getCampaignData() {
         Post apiAddClientService = ApiClient.getClient().create(Post.class);
         RequestDataCampaignDetails requestDataCampaignDetails = new RequestDataCampaignDetails();
         requestDataCampaignDetails.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
         requestDataCampaignDetails.setpId("1");
         requestDataCampaignDetails.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestDataCampaignDetails.setfDate("2016-11-06");
-        requestDataCampaignDetails.settDate("2016-11-06");
+        requestDataCampaignDetails.setfDate("2017-06-02");
+        requestDataCampaignDetails.settDate("2017-06-08");
         requestDataCampaignDetails.setLimit("10");
         requestDataCampaignDetails.setOrderBy("DESC");
         requestDataCampaignDetails.setSortBy("clicks");
 
         Call<ResponseDataCampaignDetails> campaignCall = apiAddClientService.getCampaignData(requestDataCampaignDetails);
-        campaignCall.enqueue(this);
+        campaignCall.enqueue(new Callback<ResponseDataCampaignDetails>() {
+            @Override
+            public void onResponse(Call<ResponseDataCampaignDetails> call, Response<ResponseDataCampaignDetails> response) {
+                if (response.isSuccessful()) {
+                    ResponseDataCampaignDetails campaignData = response.body();
+                    try {
+                        ArrayList<CampaignData> data = campaignData.getData();
+                        if( data != null && data.size() > 0)
+                            createDataTable( data );
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDataCampaignDetails> call, Throwable t) {
+                if( t != null ) {
+                    Log.d("TAG",t.getMessage());
+                }
+            }
+        });
+
     }
 
     @Override
@@ -219,21 +471,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    @Override
-    public void onResponse(Call<ResponseDataCampaignDetails> call, Response<ResponseDataCampaignDetails> response) {
-        if (response.isSuccessful()) {
-            ResponseDataCampaignDetails campaignData = response.body();
-            try {
-                ArrayList<CampaignData> data = campaignData.getData();
-                if( data != null && data.size() > 0)
-                createDataTable( data );
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-
-        }
-    }
 
     private void createDataTable(ArrayList<CampaignData> campaignDatas) {
         for (int i = 0; i < campaignDatas.size(); i++) {
@@ -251,10 +488,5 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         setFirstRow(row1, lp1);
     }
 
-    @Override
-    public void onFailure(Call<ResponseDataCampaignDetails> call, Throwable t) {
-        if( t != null ) {
-            Log.d("TAG",t.getMessage());
-        }
-    }
+
 }
