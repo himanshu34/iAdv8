@@ -20,7 +20,7 @@ public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityG
     private DataActivity activity;
     private ArrayList<Counts> list;
 
-    public DataActivityGroupAdapter(DataActivity activity, ArrayList<Counts> list){
+    public DataActivityGroupAdapter(DataActivity activity, ArrayList<Counts> list) {
         this.activity = activity;
         this.list = list;
     }
@@ -39,14 +39,23 @@ public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityG
         holder.parentView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(countData.getKey().equalsIgnoreCase("ads")) {
+                if (countData.getKey().equalsIgnoreCase("ads")) {
+                    Intent intent = new Intent(activity, CampaignActivity.class);
+                    intent.putExtra("type", "ads");
+                    activity.startActivity(intent);
+                } else if (countData.getKey().equalsIgnoreCase("keywords")) {
+                    Intent intent = new Intent(activity, CampaignActivity.class);
+                    intent.putExtra("type", "keywords");
+                    activity.startActivity(intent);
+                } else if (countData.getKey().equalsIgnoreCase("campaign")) {
+                    Intent intent = new Intent(activity, CampaignActivity.class);
+                    intent.putExtra("type", "campaign");
+                    activity.startActivity(intent);
 
-                } else if(countData.getKey().equalsIgnoreCase("keywords")) {
-
-                } else if(countData.getKey().equalsIgnoreCase("campaign")) {
-                    activity.startActivity(new Intent(activity, CampaignActivity.class));
-                } else if(countData.getKey().equalsIgnoreCase("adgroup")) {
-
+                } else if (countData.getKey().equalsIgnoreCase("adgroup")) {
+                    Intent intent = new Intent(activity, CampaignActivity.class);
+                    intent.putExtra("type", "adgroup");
+                    activity.startActivity(intent);
                 }
             }
         });
