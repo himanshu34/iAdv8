@@ -256,6 +256,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
         call.enqueue(new Callback<ResponseDataLogin>() {
             @Override
             public void onResponse(Call<ResponseDataLogin>call, Response<ResponseDataLogin> response) {
+                signInButton.setEnabled(true);
                 if(response != null) {
                     Log.e(TAG, response.body().getMessage());
                     if(response.body().getError() == 0) {
@@ -278,6 +279,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
             public void onFailure(Call<ResponseDataLogin>call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
+                signInButton.setEnabled(true);
                 AlertDialog builder = new showErrorDialog(LoginActivity.this, getResources().getString(R.string.instabilidade_servidor));
                 builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 builder.setCanceledOnTouchOutside(false);
