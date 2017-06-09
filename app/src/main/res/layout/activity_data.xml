@@ -29,25 +29,22 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="Default Spends"
-                    android:textSize="@dimen/_12sdp"
-                    />
+                    android:textSize="@dimen/_12sdp" />
+
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    >
+                    android:orientation="horizontal">
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mar 1-Mar 31,2017"
-                        android:textColor="@color/white"
-                        />
+                        android:text="Jun 2 - Jun 8,2017"
+                        android:textColor="@color/white" />
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_edit"
-                        />
-
+                        android:src="@drawable/ic_edit" />
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
