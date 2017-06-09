@@ -35,11 +35,14 @@ import com.agl.product.adw8_new.fragment.DataKeywordFragment;
 import com.agl.product.adw8_new.model.Ads;
 import com.agl.product.adw8_new.model.CampaignData;
 import com.agl.product.adw8_new.model.Counts;
+import com.agl.product.adw8_new.model.Graph;
 import com.agl.product.adw8_new.model.Keywords;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
+import com.agl.product.adw8_new.service.data.RequestDataGraphCampaign;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataCampaign;
+import com.agl.product.adw8_new.service.data.ResponseDataGraphCampaign;
 import com.agl.product.adw8_new.utils.Session;
 
 import java.util.ArrayList;
@@ -105,11 +108,14 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         setupTabLayout();
 
         userData = session.getUsuarioDetails();
+
         countsList = new ArrayList<Counts>();
         campaignList = new ArrayList<CampaignData>();
         keywordList = new ArrayList<Keywords>();
         adsList = new ArrayList<Ads>();
         requestDashboardData();
+
+        requestGraphDashboardData();
     }
 
     private void requestDashboardData() {
@@ -126,6 +132,47 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
         Call<ResponseDataCampaign> campaignCall = apiAddClientService.getDashboardData(requestDataCampaign);
         campaignCall.enqueue(this);
+    }
+
+    private void requestGraphDashboardData() {
+        Post apiAddClientService = ApiClient.getClient().create(Post.class);
+        RequestDataGraphCampaign requestDataGraphCampaign = new RequestDataGraphCampaign();
+        requestDataGraphCampaign.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
+        requestDataGraphCampaign.setpId("1");
+        requestDataGraphCampaign.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
+        requestDataGraphCampaign.setfDate("2017-06-02");
+        requestDataGraphCampaign.settDate("2017-06-08");
+        requestDataGraphCampaign.setLimit("5");
+
+        Call<ResponseDataGraphCampaign> campaignGraphCall = apiAddClientService.getGraphDashboardData(requestDataGraphCampaign);
+        campaignGraphCall.enqueue(new Callback<ResponseDataGraphCampaign>() {
+            @Override
+            public void onResponse(Call<ResponseDataGraphCampaign>call, Response<ResponseDataGraphCampaign> response) {
+                if(response != null) {
+                    Log.e(TAG, response.body().getMessage());
+                    if(response.body().getError() == 0) {
+                        Graph graphData = response.body().getGraph();
+                    } else {
+                        AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
+                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        builder.setCanceledOnTouchOutside(false);
+                        builder.setCancelable(false);
+                        builder.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDataGraphCampaign>call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+                AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                builder.setCanceledOnTouchOutside(false);
+                builder.setCancelable(false);
+                builder.show();
+            }
+        });
     }
 
     @Override

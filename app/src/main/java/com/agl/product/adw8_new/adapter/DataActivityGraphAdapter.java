@@ -1,29 +1,23 @@
 package com.agl.product.adw8_new.adapter;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
-import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivityGraphAdapter.MyViewHolder>{
 
@@ -35,40 +29,62 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
-
+        if(position == 0) {
+            holder.titleTextView.setText("IMPRESSION");
+            holder.countTextView.setText("10249");
+        } else if(position == 1) {
+            holder.titleTextView.setText("CLICKS");
+            holder.countTextView.setText("70");
+        } else if(position == 2) {
+            holder.titleTextView.setText("COST");
+            holder.countTextView.setText("2820.29");
+        } else if(position == 3) {
+            holder.titleTextView.setText("convertedClicks".toUpperCase());
+            holder.countTextView.setText("3");
+        } else if(position == 4) {
+            holder.titleTextView.setText("cpa".toUpperCase());
+            holder.countTextView.setText("940.1");
+        } else if(position == 5) {
+            holder.titleTextView.setText("ctr".toUpperCase());
+            holder.countTextView.setText("0.01");
+        }
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 6;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private BarChart lineChart;
+        private TextView titleTextView, countTextView;
+        private LineChart lineChart;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            lineChart = (BarChart) itemView.findViewById(R.id.lineChart);
+            titleTextView = (TextView) itemView.findViewById(R.id.textView_title);
+            countTextView = (TextView) itemView.findViewById(R.id.textView_count);
+            lineChart = (LineChart) itemView.findViewById(R.id.lineChart);
             setData();
         }
 
         private void setData() {
-            List<BarEntry> entries = new ArrayList<>();
-            entries.add(new BarEntry(0f, 30f));
-            entries.add(new BarEntry(1f, 80f));
-            entries.add(new BarEntry(2f, 60f));
-            entries.add(new BarEntry(3f, 50f));
+            List<Entry> entries = new ArrayList<>();
+            entries.add(new Entry(0f, 30f));
+            entries.add(new Entry(1f, 80f));
+            entries.add(new Entry(2f, 60f));
+            entries.add(new Entry(3f, 50f));
             // gap of 2f
-            entries.add(new BarEntry(5f, 70f));
-            entries.add(new BarEntry(6f, 60f));
+            entries.add(new Entry(5f, 70f));
+            entries.add(new Entry(6f, 60f));
 
-            BarDataSet set = new BarDataSet(entries, "BarDataSet");
+            LineDataSet set = new LineDataSet(entries, "Testing");
+            set.setAxisDependency(YAxis.AxisDependency.LEFT);
 
-            BarData data = new BarData(set);
-            data.setBarWidth(0.9f); // set custom bar width
+            List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+            dataSets.add(set);
 
+            LineData data = new LineData(dataSets);
             // set x and y axis
             // - X Axis
             XAxis xAxis = lineChart.getXAxis();
@@ -81,7 +97,7 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
             xAxis.setDrawGridLines(false);
             xAxis.setAvoidFirstLastClipping(true);
 
-// - Y Axis
+            // - Y Axis
             YAxis leftAxis = lineChart.getAxisLeft();
             leftAxis.removeAllLimitLines();
             leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
@@ -93,10 +109,9 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
             leftAxis.setDrawLimitLinesBehindData(true);
             leftAxis.setDrawGridLines(true);
             lineChart.getAxisRight().setEnabled(false);
-            //
 
             lineChart.setData(data);
-            lineChart.setFitBars(true); // make the x-axis fit exactly all bars
+//            lineChart.setFitBars(true); // make the x-axis fit exactly all bars
             lineChart.invalidate(); // refresh
         }
 
@@ -119,7 +134,5 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
             yVals.add(new Entry(180.9f, 4));
             return yVals;
         }
-
-
     }
 }

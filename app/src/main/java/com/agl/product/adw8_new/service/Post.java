@@ -3,6 +3,7 @@ package com.agl.product.adw8_new.service;
 import com.agl.product.adw8_new.service.data.RequestDataAddCient;
 import com.agl.product.adw8_new.service.data.RequestDataAds;
 import com.agl.product.adw8_new.service.data.RequestDataCampaignDetails;
+import com.agl.product.adw8_new.service.data.RequestDataGraphCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataKeywords;
 import com.agl.product.adw8_new.service.data.ResponseDataAds;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaign;
@@ -10,6 +11,7 @@ import com.agl.product.adw8_new.service.data.RequestDataCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataLogin;
 import com.agl.product.adw8_new.service.data.ResponseDataAddCient;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaignDetails;
+import com.agl.product.adw8_new.service.data.ResponseDataGraphCampaign;
 import com.agl.product.adw8_new.service.data.ResponseDataLogin;
 
 import okhttp3.RequestBody;
@@ -33,6 +35,9 @@ public interface Post {
 
     @POST("ad/get_Ad_Of_Account")
     Call<ResponseDataAds> getAdsData(@Body RequestDataAds requestDataAds);
+
+    @POST("paid/campaign/get_Graphs_Data_Of_Account")
+    Call<ResponseDataGraphCampaign> getGraphDashboardData(@Body RequestDataGraphCampaign dataGraphCampaign);
 
     @POST("keyword/get_Paid_Keyword_detail")
     Call<ResponseDataAds> getKeywordsList(@Body RequestDataKeywords requestKeywords);
