@@ -65,7 +65,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mar 1-Mar 31,2017"
+                        android:text="Jun 2 - Jun 8,2017"
                         android:textColor="@color/black"
                         android:textSize="@dimen/_12sdp" />
 
@@ -73,8 +73,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_edit"
-                        android:layout_marginLeft="@dimen/_5sdp"
-                        />
+                        android:layout_marginLeft="@dimen/_5sdp" />
                 </LinearLayout>
 
 

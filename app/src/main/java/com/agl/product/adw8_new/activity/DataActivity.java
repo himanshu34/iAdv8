@@ -249,7 +249,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container, campaignFragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     private void setKeywordFragmentData() {
@@ -261,7 +261,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container, keywordFragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     private void setAdsFragmentData() {
@@ -273,7 +273,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.frame_container, adsFragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
+        ft.commitAllowingStateLoss();
     }
 
     @Override

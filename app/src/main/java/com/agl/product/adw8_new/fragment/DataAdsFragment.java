@@ -67,24 +67,56 @@ public class DataAdsFragment extends Fragment {
         textView1.setPadding(20, 20, 20, 20);
         textView1.setLayoutParams(lp);
         textView1.setGravity(Gravity.CENTER);
-        textView1.setText(adsData.getImpressions());
+        textView1.setText(adsData.getClicks());
         row.addView(textView1, lp);
 
         TextView textView2 = new TextView(getActivity());
         textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setText(adsData.getCtr());
         textView2.setPadding(20, 20, 20, 20);
         textView2.setLayoutParams(lp);
         textView2.setGravity(Gravity.CENTER);
+        textView2.setText(adsData.getImpressions());
         row.addView(textView2, lp);
 
         TextView textView3 = new TextView(getActivity());
-        textView3.setText(adsData.getClicks());
+        textView3.setText(adsData.getAvg_cpc());
         textView3.setPadding(20, 20, 20, 20);
         textView3.setLayoutParams(lp);
         textView3.setGravity(Gravity.CENTER);
         textView3.setBackgroundResource(R.drawable.cell_shape);
         row.addView(textView3, lp);
+
+        TextView textView4 = new TextView(getActivity());
+        textView4.setText(adsData.getCost());
+        textView4.setPadding(20, 20, 20, 20);
+        textView4.setLayoutParams(lp);
+        textView4.setGravity(Gravity.CENTER);
+        textView4.setBackgroundResource(R.drawable.cell_shape);
+        row.addView(textView4, lp);
+
+        TextView textView5 = new TextView(getActivity());
+        textView5.setText(adsData.getCost());
+        textView5.setPadding(20, 20, 20, 20);
+        textView5.setLayoutParams(lp);
+        textView5.setGravity(Gravity.CENTER);
+        textView5.setBackgroundResource(R.drawable.cell_shape);
+        row.addView(textView5, lp);
+
+        TextView textView6 = new TextView(getActivity());
+        textView6.setText(adsData.getCpa());
+        textView6.setPadding(20, 20, 20, 20);
+        textView6.setGravity(Gravity.CENTER);
+        textView6.setLayoutParams(lp);
+        textView5.setBackgroundResource(R.drawable.cell_shape);
+        row.addView(textView6, lp);
+
+        TextView textView7 = new TextView(getActivity());
+        textView7.setText(adsData.getConverted_clicks());
+        textView7.setPadding(20, 20, 20, 20);
+        textView7.setGravity(Gravity.CENTER);
+        textView7.setLayoutParams(lp);
+        textView5.setBackgroundResource(R.drawable.cell_shape);
+        row.addView(textView7, lp);
 
         ll.addView(row, i);
     }
@@ -94,7 +126,7 @@ public class DataAdsFragment extends Fragment {
         textView.setTextColor(getResources().getColor(R.color.black));
         textView.setPadding(20, 20, 20, 20);
         textView.setLayoutParams(lp);
-        textView.setText("Name");
+        textView.setText("Ad");
         textView.setGravity(Gravity.CENTER);
         row.addView(textView, lp);
 
@@ -102,25 +134,58 @@ public class DataAdsFragment extends Fragment {
         textView1.setTextColor(getResources().getColor(R.color.black));
         textView1.setPadding(20, 20, 20, 20);
         textView1.setLayoutParams(lp);
-        textView1.setText("Impression");
+        textView1.setText("Clicks");
         textView1.setGravity(Gravity.CENTER);
         row.addView(textView1, lp);
 
         TextView textView2 = new TextView(getActivity());
         textView2.setTextColor(getResources().getColor(R.color.black));
-        textView2.setText("CTR");
+        textView2.setText("Impr");
         textView2.setGravity(Gravity.CENTER);
         textView2.setPadding(20, 20, 20, 20);
         textView2.setLayoutParams(lp);
         row.addView(textView2, lp);
 
         TextView textView3 = new TextView(getActivity());
-        textView3.setText("Click");
+        textView3.setText("Avg CPC");
         textView3.setPadding(20, 20, 20, 20);
         textView3.setGravity(Gravity.CENTER);
         textView3.setLayoutParams(lp);
         textView3.setTextColor(getResources().getColor(R.color.black));
         row.addView(textView3, lp);
+
+        TextView textView4 = new TextView(getActivity());
+        textView4.setText("Cost");
+        textView4.setPadding(20, 20, 20, 20);
+        textView4.setGravity(Gravity.CENTER);
+        textView4.setLayoutParams(lp);
+        textView4.setTextColor(getResources().getColor(R.color.black));
+        row.addView(textView4, lp);
+
+        TextView textView5 = new TextView(getActivity());
+        textView5.setText("CTR");
+        textView5.setPadding(20, 20, 20, 20);
+        textView5.setGravity(Gravity.CENTER);
+        textView5.setLayoutParams(lp);
+        textView5.setTextColor(getResources().getColor(R.color.black));
+        row.addView(textView5, lp);
+
+        TextView textView6 = new TextView(getActivity());
+        textView6.setText("CPA");
+        textView6.setPadding(20, 20, 20, 20);
+        textView6.setGravity(Gravity.CENTER);
+        textView6.setLayoutParams(lp);
+        textView6.setTextColor(getResources().getColor(R.color.black));
+        row.addView(textView6, lp);
+
+        TextView textView7 = new TextView(getActivity());
+        textView7.setText("Conv Clicks");
+        textView7.setPadding(20, 20, 20, 20);
+        textView7.setGravity(Gravity.CENTER);
+        textView7.setLayoutParams(lp);
+        textView7.setTextColor(getResources().getColor(R.color.black));
+        row.addView(textView7, lp);
+
         ll.addView(row, 0);
     }
 }
