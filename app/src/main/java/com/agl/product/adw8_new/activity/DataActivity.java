@@ -118,8 +118,8 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         requestDataCampaign.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
         requestDataCampaign.setpId("1");
         requestDataCampaign.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestDataCampaign.setfDate("2016-11-06");
-        requestDataCampaign.settDate("2016-11-06");
+        requestDataCampaign.setfDate("2017-06-02");
+        requestDataCampaign.settDate("2017-06-08");
         requestDataCampaign.setLimit("5");
         requestDataCampaign.setOrder("DESC");
         requestDataCampaign.setSort("clicks");
