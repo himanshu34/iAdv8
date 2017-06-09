@@ -1,5 +1,6 @@
 package com.agl.product.adw8_new.service.data;
 
+import com.agl.product.adw8_new.model.Ads;
 import com.agl.product.adw8_new.model.CampaignData;
 import com.agl.product.adw8_new.model.Counts;
 import com.agl.product.adw8_new.model.Keywords;
@@ -25,7 +26,7 @@ public class ResponseDataCampaign {
     private ArrayList<Keywords> keyword_data;
 
     @SerializedName("ads_data")
-    private ArrayList<CampaignData> ads_data;
+    private ArrayList<Ads> ads_data;
 
     public int getError() {
         return error;
@@ -59,11 +60,11 @@ public class ResponseDataCampaign {
         this.keyword_data = keyword_data;
     }
 
-    public ArrayList<CampaignData> getAds_data() {
+    public ArrayList<Ads> getAds_data() {
         return ads_data;
     }
 
-    public void setAds_data(ArrayList<CampaignData> ads_data) {
+    public void setAds_data(ArrayList<Ads> ads_data) {
         this.ads_data = ads_data;
     }
 
