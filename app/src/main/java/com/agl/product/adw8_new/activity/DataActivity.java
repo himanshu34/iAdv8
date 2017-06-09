@@ -55,7 +55,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         View.OnClickListener, Callback<ResponseDataCampaign> {
 
     public String TAG = "DataActivity";
-    private RecyclerView rvGroupData,rvGraph;
+    private RecyclerView rvGroupData, rvGraph;
     private TabLayout tabLayout;
     private DataCampaignFragment dataCampaignFragment;
     private DataKeywordFragment dataKeywordFragment;
@@ -100,15 +100,19 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         rvGraph.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvGraph.setLayoutManager(mLayoutManager1);
-        rvGraph.setAdapter( new DataActivityGraphAdapter());
+        rvGraph.setAdapter(new DataActivityGraphAdapter());
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         dataCampaignFragment = new DataCampaignFragment();
         dataKeywordFragment = new DataKeywordFragment();
         dataAdsFragment = new DataAdsFragment();
 
+
         lldefaultSpends.setOnClickListener(this);
         setupTabLayout();
+        /*addAllFragment(dataCampaignFragment);
+        addAllFragment(dataKeywordFragment);
+        addAllFragment(dataAdsFragment);*/
         userData = session.getUsuarioDetails();
         requestDashboardData();
     }
@@ -165,13 +169,35 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     }
 
     private void setCurrentTabFragment(int position) {
-        switch (position ){
+        switch (position) {
             case 0:
                 replaceFragment(dataCampaignFragment);
                 break;
             case 1:
-                replaceFragment(dataKeywordFragment);
-                if( keywordData != null  ) dataKeywordFragment.setKeywordData(keywordData);
+                DataKeywordFragment frag = new DataKeywordFragment();
+                Bundle b = new Bundle();
+                b.putSerializable("user", keywordData);
+
+                frag.setArguments(b);
+
+// Use Fragment Transaction
+                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.frame_container, frag);
+                ft.commit();
+
+//                replaceFragment(dataKeywordFragment);
+
+              /*  private void replaceFragment(Fragment fragment) {
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(.R.id.frame_container, fragment);
+                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                ft.commit();*/
+
+
+//                dataKeywordFragment.setKeywordData(this, keywordData);
+                if( keywordData != null )
+                frag.setKeywordData(this,keywordData);
                 break;
             case 2:
                 replaceFragment(dataAdsFragment);
@@ -179,38 +205,44 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         }
     }
 
+    private void addAllFragment(Fragment fragment) {
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.add(R.id.frame_container, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
+    }
+
     private void replaceFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace( R.id.frame_container, fragment );
-        ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+        ft.replace(R.id.frame_container, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.lldefaultSpends:
-                customDatePopup.showAsDropDown(lldefaultSpends,-5,-5);
+                customDatePopup.showAsDropDown(lldefaultSpends, -5, -5);
                 break;
         }
     }
 
     @Override
     public void onResponse(Call<ResponseDataCampaign> call, Response<ResponseDataCampaign> response) {
-        if( response.isSuccessful()) {
+        if (response.isSuccessful()) {
             if (response != null) {
                 if (response.body().getError() == 0) {
                     Log.d("Pass", response.body().toString());
                     try {
-                        ResponseDataCampaign responsCampaign = response.body();
-                        ArrayList<CampaignData> campaignData = responsCampaign.getCamapign_data();
-                        keywordData = responsCampaign.getKeyword_data();
-                        ArrayList<CampaignData> adData =  responsCampaign.getAds_data();
-                        dataCampaignFragment.setCampaignData(campaignData);
-                        dataKeywordFragment.setKeywordData(keywordData);
-                        dataAdsFragment.setAdsData(adData);
+                        ResponseDataCampaign responseCampaign = response.body();
+                        ArrayList<CampaignData> campaignData = responseCampaign.getCamapign_data();
+                        keywordData = responseCampaign.getKeyword_data();
+                        ArrayList<CampaignData> adData = responseCampaign.getAds_data();
 
+                        dataCampaignFragment.setCampaignData(campaignData);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

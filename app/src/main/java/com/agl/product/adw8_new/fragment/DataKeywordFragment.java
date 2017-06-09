@@ -19,28 +19,31 @@ import java.util.ArrayList;
 
 public class DataKeywordFragment extends Fragment {
 
-    private  View view;
     private TableLayout ll;
     private DataActivity dataActivity;
     private ArrayList<CampaignData> keywordData;
+
+    public DataKeywordFragment() {
+
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.dataActivity = (DataActivity) getActivity();
+        keywordData = (ArrayList<CampaignData>) getArguments().getSerializable("user");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if( view == null ){
-            view = inflater.inflate(R.layout.data_keyword_fragment, container, false);
-            dataActivity = (DataActivity) getActivity();
-            ll = (TableLayout) view.findViewById(R.id.tableLayout);
-        }
+        View view = inflater.inflate(R.layout.data_keyword_fragment, container, false);
+        ll = (TableLayout) view.findViewById(R.id.tableLayout);
         return view;
     }
 
-    public void setKeywordData(ArrayList<CampaignData> keywordData) {
-        this.keywordData = keywordData ;
+    public void setKeywordData(DataActivity activity, ArrayList<CampaignData> keywordData) {
+
         createTable(this.keywordData);
     }
 
