@@ -1,15 +1,18 @@
 package com.agl.product.adw8_new.service;
 
 import com.agl.product.adw8_new.service.data.RequestDataAddCient;
+import com.agl.product.adw8_new.service.data.RequestDataAdgroup;
 import com.agl.product.adw8_new.service.data.RequestDataAds;
 import com.agl.product.adw8_new.service.data.RequestDataCampaignDetails;
 import com.agl.product.adw8_new.service.data.RequestDataKeywords;
+import com.agl.product.adw8_new.service.data.ResponseDataAdgroup;
 import com.agl.product.adw8_new.service.data.ResponseDataAds;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataLogin;
 import com.agl.product.adw8_new.service.data.ResponseDataAddCient;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaignDetails;
+import com.agl.product.adw8_new.service.data.ResponseDataKeywords;
 import com.agl.product.adw8_new.service.data.ResponseDataLogin;
 
 import okhttp3.RequestBody;
@@ -35,5 +38,8 @@ public interface Post {
     Call<ResponseDataAds> getAdsData(@Body RequestDataAds requestDataAds);
 
     @POST("keyword/get_Paid_Keyword_detail")
-    Call<ResponseDataAds> getKeywordsList(@Body RequestDataKeywords requestKeywords);
+    Call<ResponseDataKeywords> getKeywordsList(@Body RequestDataKeywords requestKeywords);
+
+    @POST("adgroup/get_AdGroups_Of_Account")
+    Call<ResponseDataAdgroup> getAdgroupList(@Body RequestDataAdgroup requestKeywords);
 }
