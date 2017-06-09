@@ -6,7 +6,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
@@ -122,7 +121,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         requestDataCampaign.settDate("2016-11-06");
         requestDataCampaign.setLimit("5");
         requestDataCampaign.setOrder("DESC");
-        requestDataCampaign.setSortBy("clicks");
+        requestDataCampaign.setSort("clicks");
 
         Call<ResponseDataCampaign> campaignCall = apiAddClientService.getDashboardData(requestDataCampaign);
         campaignCall.enqueue(this);

@@ -20,24 +20,22 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
+import com.agl.product.adw8_new.model.CampaignData;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
-import com.agl.product.adw8_new.model.CampaignData;
 import com.agl.product.adw8_new.service.data.RequestDataCampaign;
+import com.agl.product.adw8_new.service.data.RequestDataCampaignDetails;
+import com.agl.product.adw8_new.service.data.ResponseDataCampaignDetails;
 import com.agl.product.adw8_new.utils.Session;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CampaignActivity extends AppCompatActivity implements View.OnClickListener, Callback<RequestDataCampaign> {
+public class CampaignActivity extends AppCompatActivity implements View.OnClickListener, Callback<ResponseDataCampaignDetails> {
 
     private TableLayout ll;
     private PopupWindow filterPopup, customDatePopup;
@@ -62,7 +60,9 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
         filterLayout = getLayoutInflater().inflate(R.layout.custom_filter_layout, null);
         filterPopup = new PopupWindow(this);
-        filterPopup.setWidth(400);
+        filterPopup.setWidth(500);
+
+
         filterPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
         filterPopup.setOutsideTouchable(true);
         filterPopup.setContentView(filterLayout);
@@ -81,30 +81,24 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         llDateLayout.setOnClickListener(this);
 
-//        createTable();
         userData = session.getUsuarioDetails();
         requestCampaign();
-
     }
 
     private void requestCampaign() {
         Post apiAddClientService = ApiClient.getClient().create(Post.class);
-        JSONObject inputJson = new JSONObject();
-        try {
-            inputJson.put("access_token", "{25E62EBC-AAC7-0046-0647-E2600DEBCF17}");
-            inputJson.put("pId", "1");
-            inputJson.put("cId", "279");
-            inputJson.put("fDate", "2016-11-06");
-            inputJson.put("tDate", "2016-11-06");
-            inputJson.put("limit", "2");
-            inputJson.put("sortBy", "clicks");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), (inputJson).toString());
-        Call<RequestDataCampaign> campaignCall = apiAddClientService.getCampaign(body);
-        campaignCall.enqueue(this);
+        RequestDataCampaignDetails requestDataCampaignDetails = new RequestDataCampaignDetails();
+        requestDataCampaignDetails.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
+        requestDataCampaignDetails.setpId("1");
+        requestDataCampaignDetails.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
+        requestDataCampaignDetails.setfDate("2016-11-06");
+        requestDataCampaignDetails.settDate("2016-11-06");
+        requestDataCampaignDetails.setLimit("10");
+        requestDataCampaignDetails.setOrderBy("DESC");
+        requestDataCampaignDetails.setSortBy("clicks");
 
+        Call<ResponseDataCampaignDetails> campaignCall = apiAddClientService.getCampaignData(requestDataCampaignDetails);
+        campaignCall.enqueue(this);
     }
 
     @Override
@@ -127,46 +121,37 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         return true;
     }
 
-    private void createTable() {
-        for (int i = 0; i < 15; i++) {
-            TableRow row = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            lp.span = 1;
-            row.setLayoutParams(lp);
 
-            if (i == 0) {
-                setFirstRow(row, lp);
-            } else setOtherRow(row, lp, i);
 
-        }
-    }
-
-    private void setOtherRow(TableRow row, TableRow.LayoutParams lp, int i) {
+    private void setOtherRow(TableRow row, TableRow.LayoutParams lp, int i, CampaignData campaignData) {
         TextView textView = new TextView(this);
         textView.setBackgroundResource(R.drawable.cell_shape);
         textView.setPadding(20, 20, 20, 20);
         textView.setLayoutParams(lp);
-        textView.setText("Campaign" + i);
+        textView.setText(campaignData.getCampaign());
         row.addView(textView, lp);
 
         TextView textView1 = new TextView(this);
         textView1.setBackgroundResource(R.drawable.cell_shape);
         textView1.setPadding(20, 20, 20, 20);
         textView1.setLayoutParams(lp);
-        textView1.setText("              ");
+        textView1.setText(campaignData.getImpressions());
+        textView1.setGravity(Gravity.CENTER);
         row.addView(textView1, lp);
 
         TextView textView2 = new TextView(this);
         textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setText("              ");
+        textView2.setText(campaignData.getCtr());
         textView2.setPadding(20, 20, 20, 20);
+        textView2.setGravity(Gravity.CENTER);
         textView2.setLayoutParams(lp);
         row.addView(textView2, lp);
 
         TextView textView3 = new TextView(this);
-        textView3.setText("              ");
+        textView3.setText(campaignData.getClicks());
         textView3.setPadding(20, 20, 20, 20);
         textView3.setLayoutParams(lp);
+        textView3.setGravity(Gravity.CENTER);
         textView3.setBackgroundResource(R.drawable.cell_shape);
         row.addView(textView3, lp);
 
@@ -207,49 +192,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textView3.setTextColor(getResources().getColor(R.color.black));
         row.addView(textView3, lp);
 
-        TextView textView4 = new TextView(this);
-        textView4.setText("Budget");
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setGravity(Gravity.CENTER);
-        textView4.setLayoutParams(lp);
-        textView4.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setText("Cost");
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setGravity(Gravity.CENTER);
-        textView5.setLayoutParams(lp);
-        textView5.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView5, lp);
-
-
-        TextView textView6 = new TextView(this);
-        textView6.setText("Converted Clicks");
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setGravity(Gravity.CENTER);
-        textView6.setLayoutParams(lp);
-        textView6.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView6, lp);
-
-
-        TextView textView7 = new TextView(this);
-        textView7.setText("CPA");
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setGravity(Gravity.CENTER);
-        textView7.setLayoutParams(lp);
-        textView7.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView7, lp);
-
-        TextView textView8 = new TextView(this);
-        textView8.setText("Currency");
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setGravity(Gravity.CENTER);
-        textView8.setLayoutParams(lp);
-        textView8.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView8, lp);
-
 
         ll.addView(row, 0);
     }
@@ -278,40 +220,41 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onResponse(Call<RequestDataCampaign> call, Response<RequestDataCampaign> response) {
+    public void onResponse(Call<ResponseDataCampaignDetails> call, Response<ResponseDataCampaignDetails> response) {
         if (response.isSuccessful()) {
-            RequestDataCampaign campaignData = response.body();
+            ResponseDataCampaignDetails campaignData = response.body();
             try {
-//                ArrayList<CampaignData> campaignDatas = campaignData.getData();
-//                if (campaignDatas.size() > 0) {
-//                    createDataTable(campaignDatas);
-//                }
+                ArrayList<CampaignData> data = campaignData.getData();
+                if( data != null && data.size() > 0)
+                createDataTable( data );
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         } else {
 
         }
     }
 
     private void createDataTable(ArrayList<CampaignData> campaignDatas) {
+        for (int i = 0; i < campaignDatas.size(); i++) {
+            TableRow row1 = new TableRow(this);
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+            lp.span = 1;
+            row1.setLayoutParams(lp);
+            setOtherRow(row1, lp, i,campaignDatas.get(i));
+        }
+
         TableRow row1 = new TableRow(this);
         TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
         lp1.span = 1;
         row1.setLayoutParams(lp1);
         setFirstRow(row1, lp1);
-
-        for (int i = 0; i < campaignDatas.size(); i++) {
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            lp.span = 1;
-            row1.setLayoutParams(lp);
-            setOtherRow(row1, lp, i);
-        }
     }
 
     @Override
-    public void onFailure(Call<RequestDataCampaign> call, Throwable t) {
-
+    public void onFailure(Call<ResponseDataCampaignDetails> call, Throwable t) {
+        if( t != null ) {
+            Log.d("TAG",t.getMessage());
+        }
     }
 }

@@ -2,9 +2,7 @@ package com.agl.product.adw8_new.service.data;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class RequestDataCampaign {
+public class RequestDataCampaignDetails {
 
     @SerializedName("access_token")
     private String access_token;
@@ -24,11 +22,11 @@ public class RequestDataCampaign {
     @SerializedName("limit")
     private String limit;
 
-    @SerializedName("sort")
-    private String sort;
+    @SerializedName("sortBy")
+    private String sortBy;
 
-    @SerializedName("order")
-    private String order;
+    @SerializedName("orderBy")
+    private String orderBy;
 
     public String getAccess_token() {
         return access_token;
@@ -78,19 +76,19 @@ public class RequestDataCampaign {
         this.limit = limit;
     }
 
-    public String getSort() {
-        return sort;
+    public String getSortBy() {
+        return sortBy;
     }
 
-    public void setSort(String sort) {
-        this.sort = sort;
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
     }
 
-    public String getOrder() {
-        return order;
+    public String getOrderBy() {
+        return orderBy;
     }
 
-    public void setOrder(String order) {
-        this.order = order;
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
     }
 }

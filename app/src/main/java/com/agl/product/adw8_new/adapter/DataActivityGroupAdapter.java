@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
@@ -32,10 +33,23 @@ public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityG
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Counts countData = list.get(position);
-
+        final Counts countData = list.get(position);
         holder.nameTextView.setText(countData.getKey());
         holder.countTextView.setText(countData.getValue());
+        holder.parentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(countData.getKey().equalsIgnoreCase("ads")) {
+
+                } else if(countData.getKey().equalsIgnoreCase("keywords")) {
+
+                } else if(countData.getKey().equalsIgnoreCase("campaign")) {
+                    activity.startActivity(new Intent(activity, CampaignActivity.class));
+                } else if(countData.getKey().equalsIgnoreCase("adgroup")) {
+
+                }
+            }
+        });
     }
 
     @Override
@@ -43,20 +57,16 @@ public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityG
         return list.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView nameTextView, countTextView;
+        FrameLayout parentView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
+            parentView = (FrameLayout) itemView.findViewById(R.id.parentView);
             nameTextView = (TextView) itemView.findViewById(R.id.textView_name);
             countTextView = (TextView) itemView.findViewById(R.id.textView_count);
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            activity.startActivity(new Intent(activity, CampaignActivity.class));
         }
     }
 }
