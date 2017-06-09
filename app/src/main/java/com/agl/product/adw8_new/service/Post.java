@@ -2,7 +2,7 @@ package com.agl.product.adw8_new.service;
 
 import com.agl.product.adw8_new.service.data.RequestDataAddCient;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaign;
-import com.agl.product.adw8_new.service.data.campaign_model.RequestDataCampaign;
+import com.agl.product.adw8_new.service.data.RequestDataCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataLogin;
 import com.agl.product.adw8_new.service.data.ResponseDataAddCient;
 import com.agl.product.adw8_new.service.data.ResponseDataLogin;

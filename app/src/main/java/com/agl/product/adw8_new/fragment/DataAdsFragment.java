@@ -12,47 +12,41 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
-import com.agl.product.adw8_new.activity.DataActivity;
-import com.agl.product.adw8_new.service.data.campaign_model.CampaignData;
+import com.agl.product.adw8_new.model.CampaignData;
 
 import java.util.ArrayList;
 
 public class DataAdsFragment extends Fragment {
 
-    private  View view;
     private TableLayout ll;
-    private DataActivity dataActivity;
     private ArrayList<CampaignData> adData;
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if( view == null ){
-            view = inflater.inflate(R.layout.data_campaign_fragment_layout, container, false);
-            dataActivity = (DataActivity) getActivity();
-            ll = (TableLayout) view.findViewById(R.id.tableLayout);
+        View view = inflater.inflate(R.layout.data_campaign_fragment_layout, container, false);
+        ll = (TableLayout) view.findViewById(R.id.tableLayout);
+
+        if(getArguments().containsKey("adsList")) {
+            adData = getArguments().getParcelableArrayList("adsList");
+            createTable(adData);
         }
+
         return view;
     }
 
-    public void setAdsData(ArrayList<CampaignData> adData) {
-        this.adData = adData ;
-        createTable(this.adData);
-    }
     private void createTable(ArrayList<CampaignData> campaignData) {
-        for (int i = 0; i < campaignData.size() ; i++) {
-            TableRow row1 = new TableRow(dataActivity);
-            TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            lp1.span = 1;
-            row1.setLayoutParams(lp1);
-            setOtherRow(row1, lp1 ,i,campaignData.get(i));
+        if(campaignData != null) {
+            for (int i = 0; i < campaignData.size() ; i++) {
+                TableRow row1 = new TableRow(getActivity());
+                TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+                lp1.span = 1;
+                row1.setLayoutParams(lp1);
+                setOtherRow(row1, lp1 ,i,campaignData.get(i));
+            }
         }
 
-        TableRow row = new TableRow(dataActivity);
+        TableRow row = new TableRow(getActivity());
         TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
         lp.span = 1;
         row.setLayoutParams(lp);
@@ -60,7 +54,7 @@ public class DataAdsFragment extends Fragment {
     }
 
     private void setOtherRow(TableRow row, TableRow.LayoutParams lp, int i, CampaignData campaignData) {
-        TextView textView = new TextView(dataActivity);
+        TextView textView = new TextView(getActivity());
         textView.setBackgroundResource(R.drawable.cell_shape);
         textView.setPadding(20, 20, 20, 20);
         textView.setLayoutParams(lp);
@@ -68,7 +62,7 @@ public class DataAdsFragment extends Fragment {
         textView.setText(campaignData.getCampaign());
         row.addView(textView, lp);
 
-        TextView textView1 = new TextView(dataActivity);
+        TextView textView1 = new TextView(getActivity());
         textView1.setBackgroundResource(R.drawable.cell_shape);
         textView1.setPadding(20, 20, 20, 20);
         textView1.setLayoutParams(lp);
@@ -76,7 +70,7 @@ public class DataAdsFragment extends Fragment {
         textView1.setText(campaignData.getImpressions());
         row.addView(textView1, lp);
 
-        TextView textView2 = new TextView(dataActivity);
+        TextView textView2 = new TextView(getActivity());
         textView2.setBackgroundResource(R.drawable.cell_shape);
         textView2.setText(campaignData.getCtr());
         textView2.setPadding(20, 20, 20, 20);
@@ -84,7 +78,7 @@ public class DataAdsFragment extends Fragment {
         textView2.setGravity(Gravity.CENTER);
         row.addView(textView2, lp);
 
-        TextView textView3 = new TextView(dataActivity);
+        TextView textView3 = new TextView(getActivity());
         textView3.setText(campaignData.getClicks());
         textView3.setPadding(20, 20, 20, 20);
         textView3.setLayoutParams(lp);
@@ -96,7 +90,7 @@ public class DataAdsFragment extends Fragment {
     }
 
     private void setFirstRow(TableRow row, TableRow.LayoutParams lp) {
-        TextView textView = new TextView(dataActivity);
+        TextView textView = new TextView(getActivity());
         textView.setTextColor(getResources().getColor(R.color.black));
         textView.setPadding(20, 20, 20, 20);
         textView.setLayoutParams(lp);
@@ -104,7 +98,7 @@ public class DataAdsFragment extends Fragment {
         textView.setGravity(Gravity.CENTER);
         row.addView(textView, lp);
 
-        TextView textView1 = new TextView(dataActivity);
+        TextView textView1 = new TextView(getActivity());
         textView1.setTextColor(getResources().getColor(R.color.black));
         textView1.setPadding(20, 20, 20, 20);
         textView1.setLayoutParams(lp);
@@ -112,7 +106,7 @@ public class DataAdsFragment extends Fragment {
         textView1.setGravity(Gravity.CENTER);
         row.addView(textView1, lp);
 
-        TextView textView2 = new TextView(dataActivity);
+        TextView textView2 = new TextView(getActivity());
         textView2.setTextColor(getResources().getColor(R.color.black));
         textView2.setText("CTR");
         textView2.setGravity(Gravity.CENTER);
@@ -120,7 +114,7 @@ public class DataAdsFragment extends Fragment {
         textView2.setLayoutParams(lp);
         row.addView(textView2, lp);
 
-        TextView textView3 = new TextView(dataActivity);
+        TextView textView3 = new TextView(getActivity());
         textView3.setText("Click");
         textView3.setPadding(20, 20, 20, 20);
         textView3.setGravity(Gravity.CENTER);

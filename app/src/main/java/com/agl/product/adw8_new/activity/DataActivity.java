@@ -33,39 +33,38 @@ import com.agl.product.adw8_new.adapter.DataActivityGroupAdapter;
 import com.agl.product.adw8_new.fragment.DataAdsFragment;
 import com.agl.product.adw8_new.fragment.DataCampaignFragment;
 import com.agl.product.adw8_new.fragment.DataKeywordFragment;
+import com.agl.product.adw8_new.model.CampaignData;
+import com.agl.product.adw8_new.model.Counts;
+import com.agl.product.adw8_new.model.Keywords;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaign;
-import com.agl.product.adw8_new.service.data.campaign_model.CampaignData;
-import com.agl.product.adw8_new.service.data.campaign_model.RequestDataCampaign;
+import com.agl.product.adw8_new.service.data.RequestDataCampaign;
 import com.agl.product.adw8_new.utils.Session;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DataActivity extends ActivityBase implements TabLayout.OnTabSelectedListener,
-        View.OnClickListener, Callback<ResponseDataCampaign> {
+public class DataActivity extends ActivityBase implements TabLayout.OnTabSelectedListener, View.OnClickListener,
+        Callback<ResponseDataCampaign> {
 
     public String TAG = "DataActivity";
     private RecyclerView rvGroupData, rvGraph;
     private TabLayout tabLayout;
-    private DataCampaignFragment dataCampaignFragment;
-    private DataKeywordFragment dataKeywordFragment;
-    private DataAdsFragment dataAdsFragment;
     private LinearLayout lldefaultSpends;
     private PopupWindow customDatePopup;
     private View customPopupLayout;
     Session session;
     HashMap<String, String> userData;
-    private ArrayList<CampaignData> keywordData;
+    private ArrayList<Counts> countsList;
+    private ArrayList<CampaignData> campaignList;
+    private ArrayList<Keywords> keywordList;
+    private ArrayList<CampaignData> adsList;
+    DataActivityGroupAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +93,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         rvGroupData.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvGroupData.setLayoutManager(mLayoutManager);
-        rvGroupData.setAdapter(new DataActivityGroupAdapter(this));
 
         rvGraph = (RecyclerView) findViewById(R.id.rvGraph);
         rvGraph.setNestedScrollingEnabled(false);
@@ -103,17 +101,14 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         rvGraph.setAdapter(new DataActivityGraphAdapter());
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        dataCampaignFragment = new DataCampaignFragment();
-        dataKeywordFragment = new DataKeywordFragment();
-        dataAdsFragment = new DataAdsFragment();
-
-
         lldefaultSpends.setOnClickListener(this);
         setupTabLayout();
-        /*addAllFragment(dataCampaignFragment);
-        addAllFragment(dataKeywordFragment);
-        addAllFragment(dataAdsFragment);*/
+
         userData = session.getUsuarioDetails();
+        countsList = new ArrayList<Counts>();
+        campaignList = new ArrayList<CampaignData>();
+        keywordList = new ArrayList<Keywords>();
+        adsList = new ArrayList<CampaignData>();
         requestDashboardData();
     }
 
@@ -171,54 +166,15 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     private void setCurrentTabFragment(int position) {
         switch (position) {
             case 0:
-                replaceFragment(dataCampaignFragment);
+                setCampaignFragmentData();
                 break;
             case 1:
-                DataKeywordFragment frag = new DataKeywordFragment();
-                Bundle b = new Bundle();
-                b.putSerializable("user", keywordData);
-
-                frag.setArguments(b);
-
-// Use Fragment Transaction
-                final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.frame_container, frag);
-                ft.commit();
-
-//                replaceFragment(dataKeywordFragment);
-
-              /*  private void replaceFragment(Fragment fragment) {
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                ft.replace(.R.id.frame_container, fragment);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.commit();*/
-
-
-//                dataKeywordFragment.setKeywordData(this, keywordData);
-                if( keywordData != null )
-                frag.setKeywordData(this,keywordData);
+                setKeywordFragmentData();
                 break;
             case 2:
-                replaceFragment(dataAdsFragment);
+                setAdsFragmentData();
                 break;
         }
-    }
-
-    private void addAllFragment(Fragment fragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.frame_container, fragment);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
-    }
-
-    private void replaceFragment(Fragment fragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.frame_container, fragment);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
     }
 
     @Override
@@ -235,17 +191,34 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         if (response.isSuccessful()) {
             if (response != null) {
                 if (response.body().getError() == 0) {
-                    Log.d("Pass", response.body().toString());
-                    try {
-                        ResponseDataCampaign responseCampaign = response.body();
-                        ArrayList<CampaignData> campaignData = responseCampaign.getCamapign_data();
-                        keywordData = responseCampaign.getKeyword_data();
-                        ArrayList<CampaignData> adData = responseCampaign.getAds_data();
+                    Log.d(TAG, response.body().toString());
 
-                        dataCampaignFragment.setCampaignData(campaignData);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    if(response.body().getCountsList() != null) {
+                        if(response.body().getCountsList().size() > 0) {
+                            countsList = response.body().getCountsList();
+                        }
                     }
+                    setCountListAdapter();
+
+                    if(response.body().getCamapign_data() != null) {
+                        if(response.body().getCamapign_data().size() > 0) {
+                            campaignList = response.body().getCamapign_data();
+                        }
+                    }
+
+                    if(response.body().getKeyword_data() != null) {
+                        if(response.body().getKeyword_data().size() > 0) {
+                            keywordList = response.body().getKeyword_data();
+                        }
+                    }
+
+                    if(response.body().getAds_data() != null) {
+                        if(response.body().getAds_data().size() > 0) {
+                            adsList = response.body().getAds_data();
+                        }
+                    }
+
+                    setCampaignFragmentData();
                 } else {
                     AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
                     builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -255,6 +228,52 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                 }
             }
         }
+    }
+
+    private void setCountListAdapter() {
+        if(countsList != null) {
+            if(countsList.size() > 0) {
+                mAdapter = new DataActivityGroupAdapter(DataActivity.this, countsList);
+                rvGroupData.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+            }
+        }
+    }
+
+    private void setCampaignFragmentData() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("campaignList", campaignList);
+        DataCampaignFragment campaignFragment = new DataCampaignFragment();
+        campaignFragment.setArguments(bundle);
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.frame_container, campaignFragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
+    }
+
+    private void setKeywordFragmentData() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("keywordList", keywordList);
+        DataKeywordFragment keywordFragment = new DataKeywordFragment();
+        keywordFragment.setArguments(bundle);
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.frame_container, keywordFragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
+    }
+
+    private void setAdsFragmentData() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("adsList", adsList);
+        DataAdsFragment adsFragment = new DataAdsFragment();
+        adsFragment.setArguments(bundle);
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.frame_container, adsFragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
     }
 
     @Override

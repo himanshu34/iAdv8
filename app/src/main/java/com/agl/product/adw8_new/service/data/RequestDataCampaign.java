@@ -1,10 +1,9 @@
-package com.agl.product.adw8_new.service.data.campaign_model;
+package com.agl.product.adw8_new.service.data;
 
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class RequestDataCampaign implements Serializable {
 

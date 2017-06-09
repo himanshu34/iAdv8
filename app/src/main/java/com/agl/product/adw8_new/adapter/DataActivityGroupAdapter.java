@@ -1,22 +1,27 @@
 package com.agl.product.adw8_new.adapter;
 
-
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.activity.CampaignActivity;
+import com.agl.product.adw8_new.activity.DataActivity;
+import com.agl.product.adw8_new.model.Counts;
+
+import java.util.ArrayList;
 
 public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityGroupAdapter.MyViewHolder> {
 
-    private Context context;
+    private DataActivity activity;
+    private ArrayList<Counts> list;
 
-    public DataActivityGroupAdapter(Context context){
-        this.context = context;
+    public DataActivityGroupAdapter(DataActivity activity, ArrayList<Counts> list){
+        this.activity = activity;
+        this.list = list;
     }
 
     @Override
@@ -27,25 +32,31 @@ public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityG
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
+        Counts countData = list.get(position);
 
+        holder.nameTextView.setText(countData.getKey());
+        holder.countTextView.setText(countData.getValue());
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return list.size();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        TextView nameTextView, countTextView;
+
         public MyViewHolder(View itemView) {
             super(itemView);
+            nameTextView = (TextView) itemView.findViewById(R.id.textView_name);
+            countTextView = (TextView) itemView.findViewById(R.id.textView_count);
             itemView.setOnClickListener(this);
         }
 
-
         @Override
         public void onClick(View view) {
-            context.startActivity(new Intent(context, CampaignActivity.class));
+            activity.startActivity(new Intent(activity, CampaignActivity.class));
         }
     }
 }

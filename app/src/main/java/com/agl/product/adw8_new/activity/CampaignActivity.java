@@ -22,8 +22,8 @@ import android.widget.TextView;
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
-import com.agl.product.adw8_new.service.data.campaign_model.CampaignData;
-import com.agl.product.adw8_new.service.data.campaign_model.RequestDataCampaign;
+import com.agl.product.adw8_new.model.CampaignData;
+import com.agl.product.adw8_new.service.data.RequestDataCampaign;
 import com.agl.product.adw8_new.utils.Session;
 
 import org.json.JSONException;

@@ -1,20 +1,16 @@
 package com.agl.product.adw8_new.service.data;
 
-import com.agl.product.adw8_new.service.data.campaign_model.CampaignData;
+import com.agl.product.adw8_new.model.CampaignData;
+import com.agl.product.adw8_new.model.Counts;
+import com.agl.product.adw8_new.model.Keywords;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
 public class ResponseDataCampaign {
 
-    @SerializedName("adCount")
-    private String adCount;
-
-    @SerializedName("keywordCount")
-    private String keywordCount;
-
-    @SerializedName("CampaignCount")
-    private String CampaignCount;
+    @SerializedName("count")
+    private ArrayList<Counts> countsList;
 
     @SerializedName("error")
     private int error;
@@ -26,34 +22,10 @@ public class ResponseDataCampaign {
     private ArrayList<CampaignData> camapign_data;
 
     @SerializedName("keyword_data")
-    private ArrayList<CampaignData> keyword_data;
+    private ArrayList<Keywords> keyword_data;
 
     @SerializedName("ads_data")
     private ArrayList<CampaignData> ads_data;
-
-    public String getAdCount() {
-        return adCount;
-    }
-
-    public void setAdCount(String adCount) {
-        this.adCount = adCount;
-    }
-
-    public String getKeywordCount() {
-        return keywordCount;
-    }
-
-    public void setKeywordCount(String keywordCount) {
-        this.keywordCount = keywordCount;
-    }
-
-    public String getCampaignCount() {
-        return CampaignCount;
-    }
-
-    public void setCampaignCount(String campaignCount) {
-        CampaignCount = campaignCount;
-    }
 
     public int getError() {
         return error;
@@ -79,11 +51,11 @@ public class ResponseDataCampaign {
         this.camapign_data = camapign_data;
     }
 
-    public ArrayList<CampaignData> getKeyword_data() {
+    public ArrayList<Keywords> getKeyword_data() {
         return keyword_data;
     }
 
-    public void setKeyword_data(ArrayList<CampaignData> keyword_data) {
+    public void setKeyword_data(ArrayList<Keywords> keyword_data) {
         this.keyword_data = keyword_data;
     }
 
@@ -93,5 +65,13 @@ public class ResponseDataCampaign {
 
     public void setAds_data(ArrayList<CampaignData> ads_data) {
         this.ads_data = ads_data;
+    }
+
+    public ArrayList<Counts> getCountsList() {
+        return countsList;
+    }
+
+    public void setCountsList(ArrayList<Counts> countsList) {
+        this.countsList = countsList;
     }
 }
