@@ -264,7 +264,11 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
                         Usuario usuario = response.body().getUsuario();
 
                         session.createLoginSession(permissionData, usuario);
-                        startActivity(new Intent(LoginActivity.this, DataActivity.class));
+                        Intent principal = new Intent(LoginActivity.this, HomeActivity.class);
+                        principal.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        principal.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(principal);
+                        finish();
                     } else {
                         AlertDialog builder = new showErrorDialog(LoginActivity.this, response.body().getMessage());
                         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

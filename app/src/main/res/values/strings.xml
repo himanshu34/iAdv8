@@ -2,6 +2,8 @@
     <string name="app_name">iAdv8</string>
     <string name="no_internet">Ensure your internet connection !</string>
     <string name="instabilidade_servidor">There is some connectivity issue. Please try again later.</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
 
     <!-- Login Screen -->
     <string name="login_title">Login</string>
@@ -20,4 +22,8 @@
     <!--Compaign-->
     <string name="title_activity_campaign">Campaign</string>
 
+    <!-- Home -->
+    <string name="share_text_subject">Invite Friend via...</string>
+    <string name="share_app_text">Check out iAdv8 Application for your smartphone. Download it today from https://play.google.com/store/apps/details?id=adglobal360.onlinemarketingtool.adv8.Individual</string>
+    <string name="action_settings">Settings</string>
 </resources>

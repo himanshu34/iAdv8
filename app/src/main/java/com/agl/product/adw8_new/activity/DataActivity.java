@@ -32,6 +32,7 @@ import com.agl.product.adw8_new.adapter.DataActivityGroupAdapter;
 import com.agl.product.adw8_new.fragment.DataAdsFragment;
 import com.agl.product.adw8_new.fragment.DataCampaignFragment;
 import com.agl.product.adw8_new.fragment.DataKeywordFragment;
+import com.agl.product.adw8_new.model.Ads;
 import com.agl.product.adw8_new.model.CampaignData;
 import com.agl.product.adw8_new.model.Counts;
 import com.agl.product.adw8_new.model.Keywords;
@@ -62,7 +63,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     private ArrayList<Counts> countsList;
     private ArrayList<CampaignData> campaignList;
     private ArrayList<Keywords> keywordList;
-    private ArrayList<CampaignData> adsList;
+    private ArrayList<Ads> adsList;
     DataActivityGroupAdapter mAdapter;
 
     @Override
@@ -107,7 +108,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         countsList = new ArrayList<Counts>();
         campaignList = new ArrayList<CampaignData>();
         keywordList = new ArrayList<Keywords>();
-        adsList = new ArrayList<CampaignData>();
+        adsList = new ArrayList<Ads>();
         requestDashboardData();
     }
 

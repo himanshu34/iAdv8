@@ -12,14 +12,14 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
-import com.agl.product.adw8_new.model.CampaignData;
+import com.agl.product.adw8_new.model.Ads;
 
 import java.util.ArrayList;
 
 public class DataAdsFragment extends Fragment {
 
     private TableLayout ll;
-    private ArrayList<CampaignData> adData;
+    private ArrayList<Ads> adData;
 
     @Nullable
     @Override
@@ -35,14 +35,14 @@ public class DataAdsFragment extends Fragment {
         return view;
     }
 
-    private void createTable(ArrayList<CampaignData> campaignData) {
-        if(campaignData != null) {
-            for (int i = 0; i < campaignData.size() ; i++) {
+    private void createTable(ArrayList<Ads> adsData) {
+        if(adsData != null) {
+            for (int i = 0; i < adsData.size() ; i++) {
                 TableRow row1 = new TableRow(getActivity());
                 TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
                 lp1.span = 1;
                 row1.setLayoutParams(lp1);
-                setOtherRow(row1, lp1 ,i,campaignData.get(i));
+                setOtherRow(row1, lp1 , i, adsData.get(i));
             }
         }
 
@@ -53,13 +53,13 @@ public class DataAdsFragment extends Fragment {
         setFirstRow(row, lp);
     }
 
-    private void setOtherRow(TableRow row, TableRow.LayoutParams lp, int i, CampaignData campaignData) {
+    private void setOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Ads adsData) {
         TextView textView = new TextView(getActivity());
         textView.setBackgroundResource(R.drawable.cell_shape);
         textView.setPadding(20, 20, 20, 20);
         textView.setLayoutParams(lp);
         textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setText(campaignData.getCampaign());
+        textView.setText(adsData.getAd());
         row.addView(textView, lp);
 
         TextView textView1 = new TextView(getActivity());
@@ -67,19 +67,19 @@ public class DataAdsFragment extends Fragment {
         textView1.setPadding(20, 20, 20, 20);
         textView1.setLayoutParams(lp);
         textView1.setGravity(Gravity.CENTER);
-        textView1.setText(campaignData.getImpressions());
+        textView1.setText(adsData.getImpressions());
         row.addView(textView1, lp);
 
         TextView textView2 = new TextView(getActivity());
         textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setText(campaignData.getCtr());
+        textView2.setText(adsData.getCtr());
         textView2.setPadding(20, 20, 20, 20);
         textView2.setLayoutParams(lp);
         textView2.setGravity(Gravity.CENTER);
         row.addView(textView2, lp);
 
         TextView textView3 = new TextView(getActivity());
-        textView3.setText(campaignData.getClicks());
+        textView3.setText(adsData.getClicks());
         textView3.setPadding(20, 20, 20, 20);
         textView3.setLayoutParams(lp);
         textView3.setGravity(Gravity.CENTER);
