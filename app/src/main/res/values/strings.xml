@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">iAdv8</string>
+    <string name="no_internet">Ensure your internet connection !</string>
+    <string name="instabilidade_servidor">There is some connectivity issue. Please try again later.</string>
+
+    <!-- Login Screen -->
+    <string name="login_title">Login</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="login_button">Login</string>
+    <string name="digiteEmail">Please enter email address</string>
+    <string name="digiteValidEmail">Please enter a valid email address</string>
+    <string name="digitePassword">Please enter password</string>
+
+    <string name="details">DETAILS</string>
+    <string name="impression">IMPRESSION</string>
+    <string name="what_is_this">(What is this ?)</string>
+    <string name="search_title">search</string>
+</resources>
