@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="#EDEDED"
+    android:fitsSystemWindows="true"
     tools:context="com.agl.product.adw8_new.activity.DataActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -17,7 +17,40 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <LinearLayout
+                android:id="@+id/lldefaultSpends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="Default Spends"
+                    android:textSize="@dimen/_12sdp"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mar 1-Mar 31,2017"
+                        android:textColor="@color/white"
+                        />
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_edit"
+                        />
+
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <com.agl.product.adw8_new.custom_view.MyNestedScrollView
@@ -41,44 +74,43 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/_5sdp"
                 android:paddingLeft="@dimen/_12sdp"
                 android:paddingRight="@dimen/_12sdp"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingBottom="@dimen/_5sdp">
+                android:paddingTop="@dimen/_5sdp">
 
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
-                    android:background="@color/black"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:background="@color/black" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:textSize="@dimen/_13sdp"
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_5sdp"
-                    android:text="TOP PERFORMER" />
+                    android:text="TOP PERFORMER"
+                    android:textSize="@dimen/_13sdp"
+                    android:textStyle="bold" />
 
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
-                    android:background="@color/black"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:background="@color/black" />
             </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                card_view:cardUseCompatPadding="true"
                 android:layout_marginLeft="@dimen/_2sdp"
                 android:layout_marginRight="@dimen/_2sdp"
                 card_view:cardCornerRadius="@dimen/_4sdp"
-                card_view:cardElevation="@dimen/_2sdp">
+                card_view:cardElevation="@dimen/_2sdp"
+                card_view:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -90,14 +122,14 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="top"
+                        android:background="@drawable/bottom_border_white_background"
                         app:tabGravity="fill"
                         app:tabIndicatorHeight="2dp"
-                        android:background="@drawable/bottom_border_white_background"
-                        card_view:tabIndicatorColor="@color/colorPrimary"
                         app:tabMode="fixed"
                         app:tabSelectedTextColor="@color/colorPrimary"
+                        app:tabTextAppearance="@android:style/TextAppearance.DeviceDefault.Small"
                         app:tabTextColor="@color/text_dark"
-                        app:tabTextAppearance="@android:style/TextAppearance.DeviceDefault.Small">
+                        card_view:tabIndicatorColor="@color/colorPrimary">
 
                     </android.support.design.widget.TabLayout>
 

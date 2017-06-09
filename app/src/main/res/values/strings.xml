@@ -16,4 +16,8 @@
     <string name="impression">IMPRESSION</string>
     <string name="what_is_this">(What is this ?)</string>
     <string name="search_title">search</string>
+
+    <!--Compaign-->
+    <string name="title_activity_campaign">Campaign</string>
+
 </resources>

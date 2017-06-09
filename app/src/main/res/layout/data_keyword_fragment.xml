@@ -16,7 +16,6 @@
             android:paddingTop="@dimen/_5sdp"
             android:paddingBottom="@dimen/_5sdp"
             >
-
         </TableLayout>
     </HorizontalScrollView>
 

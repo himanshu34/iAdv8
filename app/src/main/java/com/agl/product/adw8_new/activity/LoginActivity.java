@@ -224,7 +224,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
                         serviceLogin(response.body().getUserEmail(), response.body().getUserPassword());
                     } else {
                         AlertDialog builder = new showErrorDialog(LoginActivity.this, response.body().getMessage());
-                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         builder.setCanceledOnTouchOutside(false);
                         builder.setCancelable(false);
                         builder.show();
@@ -237,7 +237,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
                 AlertDialog builder = new showErrorDialog(LoginActivity.this, getResources().getString(R.string.instabilidade_servidor));
-                builder.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 builder.setCanceledOnTouchOutside(false);
                 builder.setCancelable(false);
                 builder.show();
@@ -266,7 +266,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
                         startActivity(new Intent(LoginActivity.this, DataActivity.class));
                     } else {
                         AlertDialog builder = new showErrorDialog(LoginActivity.this, response.body().getMessage());
-                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         builder.setCanceledOnTouchOutside(false);
                         builder.setCancelable(false);
                         builder.show();
@@ -279,7 +279,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
                 AlertDialog builder = new showErrorDialog(LoginActivity.this, getResources().getString(R.string.instabilidade_servidor));
-                builder.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 builder.setCanceledOnTouchOutside(false);
                 builder.setCancelable(false);
                 builder.show();
