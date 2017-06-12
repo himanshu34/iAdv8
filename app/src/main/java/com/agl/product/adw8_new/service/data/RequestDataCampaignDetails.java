@@ -28,6 +28,9 @@ public class RequestDataCampaignDetails {
     @SerializedName("orderBy")
     private String orderBy;
 
+    @SerializedName("offset")
+    private int offset;
+
     public String getAccess_token() {
         return access_token;
     }
@@ -62,6 +65,14 @@ public class RequestDataCampaignDetails {
 
     public String gettDate() {
         return tDate;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public void settDate(String tDate) {

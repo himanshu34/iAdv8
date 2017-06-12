@@ -1,10 +1,16 @@
 package com.agl.product.adw8_new.utils;
 
 import android.content.Context;
+import android.icu.util.Calendar;
+import android.icu.util.GregorianCalendar;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Utils {
 
@@ -37,4 +43,34 @@ public class Utils {
 
         return false;
     }
+
+    public static String getYesterdayDate(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(java.util.Calendar.DATE, -1);
+        return dateFormat.format(cal.getTime());
+    }
+
+    public static String getSevenDayBeforeDate(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(java.util.Calendar.DATE, -7);
+        return dateFormat.format(cal.getTime());
+    }
+
+    public static String getCurrentDate(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        return dateFormat.format(cal.getTime());
+    }
+
+    public static String getThirtyDayBeforeDate(){
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(java.util.Calendar.DATE, -30);
+        return dateFormat.format(cal.getTime());
+    }
+
+
+
 }

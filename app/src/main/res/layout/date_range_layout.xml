@@ -18,6 +18,7 @@
         >
 
         <TextView
+            android:id="@+id/textYesterday"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Yesterday"
@@ -26,6 +27,7 @@
             android:padding="@dimen/_7sdp"
             />
         <TextView
+            android:id="@+id/textLastSevenDays"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Last 7 Days"
@@ -35,6 +37,7 @@
 
             />
         <TextView
+            android:id="@+id/textLastThirtyDays"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Last 30 Days"
@@ -43,6 +46,7 @@
             android:padding="@dimen/_7sdp"
             />
         <TextView
+            android:id="@+id/textCustom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Custom"
@@ -51,7 +55,6 @@
             android:padding="@dimen/_7sdp"
             />
     </LinearLayout>
-
 
 
 </android.support.v7.widget.CardView>
