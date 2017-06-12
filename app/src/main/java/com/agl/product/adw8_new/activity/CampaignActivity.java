@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -64,7 +65,8 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private int offset = 0;
     private SwipeRefreshLayoutBottom swipeRefreshLayout;
     private int rowCount;
-    private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange;
+    private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange,textMessage;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,8 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         ll = (TableLayout) findViewById(R.id.tableLayout);
         swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
         textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        textMessage = (TextView) findViewById(R.id.textMessage);
 
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
         filterLayout = getLayoutInflater().inflate(R.layout.custom_filter_layout, null);
@@ -383,8 +387,9 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private void setKeywordsOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Keywords keyword) {
         TextView textView = new TextView(this);
         textView.setBackgroundResource(R.drawable.cell_shape);
+        ViewGroup.LayoutParams  layoutParams = new ViewGroup.LayoutParams( 200,ViewGroup.LayoutParams.WRAP_CONTENT);
         textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(lp);
+        textView.setLayoutParams(layoutParams);
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setText(keyword.getKeyword_name());
         row.addView(textView, lp);

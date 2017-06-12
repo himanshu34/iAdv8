@@ -30,92 +30,116 @@
         app:cardElevation="@dimen/_3sdp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom
-            android:id="@+id/swipeRefresh"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <android.support.v4.widget.NestedScrollView
-                android:id="@+id/scrollview"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/llDateRange"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dip"
-                android:fillViewport="true"
-                android:scrollbarStyle="outsideInset"
-                android:scrollbars="horizontal|vertical">
+                android:layout_height="wrap_content"
+                android:gravity="center|left"
+                android:orientation="horizontal"
+                android:padding="@dimen/_8sdp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/_8sdp"
+                    android:layout_marginRight="@dimen/_8sdp"
+                    android:text="Date Range"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_16sdp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
+                    android:id="@+id/llDateLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bottom_border_theme_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_1sdp">
+
+                    <TextView
+                        android:id="@+id/textSelectedDateRange"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jun 2 - Jun 8,2017"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_10sdp" />
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="1dp"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_edit"
+                        android:scaleType="fitCenter" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border" />
+
+            <com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom
+                android:id="@+id/swipeRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <android.support.v4.widget.NestedScrollView
+                    android:id="@+id/scrollview"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="vertical">
+                    android:layout_marginTop="5dip"
+                    android:fillViewport="true"
+                    android:scrollbarStyle="outsideInset"
+                    android:scrollbars="horizontal|vertical">
 
                     <LinearLayout
-                        android:id="@+id/llDateRange"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center|left"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/_8sdp">
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/_8sdp"
-                            android:layout_marginRight="@dimen/_8sdp"
-                            android:text="Date Range"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/_18sdp"
-                            android:textStyle="bold" />
-
-                        <LinearLayout
-                            android:id="@+id/llDateLayout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bottom_border_theme_background"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:padding="@dimen/_1sdp">
-
-                            <TextView
-                                android:id="@+id/textSelectedDateRange"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Jun 2 - Jun 8,2017"
-                                android:textColor="@color/black"
-                                android:textSize="@dimen/_12sdp" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="@dimen/_5sdp"
-                                android:src="@drawable/ic_edit" />
-                        </LinearLayout>
-
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/border" />
-
-                    <HorizontalScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:scrollbars="none">
-
-                        <TableLayout
-                            android:id="@+id/tableLayout"
+                        <HorizontalScrollView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingBottom="@dimen/_5sdp"
-                            android:paddingTop="@dimen/_5sdp"></TableLayout>
-                    </HorizontalScrollView>
+                            android:scrollbars="none">
 
-                </LinearLayout>
-            </android.support.v4.widget.NestedScrollView>
-        </com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom>
+                            <TableLayout
+                                android:id="@+id/tableLayout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:paddingBottom="@dimen/_5sdp"
+                                android:paddingTop="@dimen/_5sdp"></TableLayout>
+                        </HorizontalScrollView>
+                    </LinearLayout>
+                </android.support.v4.widget.NestedScrollView>
+            </com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom>
+        </LinearLayout>
 
+        <TextView
+            android:id="@+id/textMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No Data Found"
+            android:textSize="@dimen/_15sdp"
+            android:visibility="invisible" />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleInverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:max="500"
+            android:progress="0" />
     </android.support.v7.widget.CardView>
-
 </android.support.design.widget.CoordinatorLayout>
