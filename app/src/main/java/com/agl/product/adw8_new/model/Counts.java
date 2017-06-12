@@ -10,6 +10,11 @@ public class Counts {
     @SerializedName("value")
     private String value;
 
+    public Counts(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
     public String getValue() {
         return value;
     }

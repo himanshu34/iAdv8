@@ -3,6 +3,8 @@ package com.agl.product.adw8_new.service.data;
 import com.agl.product.adw8_new.model.Graph;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
+
 public class ResponseDataGraphCampaign {
 
     @SerializedName("error")
@@ -12,7 +14,7 @@ public class ResponseDataGraphCampaign {
     private String message;
 
     @SerializedName("data")
-    private Graph graph;
+    private ArrayList<Graph> graphList;
 
     public int getError() {
         return error;
@@ -30,11 +32,11 @@ public class ResponseDataGraphCampaign {
         this.message = message;
     }
 
-    public Graph getGraph() {
-        return graph;
+    public ArrayList<Graph> getGraphList() {
+        return graphList;
     }
 
-    public void setGraph(Graph graph) {
-        this.graph = graph;
+    public void setGraphList(ArrayList<Graph> graphList) {
+        this.graphList = graphList;
     }
 }

@@ -29,7 +29,6 @@ import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
 import com.agl.product.adw8_new.service.data.RequestDataAdgroup;
 import com.agl.product.adw8_new.service.data.RequestDataAds;
-import com.agl.product.adw8_new.service.data.RequestDataCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataCampaignDetails;
 import com.agl.product.adw8_new.service.data.RequestDataKeywords;
 import com.agl.product.adw8_new.service.data.ResponseDataAdgroup;
@@ -60,12 +59,18 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_campaign);
         session = new Session(this);
+
+        Intent intent = getIntent();
+        if (intent != null)
+            campaignType = intent.getStringExtra("type");
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
+        actionBar.setTitle(campaignType.toUpperCase());
 
         ll = (TableLayout) findViewById(R.id.tableLayout);
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
@@ -73,13 +78,11 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         filterPopup = new PopupWindow(this);
         filterPopup.setWidth(500);
 
-
         filterPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
         filterPopup.setOutsideTouchable(true);
         filterPopup.setContentView(filterLayout);
         filterPopup.setBackgroundDrawable(new BitmapDrawable());
         filterPopup.setFocusable(true);
-
 
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
         customDatePopup = new PopupWindow(this);
@@ -91,10 +94,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         customDatePopup.setFocusable(true);
 
         llDateLayout.setOnClickListener(this);
-
-        Intent intent = getIntent();
-        if (intent != null) campaignType = intent.getStringExtra("type");
-
 
         userData = session.getUsuarioDetails();
         requestCampaign();

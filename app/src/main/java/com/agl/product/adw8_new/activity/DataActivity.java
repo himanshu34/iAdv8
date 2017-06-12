@@ -63,6 +63,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     private View customPopupLayout;
     Session session;
     HashMap<String, String> userData;
+    private ArrayList<Graph> graphList;
     private ArrayList<Counts> countsList;
     private ArrayList<CampaignData> campaignList;
     private ArrayList<Keywords> keywordList;
@@ -101,7 +102,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         rvGraph.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvGraph.setLayoutManager(mLayoutManager1);
-        rvGraph.setAdapter(new DataActivityGraphAdapter());
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         lldefaultSpends.setOnClickListener(this);
@@ -109,6 +109,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
         userData = session.getUsuarioDetails();
 
+        graphList = new ArrayList<Graph>();
         countsList = new ArrayList<Counts>();
         campaignList = new ArrayList<CampaignData>();
         keywordList = new ArrayList<Keywords>();
@@ -151,7 +152,13 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                 if(response != null) {
                     Log.e(TAG, response.body().getMessage());
                     if(response.body().getError() == 0) {
-                        Graph graphData = response.body().getGraph();
+                        if(response.body().getGraphList() != null) {
+                            if(response.body().getGraphList().size() > 0) {
+                                graphList = response.body().getGraphList();
+                            }
+                        }
+
+                        setGraphListAdapter();
                     } else {
                         AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
                         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -275,6 +282,11 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                 }
             }
         }
+    }
+
+    private void setGraphListAdapter() {
+        //Add Graph Adapter here
+        rvGraph.setAdapter(new DataActivityGraphAdapter());
     }
 
     private void setCountListAdapter() {
