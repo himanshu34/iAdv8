@@ -218,17 +218,25 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
         call.enqueue(new Callback<ResponseDataAddCient>() {
             @Override
             public void onResponse(Call<ResponseDataAddCient>call, Response<ResponseDataAddCient> response) {
-                if(response != null) {
-                    Log.e(TAG, response.body().getMessage());
-                    if(response.body().getError() == 0) {
-                        serviceLogin(response.body().getUserEmail(), response.body().getUserPassword());
-                    } else {
-                        AlertDialog builder = new showErrorDialog(LoginActivity.this, response.body().getMessage());
-                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        builder.setCanceledOnTouchOutside(false);
-                        builder.setCancelable(false);
-                        builder.show();
+                if(response.isSuccessful()) {
+                    if(response != null) {
+                        Log.e(TAG, response.body().getMessage());
+                        if(response.body().getError() == 0) {
+                            serviceLogin(response.body().getUserEmail(), response.body().getUserPassword());
+                        } else {
+                            AlertDialog builder = new showErrorDialog(LoginActivity.this, response.body().getMessage());
+                            builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            builder.setCanceledOnTouchOutside(false);
+                            builder.setCancelable(false);
+                            builder.show();
+                        }
                     }
+                } else {
+                    AlertDialog builder = new showErrorDialog(LoginActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    builder.setCanceledOnTouchOutside(false);
+                    builder.setCancelable(false);
+                    builder.show();
                 }
             }
 
@@ -257,25 +265,33 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
             @Override
             public void onResponse(Call<ResponseDataLogin>call, Response<ResponseDataLogin> response) {
                 signInButton.setEnabled(true);
-                if(response != null) {
-                    Log.e(TAG, response.body().getMessage());
-                    if(response.body().getError() == 0) {
-                        PermissionData permissionData = response.body().getPermission_array();
-                        Usuario usuario = response.body().getUsuario();
+                if(response.isSuccessful()) {
+                    if(response != null) {
+                        Log.e(TAG, response.body().getMessage());
+                        if(response.body().getError() == 0) {
+                            PermissionData permissionData = response.body().getPermission_array();
+                            Usuario usuario = response.body().getUsuario();
 
-                        session.createLoginSession(permissionData, usuario);
-                        Intent principal = new Intent(LoginActivity.this, HomeActivity.class);
-                        principal.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        principal.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(principal);
-                        finish();
-                    } else {
-                        AlertDialog builder = new showErrorDialog(LoginActivity.this, response.body().getMessage());
-                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        builder.setCanceledOnTouchOutside(false);
-                        builder.setCancelable(false);
-                        builder.show();
+                            session.createLoginSession(permissionData, usuario);
+                            Intent principal = new Intent(LoginActivity.this, HomeActivity.class);
+                            principal.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            principal.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(principal);
+                            finish();
+                        } else {
+                            AlertDialog builder = new showErrorDialog(LoginActivity.this, response.body().getMessage());
+                            builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            builder.setCanceledOnTouchOutside(false);
+                            builder.setCancelable(false);
+                            builder.show();
+                        }
                     }
+                } else {
+                    AlertDialog builder = new showErrorDialog(LoginActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    builder.setCanceledOnTouchOutside(false);
+                    builder.setCancelable(false);
+                    builder.show();
                 }
             }
 

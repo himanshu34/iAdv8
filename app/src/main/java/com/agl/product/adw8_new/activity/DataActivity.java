@@ -149,23 +149,31 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         campaignGraphCall.enqueue(new Callback<ResponseDataGraphCampaign>() {
             @Override
             public void onResponse(Call<ResponseDataGraphCampaign>call, Response<ResponseDataGraphCampaign> response) {
-                if(response != null) {
-                    Log.e(TAG, response.body().getMessage());
-                    if(response.body().getError() == 0) {
-                        if(response.body().getGraphList() != null) {
-                            if(response.body().getGraphList().size() > 0) {
-                                graphList = response.body().getGraphList();
+                if(response.isSuccessful()) {
+                    if(response != null) {
+                        Log.e(TAG, response.body().getMessage());
+                        if(response.body().getError() == 0) {
+                            if(response.body().getGraphList() != null) {
+                                if(response.body().getGraphList().size() > 0) {
+                                    graphList = response.body().getGraphList();
+                                }
                             }
-                        }
 
-                        setGraphListAdapter();
-                    } else {
-                        AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
-                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        builder.setCanceledOnTouchOutside(false);
-                        builder.setCancelable(false);
-                        builder.show();
+                            setGraphListAdapter();
+                        } else {
+                            AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
+                            builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            builder.setCanceledOnTouchOutside(false);
+                            builder.setCancelable(false);
+                            builder.show();
+                        }
                     }
+                } else {
+                    AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    builder.setCanceledOnTouchOutside(false);
+                    builder.setCancelable(false);
+                    builder.show();
                 }
             }
 
@@ -274,7 +282,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
                     setCampaignFragmentData();
                 } else {
-                    AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
+                    AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
                     builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     builder.setCanceledOnTouchOutside(false);
                     builder.setCancelable(false);
