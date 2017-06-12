@@ -3,6 +3,7 @@ package com.agl.product.adw8_new.activity;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,14 +14,17 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
+import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
 import com.agl.product.adw8_new.model.AdListingData;
 import com.agl.product.adw8_new.model.Adgroup;
 import com.agl.product.adw8_new.model.CampaignData;
@@ -36,6 +40,9 @@ import com.agl.product.adw8_new.service.data.ResponseDataAds;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaignDetails;
 import com.agl.product.adw8_new.service.data.ResponseDataKeywords;
 import com.agl.product.adw8_new.utils.Session;
+import com.agl.product.adw8_new.utils.Utils;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +51,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CampaignActivity extends AppCompatActivity implements View.OnClickListener {
+
+public class CampaignActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
 
     private TableLayout ll;
     private PopupWindow filterPopup, customDatePopup;
@@ -53,6 +61,10 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     Session session;
     HashMap<String, String> userData;
     private String campaignType;
+    private int offset = 0;
+    private SwipeRefreshLayoutBottom swipeRefreshLayout;
+    private int rowCount;
+    private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +85,9 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         actionBar.setTitle(campaignType.toUpperCase());
 
         ll = (TableLayout) findViewById(R.id.tableLayout);
+        swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
+        textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
+
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
         filterLayout = getLayoutInflater().inflate(R.layout.custom_filter_layout, null);
         filterPopup = new PopupWindow(this);
@@ -84,7 +99,9 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         filterPopup.setBackgroundDrawable(new BitmapDrawable());
         filterPopup.setFocusable(true);
 
+
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
+
         customDatePopup = new PopupWindow(this);
         customDatePopup.setWidth(400);
         customDatePopup.setHeight(ListPopupWindow.WRAP_CONTENT);
@@ -93,30 +110,41 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         customDatePopup.setBackgroundDrawable(new BitmapDrawable());
         customDatePopup.setFocusable(true);
 
+        textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
+        textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
+        textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
+        textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
+
         llDateLayout.setOnClickListener(this);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        textYesterday.setOnClickListener(this);
+        textLastSevenDays.setOnClickListener(this);
+        textLastThirtyDays.setOnClickListener(this);
+        textCustom.setOnClickListener(this);
 
         userData = session.getUsuarioDetails();
         requestCampaign();
     }
 
     private void requestCampaign() {
-
         switch (campaignType) {
             case "ads":
+                setAdsHeaderRow();
                 getAdsData();
                 break;
             case "keywords":
+                setKeywordsHeaderRow();
                 getKeywordsData();
                 break;
             case "campaign":
+                createCampaignHeaderRow();
                 getCampaignData();
                 break;
             case "adgroup":
+                setAdgroupHeaderRow();
                 getAdGroupData();
                 break;
-
         }
-
     }
 
     private void getAdGroupData() {
@@ -131,28 +159,37 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         requestKeywords.setOrderBy("ASC");
         requestKeywords.setSortBy("clicks");
         requestKeywords.setpId("1");
+        requestKeywords.setOffset(offset);
+
 
         Call<ResponseDataAdgroup> adsCall = apiAddClientService.getAdgroupList(requestKeywords);
         adsCall.enqueue(new Callback<ResponseDataAdgroup>() {
             @Override
             public void onResponse(Call<ResponseDataAdgroup> call, Response<ResponseDataAdgroup> response) {
-
+                    swipeRefreshLayout.setRefreshing(false);
                 if ( response != null ){
-                    try {
-                        ResponseDataAdgroup body = response.body();
-                        ArrayList<Adgroup> data = body.getData();
-                        if ( data != null && data.size() > 0 ){
-                            createAdgroupTable(data);
+                    if( response.isSuccessful() ){
+                        offset = offset + 20 ;
+                        try {
+                            ResponseDataAdgroup body = response.body();
+                            ArrayList<Adgroup> data = body.getData();
+                            if ( data != null && data.size() > 0 ){
+                                createAdgroupTable(data);
+                            }
+                        }catch (Exception e ){
+                            e.printStackTrace();
                         }
-                    }catch (Exception e ){
-                        e.printStackTrace();
+                    }else {
+
                     }
+
 
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseDataAdgroup> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
                 if ( t != null ) t.printStackTrace();
             }
         });
@@ -165,17 +202,17 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             lp.span = 1;
             row1.setLayoutParams(lp);
-            setAdgroupOtherRow(row1, lp, i, data.get(i));
+            setAdgroupOtherRow(row1, lp, ++rowCount, data.get(i));
         }
 
-        TableRow row1 = new TableRow(this);
-        TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp1.span = 1;
-        row1.setLayoutParams(lp1);
-        setAdgroupHeaderRow(row1, lp1);
     }
 
-    private void setAdgroupHeaderRow(TableRow row, TableRow.LayoutParams lp) {
+    private void setAdgroupHeaderRow() {
+        TableRow row = new TableRow(this);
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        lp.span = 1;
+        row.setLayoutParams(lp);
+
         TextView textView = new TextView(this);
         textView.setTextColor(getResources().getColor(R.color.black));
         textView.setPadding(20, 20, 20, 20);
@@ -293,19 +330,21 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         requestKeywords.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
         requestKeywords.setfDate("2017-06-02");
         requestKeywords.settDate("2017-06-08");
-        requestKeywords.setLimit("2");
+        requestKeywords.setLimit("10");
         requestKeywords.setOrderBy("ASC");
         requestKeywords.setSortBy("clicks");
         requestKeywords.setpId("1");
-        requestKeywords.setOffset(1);
+        requestKeywords.setOffset(offset);
 
         Call<ResponseDataKeywords> adsCall = apiAddClientService.getKeywordsList(requestKeywords);
         adsCall.enqueue(new Callback<ResponseDataKeywords>() {
             @Override
             public void onResponse(Call<ResponseDataKeywords> call, Response<ResponseDataKeywords> response) {
+                swipeRefreshLayout.setRefreshing(false);
                 if (response != null) {
                     if (response.isSuccessful()) {
                         try {
+                            offset = offset + 20 ;
                             ResponseDataKeywords res = response.body();
                             ArrayList<Keywords> keywords = res.getData();
                             if (keywords != null && keywords.size() > 0) {
@@ -325,6 +364,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onFailure(Call<ResponseDataKeywords> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
                 if (t != null) Log.d("TAG", t.getMessage());
             }
         });
@@ -336,14 +376,8 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             lp.span = 1;
             row1.setLayoutParams(lp);
-            setKeywordsOtherRow(row1, lp, i, keywordsData.get(i));
+            setKeywordsOtherRow(row1, lp, ++rowCount, keywordsData.get(i));
         }
-
-        TableRow row1 = new TableRow(this);
-        TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp1.span = 1;
-        row1.setLayoutParams(lp1);
-        setKeywordsHeaderRow(row1, lp1);
     }
 
     private void setKeywordsOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Keywords keyword) {
@@ -420,7 +454,12 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         ll.addView(row, i);
     }
 
-    private void setKeywordsHeaderRow(TableRow row, TableRow.LayoutParams lp) {
+    private void setKeywordsHeaderRow() {
+        TableRow row = new TableRow(this);
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        lp.span = 1;
+        row.setLayoutParams(lp);
+
         TextView textView = new TextView(this);
         textView.setTextColor(getResources().getColor(R.color.black));
         textView.setPadding(20, 20, 20, 20);
@@ -507,25 +546,36 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         requestDataAds.setOrderBy("DESC");
         requestDataAds.setSortBy("clicks");
         requestDataAds.setpId("1");
+        requestDataAds.setOffset(offset);
 
 
         Call<ResponseDataAds> adsCall = apiAddClientService.getAdsData(requestDataAds);
         adsCall.enqueue(new Callback<ResponseDataAds>() {
             @Override
             public void onResponse(Call<ResponseDataAds> call, Response<ResponseDataAds> response) {
-                try {
-                    ResponseDataAds adsData = response.body();
-                    ArrayList<AdListingData> adListingData = adsData.getData();
-                    if (adListingData != null && adListingData.size() > 0)
-                        createAdsTable(adListingData);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                swipeRefreshLayout.setRefreshing(false);
+                if( response != null ){
+                    if( response.isSuccessful() ){
+                        try {
+                            ResponseDataAds adsData = response.body();
+                            offset = offset + 20 ;
+                            ArrayList<AdListingData> adListingData = adsData.getData();
+                            if (adListingData != null && adListingData.size() > 0)
+                                createAdsTable(adListingData);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+
+                    }
                 }
+
             }
 
             @Override
             public void onFailure(Call<ResponseDataAds> call, Throwable t) {
-
+                swipeRefreshLayout.setRefreshing(false);
+                if( t != null ) Log.d("TAG",t.getMessage()+"");
             }
         });
 
@@ -538,23 +588,17 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             lp.span = 1;
             row1.setLayoutParams(lp);
-            setAdsOtherRow(row1, lp, i, adListingData.get(i));
+            setAdsOtherRow(row1, lp, ++rowCount, adListingData.get(i));
         }
-
-        TableRow row1 = new TableRow(this);
-        TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp1.span = 1;
-        row1.setLayoutParams(lp1);
-        setAdsHeaderRow(row1, lp1);
-
     }
 
     private void setAdsOtherRow(TableRow row, TableRow.LayoutParams lp, int i, AdListingData adListingData) {
 
         TextView textView = new TextView(this);
+        ViewGroup.LayoutParams  layoutParams = new ViewGroup.LayoutParams( 200,ViewGroup.LayoutParams.WRAP_CONTENT);
         textView.setBackgroundResource(R.drawable.cell_shape);
         textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(lp);
+        textView.setLayoutParams(layoutParams);
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setText(adListingData.getAd());
         row.addView(textView, lp);
@@ -604,7 +648,12 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    private void setAdsHeaderRow(TableRow row, TableRow.LayoutParams lp) {
+    private void setAdsHeaderRow() {
+        TableRow row = new TableRow(this);
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        lp.span = 1;
+        row.setLayoutParams(lp);
+
         TextView textView = new TextView(this);
         textView.setTextColor(getResources().getColor(R.color.black));
         textView.setPadding(20, 20, 20, 20);
@@ -668,20 +717,23 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         requestDataCampaignDetails.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
         requestDataCampaignDetails.setfDate("2017-06-02");
         requestDataCampaignDetails.settDate("2017-06-08");
-        requestDataCampaignDetails.setLimit("10");
+        requestDataCampaignDetails.setLimit("20");
         requestDataCampaignDetails.setOrderBy("DESC");
         requestDataCampaignDetails.setSortBy("clicks");
+        requestDataCampaignDetails.setOffset(offset);
 
         Call<ResponseDataCampaignDetails> campaignCall = apiAddClientService.getCampaignData(requestDataCampaignDetails);
         campaignCall.enqueue(new Callback<ResponseDataCampaignDetails>() {
             @Override
             public void onResponse(Call<ResponseDataCampaignDetails> call, Response<ResponseDataCampaignDetails> response) {
+                swipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful()) {
                     ResponseDataCampaignDetails campaignData = response.body();
+                    offset = offset + 20;
                     try {
                         ArrayList<CampaignData> data = campaignData.getData();
                         if (data != null && data.size() > 0)
-                            createDataTable(data);
+                            createCampaignTable(data);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -692,6 +744,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onFailure(Call<ResponseDataCampaignDetails> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
                 if (t != null) {
                     Log.d("TAG", t.getMessage());
                 }
@@ -753,11 +806,77 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textView3.setBackgroundResource(R.drawable.cell_shape);
         row.addView(textView3, lp);
 
-
         ll.addView(row, i);
     }
 
-    private void setFirstRow(TableRow row, TableRow.LayoutParams lp) {
+
+
+    public void displayFilterLayout() {
+        filterPopup.showAtLocation(findViewById(R.id.menu_filter), Gravity.RIGHT | Gravity.TOP, 20, getActionBarHeight());
+    }
+
+    private int getActionBarHeight() {
+        int actionBarHeight = 0;
+        TypedValue tv = new TypedValue();
+
+        if (getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        }
+        return actionBarHeight;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.llDateLayout:
+                customDatePopup.showAsDropDown(llDateLayout, 0, 10);
+                break;
+            case R.id.textYesterday :
+                setYesterday();
+                break;
+            case R.id.textLastSevenDays :
+                setLastSeven();
+                break;
+            case R.id.textLastThirtyDays :
+                setLastThirty();
+                break;
+            case R.id.textCustom :
+                break;
+
+        }
+    }
+
+    private void setYesterday() {
+        textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textSelectedDateRange.setText(Utils.getYesterdayDate());
+        customDatePopup.dismiss();
+    }
+
+    private void setLastSeven() {
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textSelectedDateRange.setText(Utils.getSevenDayBeforeDate()+"-"+Utils.getCurrentDate());
+        customDatePopup.dismiss();
+    }
+
+    private void setLastThirty() {
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textSelectedDateRange.setText(Utils.getThirtyDayBeforeDate()+"-"+Utils.getCurrentDate());
+        customDatePopup.dismiss();
+    }
+
+
+    private void createCampaignHeaderRow(){
+        TableRow row = new TableRow(this);
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        lp.span = 1;
+        row.setLayoutParams(lp);
+
         TextView textView = new TextView(this);
         textView.setTextColor(getResources().getColor(R.color.black));
         textView.setPadding(20, 20, 20, 20);
@@ -794,45 +913,32 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         ll.addView(row, 0);
     }
 
-    public void displayFilterLayout() {
-        filterPopup.showAtLocation(findViewById(R.id.menu_filter), Gravity.RIGHT | Gravity.TOP, 20, getActionBarHeight());
-    }
-
-    private int getActionBarHeight() {
-        int actionBarHeight = 0;
-        TypedValue tv = new TypedValue();
-
-        if (getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
-            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
-        }
-        return actionBarHeight;
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.llDateLayout:
-                customDatePopup.showAsDropDown(llDateLayout, 0, 10);
-                break;
-        }
-    }
-
-
-    private void createDataTable(ArrayList<CampaignData> campaignDatas) {
+    private void createCampaignTable(ArrayList<CampaignData> campaignDatas) {
         for (int i = 0; i < campaignDatas.size(); i++) {
             TableRow row1 = new TableRow(this);
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             lp.span = 1;
             row1.setLayoutParams(lp);
-            setOtherRow(row1, lp, i, campaignDatas.get(i));
+            setOtherRow(row1, lp, ++rowCount, campaignDatas.get(i));
         }
-
-        TableRow row1 = new TableRow(this);
-        TableRow.LayoutParams lp1 = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp1.span = 1;
-        row1.setLayoutParams(lp1);
-        setFirstRow(row1, lp1);
     }
 
+    @Override
+    public void onRefresh() {
+        switch (campaignType) {
+            case "ads":
+                getAdsData();
+                break;
+            case "keywords":
+                getKeywordsData();
+                break;
+            case "campaign":
+                getCampaignData();
+                break;
+            case "adgroup":
+                getAdGroupData();
+                break;
+        }
 
+    }
 }

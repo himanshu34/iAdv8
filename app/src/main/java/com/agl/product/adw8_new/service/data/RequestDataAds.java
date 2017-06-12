@@ -32,6 +32,9 @@ public class RequestDataAds  {
     @SerializedName("orderBy")
     private String orderBy;
 
+    @SerializedName("offset")
+    private int offset;
+
     public String getAccess_token() {
         return access_token;
     }
@@ -94,5 +97,13 @@ public class RequestDataAds  {
 
     public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 }

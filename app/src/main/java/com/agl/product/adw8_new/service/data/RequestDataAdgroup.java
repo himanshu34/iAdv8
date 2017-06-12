@@ -28,6 +28,17 @@ public class RequestDataAdgroup {
     @SerializedName("orderBy")
     private String orderBy;
 
+    @SerializedName("offset")
+    private int offset;
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
     public String getAccess_token() {
         return access_token;
     }
