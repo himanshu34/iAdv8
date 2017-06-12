@@ -51,7 +51,6 @@ public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityG
                     Intent intent = new Intent(activity, CampaignActivity.class);
                     intent.putExtra("type", "campaign");
                     activity.startActivity(intent);
-
                 } else if (countData.getKey().equalsIgnoreCase("adgroup")) {
                     Intent intent = new Intent(activity, CampaignActivity.class);
                     intent.putExtra("type", "adgroup");

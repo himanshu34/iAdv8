@@ -69,6 +69,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     private ArrayList<Keywords> keywordList;
     private ArrayList<Ads> adsList;
     DataActivityGroupAdapter mAdapter;
+    DataActivityGraphAdapter graphAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,18 +191,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.data_activity_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
     private void setupTabLayout() {
         tabLayout.addTab(tabLayout.newTab().setText("CAMPAIGN"), true);
         tabLayout.addTab(tabLayout.newTab().setText("KEYWORDS"));
@@ -294,7 +283,13 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
     private void setGraphListAdapter() {
         //Add Graph Adapter here
-        rvGraph.setAdapter(new DataActivityGraphAdapter());
+        if(graphList != null) {
+            if(graphList.size() > 0) {
+                graphAdapter = new DataActivityGraphAdapter(DataActivity.this, graphList);
+                rvGraph.setAdapter(graphAdapter);
+                graphAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     private void setCountListAdapter() {

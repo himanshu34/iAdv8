@@ -29,22 +29,30 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
                     android:text="Default Spends"
-                    android:textSize="@dimen/_12sdp" />
+                    android:textSize="@dimen/_14sdp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Jun 2 - Jun 8,2017"
+                        android:textSize="@dimen/_10sdp"
                         android:textColor="@color/white" />
+
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="1dp"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_edit" />
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icon_edit" />
                 </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
@@ -90,7 +98,8 @@
                     android:layout_marginLeft="@dimen/_5sdp"
                     android:layout_marginRight="@dimen/_5sdp"
                     android:text="TOP PERFORMER"
-                    android:textSize="@dimen/_13sdp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_16sdp"
                     android:textStyle="bold" />
 
                 <View
