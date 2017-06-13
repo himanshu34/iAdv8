@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
+import com.agl.product.adw8_new.activity.AdgroupActivity;
 import com.agl.product.adw8_new.activity.CampaignActivity;
 import com.agl.product.adw8_new.activity.DataActivity;
 import com.agl.product.adw8_new.model.Counts;
@@ -52,7 +53,7 @@ public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityG
                     intent.putExtra("type", "campaign");
                     activity.startActivity(intent);
                 } else if (countData.getKey().equalsIgnoreCase("adgroup")) {
-                    Intent intent = new Intent(activity, CampaignActivity.class);
+                    Intent intent = new Intent(activity, AdgroupActivity.class);
                     intent.putExtra("type", "adgroup");
                     activity.startActivity(intent);
                 }
