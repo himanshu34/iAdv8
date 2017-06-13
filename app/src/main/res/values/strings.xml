@@ -26,4 +26,7 @@
     <string name="share_text_subject">Invite Friend via...</string>
     <string name="share_app_text">Check out iAdv8 Application for your smartphone. Download it today from https://play.google.com/store/apps/details?id=adglobal360.onlinemarketingtool.adv8.Individual</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_keywords">Keywords</string>
+    <string name="title_activity_ads">Ads</string>
+    <string name="title_activity_adgroup">Adgroups</string>
 </resources>
