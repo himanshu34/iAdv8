@@ -15,9 +15,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -353,13 +350,13 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         protected showErrorDialog(Context context, String message) {
             super(context);
             LayoutInflater inflater = getLayoutInflater();
-            final View dialoglayout = inflater.inflate(R.layout.custom_alert_layout_single, (ViewGroup) getCurrentFocus());
-            setView(dialoglayout);
-            final TextView textviewTitle = (TextView) dialoglayout.findViewById(R.id.textview_title);
-            textviewTitle.setText(getResources().getString(R.string.app_name));
-            final TextView textviewMessage = (TextView) dialoglayout.findViewById(R.id.textview_text);
-            textviewMessage.setText(message);
-            final TextView textviewPositive = (TextView) dialoglayout.findViewById(R.id.textview_positive);
+            final View dialogLayout = inflater.inflate(R.layout.custom_alert_layout_single, (ViewGroup) getCurrentFocus());
+            setView(dialogLayout);
+            final TextView textViewTitle = (TextView) dialogLayout.findViewById(R.id.textview_title);
+            textViewTitle.setText(getResources().getString(R.string.app_name));
+            final TextView textViewMessage = (TextView) dialogLayout.findViewById(R.id.textview_text);
+            textViewMessage.setText(message);
+            final TextView textviewPositive = (TextView) dialogLayout.findViewById(R.id.textview_positive);
             textviewPositive.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
