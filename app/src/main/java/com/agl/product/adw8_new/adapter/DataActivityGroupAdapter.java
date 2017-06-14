@@ -10,8 +10,10 @@ import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.activity.AdgroupActivity;
+import com.agl.product.adw8_new.activity.AdsActivity;
 import com.agl.product.adw8_new.activity.CampaignActivity;
 import com.agl.product.adw8_new.activity.DataActivity;
+import com.agl.product.adw8_new.activity.KeywordsActivity;
 import com.agl.product.adw8_new.model.Counts;
 
 import java.util.ArrayList;
@@ -41,11 +43,11 @@ public class DataActivityGroupAdapter extends RecyclerView.Adapter<DataActivityG
             @Override
             public void onClick(View v) {
                 if (countData.getKey().equalsIgnoreCase("ads")) {
-                    Intent intent = new Intent(activity, CampaignActivity.class);
+                    Intent intent = new Intent(activity, AdsActivity.class);
                     intent.putExtra("type", "ads");
                     activity.startActivity(intent);
                 } else if (countData.getKey().equalsIgnoreCase("keywords")) {
-                    Intent intent = new Intent(activity, CampaignActivity.class);
+                    Intent intent = new Intent(activity, KeywordsActivity.class);
                     intent.putExtra("type", "keywords");
                     activity.startActivity(intent);
                 } else if (countData.getKey().equalsIgnoreCase("campaign")) {

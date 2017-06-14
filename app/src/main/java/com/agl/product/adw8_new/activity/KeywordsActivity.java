@@ -9,8 +9,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
@@ -22,6 +29,7 @@ import android.widget.Toast;
 
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
+import com.agl.product.adw8_new.model.Adgroup;
 import com.agl.product.adw8_new.model.Keywords;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
@@ -42,10 +50,12 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
     private TableLayout ll;
     private PopupWindow filterPopup, customDatePopup;
     private View filterLayout, customPopupLayout;
-    private LinearLayout llDateLayout,llContainer;
+    private LinearLayout llDateLayout,llDataContainer;
+    private TableLayout tlName, tlValues;
+    private HorizontalScrollView hrone, hrsecond,hrbottom;
     Session session;
     HashMap<String, String> userData;
-    private int offset = 0;
+    private int offset = 0,limit = 50;
     private SwipeRefreshLayoutBottom swipeRefreshLayout;
     private int rowCount;
     private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange,textMessage;
@@ -54,7 +64,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_campaign);
+        setContentView(R.layout.activity_keywords);
         session = new Session(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -69,7 +79,13 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
         textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        llContainer = (LinearLayout) findViewById(R.id.llContainer);
+        llDataContainer = (LinearLayout) findViewById(R.id.llDataContainer);
+        tlValues = (TableLayout) findViewById(R.id.tlValues);
+        hrone = (HorizontalScrollView) findViewById(R.id.hrone);
+        hrsecond = (HorizontalScrollView) findViewById(R.id.hrsecond);
+        hrbottom = (HorizontalScrollView) findViewById(R.id.hrbottom);
+
+        tlName = (TableLayout) findViewById(R.id.tlName);
         textMessage = (TextView) findViewById(R.id.textMessage);
 
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
@@ -107,7 +123,37 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         textCustom.setOnClickListener(this);
 
         userData = session.getUsuarioDetails();
+        hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                hrone.scrollTo(hrsecond.getScrollX(), hrsecond.getScrollY());
+                hrbottom.scrollTo(hrsecond.getScrollX(), hrsecond.getScrollY());
+            }
+        });
 
+        getKeywordsData();
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.campaign_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.menu_filter:
+                displayFilterLayout();
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -129,6 +175,10 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                 break;
 
         }
+    }
+
+    public void displayFilterLayout() {
+        filterPopup.showAtLocation(findViewById(R.id.menu_filter), Gravity.RIGHT | Gravity.TOP, 20, getActionBarHeight());
     }
 
 
@@ -162,6 +212,17 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         getKeywordsData();
     }
 
+    private int getActionBarHeight() {
+        int actionBarHeight = 0;
+        TypedValue tv = new TypedValue();
+
+        if (getTheme().resolveAttribute(R.attr.actionBarSize, tv, true)) {
+            actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
+        }
+        return actionBarHeight;
+    }
+
+
     private void getKeywordsData() {
         Post apiAddClientService = ApiClient.getClient().create(Post.class);
         RequestDataKeywords requestKeywords = new RequestDataKeywords();
@@ -171,7 +232,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         requestKeywords.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
         requestKeywords.setfDate("2017-06-02");
         requestKeywords.settDate("2017-06-08");
-        requestKeywords.setLimit("10");
+        requestKeywords.setLimit(limit+"");
         requestKeywords.setOrderBy("ASC");
         requestKeywords.setSortBy("clicks");
         requestKeywords.setpId("1");
@@ -189,15 +250,15 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                             ArrayList<Keywords> keywords = res.getData();
                             if( keywords != null ){
                                 if( keywords.size() > 0 ){
-                                    llContainer.setVisibility(View.VISIBLE);
+                                    llDataContainer.setVisibility(View.VISIBLE);
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.GONE);
                                     keywordsList.addAll(keywords);
                                     createKeywordsTable(keywords);
-                                    offset = offset + 20;
+                                    offset = offset + limit;
                                 }else {
                                     if( offset == 0 ){
-                                        llContainer.setVisibility(View.INVISIBLE);
+                                        llDataContainer.setVisibility(View.INVISIBLE);
                                         progressBar.setVisibility(View.GONE);
                                         textMessage.setVisibility(View.VISIBLE);
                                         textMessage.setText("No Keywords Found.");
@@ -209,7 +270,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                         } catch (Exception e) {
                             e.printStackTrace();
                             if( offset == 0 ){
-                                llContainer.setVisibility(View.INVISIBLE);
+                                llDataContainer.setVisibility(View.INVISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.VISIBLE);
                                 textMessage.setText("Some error occured.");
@@ -220,7 +281,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                         }
                     } else {
                         if( offset == 0 ){
-                            llContainer.setVisibility(View.INVISIBLE);
+                            llDataContainer.setVisibility(View.INVISIBLE);
                             progressBar.setVisibility(View.GONE);
                             textMessage.setVisibility(View.VISIBLE);
                             textMessage.setText("Some error occured.");
@@ -229,7 +290,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                     }
                 } else {
                     if( offset == 0 ){
-                        llContainer.setVisibility(View.INVISIBLE);
+                        llDataContainer.setVisibility(View.INVISIBLE);
                         progressBar.setVisibility(View.GONE);
                         textMessage.setVisibility(View.VISIBLE);
                         textMessage.setText("Some error occured.");
@@ -246,7 +307,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                 swipeRefreshLayout.setRefreshing(false);
                 if (t != null) Log.d("TAG", t.getMessage());
                 if( offset == 0 ){
-                    llContainer.setVisibility(View.INVISIBLE);
+                    llDataContainer.setVisibility(View.INVISIBLE);
                     progressBar.setVisibility(View.GONE);
                     textMessage.setVisibility(View.VISIBLE);
                     textMessage.setText("There is some connectivity issue, please try again.");
@@ -259,121 +320,93 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void createKeywordsTable(ArrayList<Keywords> keywordsData) {
-        if( rowCount != 0 )
-            removeKeywordsTotalRows();
         for (int i = 0; i < keywordsData.size(); i++) {
             TableRow row1 = new TableRow(this);
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             lp.span = 1;
             row1.setLayoutParams(lp);
-            setKeywordsOtherRow(row1, lp, ++rowCount, keywordsData.get(i));
+            setKeywordsOtherRow(row1, lp, rowCount, keywordsData.get(i));
         }
-    }
-    private void removeKeywordsTotalRows() {
-        ll.removeViewAt(ll.getChildCount()-1);
     }
 
     private void setKeywordsOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Keywords keyword) {
-        TextView textView = new TextView(this);
-        textView.setBackgroundResource(R.drawable.cell_shape);
+
+        setKeywordName( i,keyword);
+
         LinearLayout.LayoutParams  layoutParams = new LinearLayout.LayoutParams( 20,LinearLayout.LayoutParams.WRAP_CONTENT);
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(layoutParams);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setText(keyword.getKeyword_name());
-        row.addView(textView, lp);
 
-        TextView textView1 = new TextView(this);
-        textView1.setBackgroundResource(R.drawable.cell_shape);
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(layoutParams);
-        textView1.setGravity(Gravity.CENTER_VERTICAL);
-        textView1.setText(keyword.getImpressions());
-        row.addView(textView1, lp);
-
+        View view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
 
         TextView textView2 = new TextView(this);
         textView2.setBackgroundResource(R.drawable.cell_shape);
         textView2.setPadding(20, 20, 20, 20);
         textView2.setLayoutParams(layoutParams);
         textView2.setGravity(Gravity.CENTER_VERTICAL);
+
+        textView2 = (TextView) view.findViewById(R.id.text_view);
         textView2.setText(keyword.getClicks());
-        row.addView(textView2, lp);
+        row.addView(textView2);
 
 
-        TextView textView3 = new TextView(this);
-        textView3.setBackgroundResource(R.drawable.cell_shape);
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(layoutParams);
-        textView3.setGravity(Gravity.CENTER_VERTICAL);
-        textView3.setText(keyword.getCost());
-        row.addView(textView3, lp);
-
-        TextView textView4 = new TextView(this);
-        textView4.setBackgroundResource(R.drawable.cell_shape);
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(layoutParams);
-        textView4.setGravity(Gravity.CENTER_VERTICAL);
-        textView4.setText(keyword.getConverted_clicks());
-        row.addView(textView4, lp);
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        TextView textView1 = (TextView) view.findViewById(R.id.text_view);
+        textView1.setText(keyword.getImpressions());
+        row.addView(textView1);
 
 
-        TextView textView5 = new TextView(this);
-        textView5.setBackgroundResource(R.drawable.cell_shape);
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(layoutParams);
-        textView5.setGravity(Gravity.CENTER_VERTICAL);
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(keyword.getAvg_cpc());
-        row.addView(textView5, lp);
+        row.addView(textView5);
 
 
-        TextView textView6 = new TextView(this);
-        textView6.setBackgroundResource(R.drawable.cell_shape);
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setLayoutParams(layoutParams);
-        textView6.setGravity(Gravity.CENTER_VERTICAL);
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        TextView textView3 = (TextView) view.findViewById(R.id.text_view);
+        textView3.setText(keyword.getCost());
+        row.addView(textView3);
+
+        //CTR
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        TextView textView10 = (TextView) view.findViewById(R.id.text_view);
+        textView10.setText(keyword.getCtr());
+        row.addView(textView10);
+
+        // Avg Pos
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        TextView textView8 = (TextView) view.findViewById(R.id.text_view);
+        textView8.setText(keyword.getAvg_position());
+        row.addView(textView8);
+
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        TextView textView4 = (TextView) view.findViewById(R.id.text_view);
+        textView4.setText(keyword.getConverted_clicks());
+        row.addView(textView4);
+
+
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        TextView textView6 = (TextView) view.findViewById(R.id.text_view);
         textView6.setText(keyword.getCpa());
-        row.addView(textView6, lp);
+        row.addView(textView6);
 
 
-        TextView textView7 = new TextView(this);
-        textView7.setBackgroundResource(R.drawable.cell_shape);
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setLayoutParams(layoutParams);
-        textView7.setGravity(Gravity.CENTER_VERTICAL);
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        TextView textView7 = (TextView) view.findViewById(R.id.text_view);
         textView7.setText(keyword.getKeyword_state());
-        row.addView(textView7, lp);
+        row.addView(textView7);
 
+        tlValues.addView(row, i);
+        rowCount++;
+    }
 
-        TextView textView8 = new TextView(this);
-        textView8.setBackgroundResource(R.drawable.cell_shape);
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setLayoutParams(layoutParams);
-        textView8.setGravity(Gravity.CENTER_VERTICAL);
-        textView8.setText("");
-        row.addView(textView8, lp);
+    private void setKeywordName(int i, Keywords data) {
+        TableRow row = new TableRow(this);
+        View v = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
+        TextView tv = (TextView)v.findViewById(R.id.text_view);
+        tv.setText(data.getKeyword_name());
+        tlName.addView(v, i);
 
-
-
-        TextView textView9 = new TextView(this);
-        textView9.setBackgroundResource(R.drawable.cell_shape);
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setLayoutParams(layoutParams);
-        textView9.setGravity(Gravity.CENTER_VERTICAL);
-        textView9.setText("");
-        row.addView(textView9, lp);
-
-
-        TextView textView10 = new TextView(this);
-        textView10.setBackgroundResource(R.drawable.cell_shape);
-        textView10.setPadding(20, 20, 20, 20);
-        textView10.setLayoutParams(layoutParams);
-        textView10.setGravity(Gravity.CENTER_VERTICAL);
-        textView10.setText("");
-        row.addView(textView10, lp);
-
-
-
-        ll.addView(row, i);
     }
 }

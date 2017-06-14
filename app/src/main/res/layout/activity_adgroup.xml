@@ -94,8 +94,10 @@
 
 
             <LinearLayout
+                android:id="@+id/llDataContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -103,24 +105,18 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TableLayout
+
+                    <TextView
+                        android:id="@+id/text"
                         android:layout_width="100dp"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:background="@color/border"
+                        android:gravity="center"
+                        android:minHeight="50dp"
+                        android:padding="5dp"
+                        android:text="Name"
+                        android:textColor="@color/black" />
 
-                        <TableRow
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:padding="5dp"
-                                android:textColor="@color/black"
-                                android:text="Name"
-                                 />
-                        </TableRow>
-                    </TableLayout>
 
                     <HorizontalScrollView
                         android:id="@+id/hrone"
@@ -128,100 +124,110 @@
                         android:layout_height="wrap_content"
                         android:scrollbars="none">
 
-                        <TableLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
-                            <TableRow
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:padding="5dp"
+                                android:text="Clicks"
+                                android:textColor="@color/black" />
 
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Clicks" />
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@color/border"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:padding="5dp"
+                                android:text="Impr"
+                                android:textColor="@color/black" />
 
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Name" />
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@color/border"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:padding="5dp"
+                                android:text="Avg CPC."
+                                android:textColor="@color/black" />
 
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Impress." />
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@color/border"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:padding="5dp"
+                                android:text="COST "
+                                android:textColor="@color/black" />
 
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Avg. CPC" />
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@color/border"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:padding="5dp"
+                                android:text="CTR"
+                                android:textColor="@color/black" />
 
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Cost" />
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="CTR" />
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Avg. Pos" />
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Conv." />
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Cost/Conv" />
-                                <TextView
-                                    android:layout_width="100dp"
-                                    android:layout_height="wrap_content"
-                                    android:gravity="center"
-                                    android:padding="5dp"
-                                    android:textColor="@color/black"
-                                    android:text="Conv Rate" />
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@color/border"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:padding="5dp"
+                                android:text="Avg. Pos"
+                                android:textColor="@color/black" />
 
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@color/border"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:padding="5dp"
+                                android:text="Conv"
+                                android:textColor="@color/black" />
 
-                            </TableRow>
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@color/border"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:padding="5dp"
+                                android:text="Cost/Conv"
+                                android:textColor="@color/black" />
 
-                        </TableLayout>
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:background="@color/border"
+                                android:gravity="center"
+                                android:minHeight="50dp"
+                                android:padding="5dp"
+                                android:text="Conv Rate"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+
                     </HorizontalScrollView>
                 </LinearLayout>
 
                 <com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom
                     android:id="@+id/swipeRefresh"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
 
                     <android.support.v4.widget.NestedScrollView
                         android:id="@+id/scrollview"
@@ -247,13 +253,13 @@
                                 android:id="@+id/hrsecond"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_weight="1"
                                 android:scrollbars="none">
 
                                 <TableLayout
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent">
-
-                                </TableLayout>
+                                    android:id="@+id/tlValues"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"></TableLayout>
                             </HorizontalScrollView>
 
 
@@ -261,7 +267,148 @@
                     </android.support.v4.widget.NestedScrollView>
                     >
                 </com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <TextView
+                        android:id="@+id/text1"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="5dp"
+                        android:text="Total"
+                        android:minHeight="50dp"
+                        android:background="@color/border"
+                        android:textColor="@color/black" />
+
+                    <HorizontalScrollView
+                        android:id="@+id/hrbottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="100dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:minHeight="50dp"
+                                android:background="@color/border"
+                                android:textColor="@color/black" />
+
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/textMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No Data Found"
+            android:textSize="@dimen/_15sdp"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:max="500"
+            android:progress="0"
+            android:theme="@style/AppTheme.PrimaryAccent" />
     </android.support.v7.widget.CardView>
 </android.support.design.widget.CoordinatorLayout>

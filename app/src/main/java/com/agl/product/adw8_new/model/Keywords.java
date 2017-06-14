@@ -61,6 +61,11 @@ public class Keywords implements Parcelable {
     @SerializedName("cpa")
     private String cpa;
 
+    @SerializedName("avg_position")
+    private String avg_position;
+
+
+
     public Keywords() {
 
     }
@@ -233,6 +238,7 @@ public class Keywords implements Parcelable {
         this.avg_cpc = in.readString();
         this.ctr = in.readString();
         this.cpa = in.readString();
+        this.avg_position = in.readString();
     }
 
     @Override
@@ -260,6 +266,8 @@ public class Keywords implements Parcelable {
         parcel.writeString(avg_cpc);
         parcel.writeString(ctr);
         parcel.writeString(cpa);
+        parcel.writeString(avg_position);
+
     }
 
     public static final Creator<Keywords> CREATOR = new Creator<Keywords>() {
@@ -271,4 +279,12 @@ public class Keywords implements Parcelable {
             return new Keywords[size];
         }
     };
+
+    public String getAvg_position() {
+        return avg_position;
+    }
+
+    public void setAvg_position(String avg_position) {
+        this.avg_position = avg_position;
+    }
 }

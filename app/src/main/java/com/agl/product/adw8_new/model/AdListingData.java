@@ -28,6 +28,17 @@ public class AdListingData {
     @SerializedName("cpa")
     private String cpa;
 
+    @SerializedName("avg_cpc")
+    private String avg_cpc;
+
+    @SerializedName("avg_position")
+    private String avg_position;
+
+    @SerializedName("conversion_rate")
+    private String conversion_rate;
+
+
+
     @SerializedName("currency")
     private String currency;
 
@@ -93,5 +104,29 @@ public class AdListingData {
 
     public void setClicks(String clicks) {
         this.clicks = clicks;
+    }
+
+    public String getAvg_cpc() {
+        return avg_cpc;
+    }
+
+    public void setAvg_cpc(String avg_cpc) {
+        this.avg_cpc = avg_cpc;
+    }
+
+    public String getAvg_position() {
+        return avg_position;
+    }
+
+    public void setAvg_position(String avg_position) {
+        this.avg_position = avg_position;
+    }
+
+    public String getConversion_rate() {
+        return conversion_rate;
+    }
+
+    public void setConversion_rate(String conversion_rate) {
+        this.conversion_rate = conversion_rate;
     }
 }
