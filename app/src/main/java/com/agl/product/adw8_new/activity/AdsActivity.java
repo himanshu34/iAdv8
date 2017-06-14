@@ -128,7 +128,6 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         });
 
         getAdsData();
-
     }
 
     @Override
@@ -228,8 +227,6 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
                 textMessage.setText("There is some connectivity issue, please try again.");
             }
         });
-
-
     }
 
     private void createAdsTable(ArrayList<AdListingData> adListingData) {
@@ -313,7 +310,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
 
     private void setAdsName(int i, AdListingData data) {
         TableRow row = new TableRow(this);
-        View v = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
         TextView tv = (TextView)v.findViewById(R.id.text_view);
         tv.setText(data.getAd());
         tlName.addView(v, i);

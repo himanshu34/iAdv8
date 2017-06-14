@@ -107,7 +107,7 @@
 
                     <TextView
                         android:id="@+id/text"
-                        android:layout_width="100dp"
+                        android:layout_width="125dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:padding="5dp"
@@ -128,97 +128,104 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Budget"
+                                android:singleLine="true"
                                 android:textColor="@color/black"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:id="@+id/textView" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Clicks"
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:minHeight="50dp"
                                 android:text="Impr"
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Avg CPC"
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:background="@color/border"
                                 android:text="Cost"
+                                android:singleLine="true"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="CTR"
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:text="Avg. Pos"
+                                android:singleLine="true"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Conv"
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Cost/Conv"
                                 android:minHeight="50dp"
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:textColor="@color/black" />
-
-
                         </LinearLayout>
 
                     </HorizontalScrollView>
@@ -245,7 +252,7 @@
 
                             <TableLayout
                                 android:id="@+id/tlName"
-                                android:layout_width="100dp"
+                                android:layout_width="125dp"
                                 android:layout_height="wrap_content">
 
                             </TableLayout>
@@ -266,7 +273,6 @@
 
                         </LinearLayout>
                     </android.support.v4.widget.NestedScrollView>
-                    >
                 </com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom>
 
                 <LinearLayout
@@ -276,15 +282,15 @@
 
                     <TextView
                         android:id="@+id/text1"
-                        android:layout_width="100dp"
+                        android:layout_width="125dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="Total"
+                        android:singleLine="true"
                         android:background="@color/border"
                         android:minHeight="50dp"
                         android:textColor="@color/black" />
-
 
                     <HorizontalScrollView
                         android:id="@+id/hrbottom"
@@ -297,110 +303,116 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
 
-
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:text=""
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
                             <TextView
-                                android:layout_width="100dp"
+                                android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text=""
+                                android:singleLine="true"
                                 android:background="@color/border"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
-
                         </LinearLayout>
-
-
                     </HorizontalScrollView>
                 </LinearLayout>
             </LinearLayout>

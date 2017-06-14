@@ -403,10 +403,9 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
 
     private void setKeywordName(int i, Keywords data) {
         TableRow row = new TableRow(this);
-        View v = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
         TextView tv = (TextView)v.findViewById(R.id.text_view);
         tv.setText(data.getKeyword_name());
         tlName.addView(v, i);
-
     }
 }

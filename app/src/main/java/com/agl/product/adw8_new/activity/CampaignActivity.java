@@ -385,15 +385,11 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
     private void setCampaignName(int i, CampaignData data) {
         TableRow row = new TableRow(this);
-        View v = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
         TextView tv = (TextView)v.findViewById(R.id.text_view);
         tv.setText(data.getCampaign());
         tlName.addView(v, i);
-
     }
-
-
-
 
     public void displayFilterLayout() {
         filterPopup.showAtLocation(findViewById(R.id.menu_filter), Gravity.RIGHT | Gravity.TOP, 20, getActionBarHeight());

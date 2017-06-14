@@ -201,7 +201,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getSevenDayBeforeDate() + "-" + Utils.getCurrentDate());
+        textSelectedDateRange.setText(Utils.getSevenDayBeforeDate() + " - " + Utils.getCurrentDate());
         customDatePopup.dismiss();
     }
 
@@ -209,7 +209,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getThirtyDayBeforeDate() + "-" + Utils.getCurrentDate());
+        textSelectedDateRange.setText(Utils.getThirtyDayBeforeDate() + " - " + Utils.getCurrentDate());
         customDatePopup.dismiss();
     }
 
@@ -390,7 +390,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setAdName( int i, Adgroup data) {
         TableRow row = new TableRow(this);
-        View v = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
         TextView tv = (TextView)v.findViewById(R.id.text_view);
         tv.setText(data.getAdgroup());
         tlName.addView(v, i);
