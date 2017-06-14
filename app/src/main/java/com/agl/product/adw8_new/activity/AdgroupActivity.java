@@ -31,6 +31,7 @@ import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
 import com.agl.product.adw8_new.service.data.RequestDataAdgroup;
 import com.agl.product.adw8_new.service.data.ResponseDataAdgroup;
+import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
 
@@ -44,18 +45,20 @@ import retrofit2.Response;
 public class AdgroupActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
 
     private TableLayout tlName, tlValues;
-    private HorizontalScrollView hrone, hrsecond,hrbottom;
+    private HorizontalScrollView hrone, hrsecond, hrbottom;
     private ProgressBar progressBar;
-    private LinearLayout llDateLayout,llDataContainer;
+    private LinearLayout llDateLayout, llDataContainer;
 
     private PopupWindow filterPopup, customDatePopup;
     private View filterLayout, customPopupLayout;
-    private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange, textMessage,text;
+    private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange, textMessage, text;
     Session session;
     private SwipeRefreshLayoutBottom swipeRefreshLayout;
     HashMap<String, String> userData;
     private int rowCount;
-    private int offset = 0,limit = 50 ;
+    private int offset = 0, limit = 50;
+    private String fromDate, toDate;
+    private ConnectionDetector cd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
 
         session = new Session(this);
+        cd = new ConnectionDetector(this);
         userData = session.getUsuarioDetails();
 
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
@@ -129,7 +133,9 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                 hrbottom.scrollTo(hrsecond.getScrollX(), hrsecond.getScrollY());
             }
         });
-
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         getAdGroupData();
 
     }
@@ -190,27 +196,45 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setYesterday() {
+        if (!cd.isConnectedToInternet()) return;
         textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getYesterdayDate());
+        fromDate = Utils.getYesterdayDate();
+        toDate = Utils.getYesterdayDate();
+        textSelectedDateRange.setText(fromDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getAdGroupData();
     }
 
     private void setLastSeven() {
+        if (!cd.isConnectedToInternet()) return;
         textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getSevenDayBeforeDate() + " - " + Utils.getCurrentDate());
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate + "-" + toDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getAdGroupData();
     }
 
     private void setLastThirty() {
+        if (!cd.isConnectedToInternet()) return;
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getThirtyDayBeforeDate() + " - " + Utils.getCurrentDate());
+        fromDate = Utils.getThirtyDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate + "-" + toDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getAdGroupData();
     }
 
     private void getAdGroupData() {
@@ -219,70 +243,77 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         requestKeywords.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
         requestKeywords.setpId("1");
         requestKeywords.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestKeywords.setfDate("2017-06-02");
-        requestKeywords.settDate("2017-06-08");
-        requestKeywords.setLimit(limit+"");
+        requestKeywords.setfDate(fromDate);
+        requestKeywords.settDate(toDate);
+        requestKeywords.setLimit(limit + "");
         requestKeywords.setOrderBy("ASC");
         requestKeywords.setSortBy("clicks");
         requestKeywords.setpId("1");
         requestKeywords.setOffset(offset);
 
 
+        if (offset == 0) {
+            // Show loading on first time
+            llDataContainer.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            textMessage.setVisibility(View.GONE);
+        }
+
         Call<ResponseDataAdgroup> adsCall = apiAddClientService.getAdgroupList(requestKeywords);
         adsCall.enqueue(new Callback<ResponseDataAdgroup>() {
             @Override
             public void onResponse(Call<ResponseDataAdgroup> call, Response<ResponseDataAdgroup> response) {
                 swipeRefreshLayout.setRefreshing(false);
-                if ( response != null ){
-                    if( response.isSuccessful() ){
+                if (response != null) {
+                    if (response.isSuccessful()) {
 
                         try {
                             ResponseDataAdgroup body = response.body();
                             ArrayList<Adgroup> data = body.getData();
-                            if( data != null ){
-                                if ( data.size() > 0 ){
+                            if (data != null) {
+                                if (data.size() > 0) {
                                     llDataContainer.setVisibility(View.VISIBLE);
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.GONE);
                                     createAdgroupTable(data);
-                                    offset = offset + limit ;
+                                    offset = offset + limit;
 
-                                }else {
-                                    if( offset == 0 ){
+                                } else {
+                                    if (offset == 0) {
                                         llDataContainer.setVisibility(View.INVISIBLE);
                                         progressBar.setVisibility(View.GONE);
                                         textMessage.setVisibility(View.VISIBLE);
                                         textMessage.setText("No Adgroups Found.");
                                     }
                                 }
-                            }else {
-                                if( offset == 0 ){
+                            } else {
+                                if (offset == 0) {
                                     llDataContainer.setVisibility(View.INVISIBLE);
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.VISIBLE);
                                     textMessage.setText("Some error occured.");
-                                }else
+                                } else
                                     Toast.makeText(AdgroupActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
 
                             }
 
-                        }catch (Exception e ){
+                        } catch (Exception e) {
                             e.printStackTrace();
-                            if( offset == 0 ){
+                            if (offset == 0) {
                                 llDataContainer.setVisibility(View.INVISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.VISIBLE);
                                 textMessage.setText("Some error occured.");
-                            }else
+                            } else
                                 Toast.makeText(AdgroupActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
                         }
-                    }else {
-                        if( offset == 0 ){
+                    } else {
+                        if (offset == 0) {
                             llDataContainer.setVisibility(View.INVISIBLE);
                             progressBar.setVisibility(View.GONE);
                             textMessage.setVisibility(View.VISIBLE);
                             textMessage.setText("Some error occured.");
-                        }else
+                        } else
                             Toast.makeText(AdgroupActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
 
                     }
@@ -294,13 +325,13 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onFailure(Call<ResponseDataAdgroup> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
-                if ( t != null ) t.printStackTrace();
-                if( offset == 0 ){
+                if (t != null) t.printStackTrace();
+                if (offset == 0) {
                     llDataContainer.setVisibility(View.INVISIBLE);
                     progressBar.setVisibility(View.GONE);
                     textMessage.setVisibility(View.VISIBLE);
                     textMessage.setText("There is some connectivity issue, please try again.");
-                }else
+                } else
                     Toast.makeText(AdgroupActivity.this, "There is some connectivity issue, please try again.", Toast.LENGTH_SHORT).show();
 
             }
@@ -320,9 +351,9 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
 
     private void setAdgroupOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Adgroup data) {
 
-        setAdName(i,data);
+        setAdName(i, data);
 
-        View view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        View view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
 
 
         TextView textView3 = (TextView) view.findViewById(R.id.text_view);
@@ -330,7 +361,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         row.addView(textView3);
 
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView1 = (TextView) view.findViewById(R.id.text_view);
         textView1.setText(data.getImpressions());
         row.addView(textView1);
@@ -338,40 +369,40 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         // Avg cpc
 
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView = (TextView) view.findViewById(R.id.text_view);
         textView.setText(data.getAvg_cpc());
         row.addView(textView);
 
         // Cost
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView4 = (TextView) view.findViewById(R.id.text_view);
         textView4.setText(data.getCost());
         row.addView(textView4);
 
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView2 = (TextView) view.findViewById(R.id.text_view);
         textView2.setText(data.getCtr());
         row.addView(textView2);
 
         // Avg Pos
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView6 = (TextView) view.findViewById(R.id.text_view);
         textView6.setText(data.getAvg_position());
         row.addView(textView6);
 
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(data.getConverted_clicks());
         row.addView(textView5);
 
         // Cost/ conv
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView7 = (TextView) view.findViewById(R.id.text_view);
         textView7.setText(data.getCpa());
         row.addView(textView7);
@@ -379,7 +410,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
 
         // Conv Rate
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView8 = (TextView) view.findViewById(R.id.text_view);
         textView8.setText(data.getConversion_rate());
         row.addView(textView8);
@@ -388,10 +419,10 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         rowCount++;
     }
 
-    private void setAdName( int i, Adgroup data) {
+    private void setAdName(int i, Adgroup data) {
         TableRow row = new TableRow(this);
         View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
-        TextView tv = (TextView)v.findViewById(R.id.text_view);
+        TextView tv = (TextView) v.findViewById(R.id.text_view);
         tv.setText(data.getAdgroup());
         tlName.addView(v, i);
     }
