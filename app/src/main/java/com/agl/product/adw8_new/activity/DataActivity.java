@@ -190,11 +190,13 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
             @Override
             public void onFailure(Call<ResponseDataCampaign>call, Throwable t) {
                 Log.e(TAG, t.toString());
-                AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
-                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                builder.setCanceledOnTouchOutside(false);
-                builder.setCancelable(false);
-                builder.show();
+                if(! DataActivity.this.isFinishing()) {
+                    AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    builder.setCanceledOnTouchOutside(false);
+                    builder.setCancelable(false);
+                    builder.show();
+                }
             }
         });
     }

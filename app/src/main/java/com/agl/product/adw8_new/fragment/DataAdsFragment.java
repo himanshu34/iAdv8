@@ -69,25 +69,20 @@ public class DataAdsFragment extends Fragment {
         TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
         row.setLayoutParams(lp);
 
-
-
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
         TextView textView1 = (TextView) view.findViewById(R.id.text_view);
         textView1.setText(adsData.getClicks());
         row.addView(textView1);
-
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
         TextView textView2 = (TextView) view.findViewById(R.id.text_view);
         textView2.setText(adsData.getImpressions());
         row.addView(textView2);
 
-
         view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
         TextView textView3 = (TextView) view.findViewById(R.id.text_view);
         textView3.setText(adsData.getAvg_cpc());
         row.addView(textView3);
-
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
         TextView textView4 = (TextView) view.findViewById(R.id.text_view);
