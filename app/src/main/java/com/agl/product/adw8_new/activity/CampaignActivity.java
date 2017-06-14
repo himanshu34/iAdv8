@@ -10,11 +10,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
@@ -41,6 +44,7 @@ import com.agl.product.adw8_new.service.data.ResponseDataAdgroup;
 import com.agl.product.adw8_new.service.data.ResponseDataAds;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaignDetails;
 import com.agl.product.adw8_new.service.data.ResponseDataKeywords;
+import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
 
@@ -56,19 +60,21 @@ import retrofit2.Response;
 
 public class CampaignActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
 
-    private TableLayout ll;
     private PopupWindow filterPopup, customDatePopup;
+    private HorizontalScrollView hrone, hrsecond,hrbottom;
     private View filterLayout, customPopupLayout;
-    private LinearLayout llDateLayout,llContainer;
+    private LinearLayout llDateLayout,llDataContainer;
     Session session;
     HashMap<String, String> userData;
     private String campaignType;
-    private int offset = 0;
+    private int offset = 0,limit = 50;
     private SwipeRefreshLayoutBottom swipeRefreshLayout;
     private int rowCount;
+    private TableLayout tlName, tlValues;
     private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange,textMessage;
     private ProgressBar progressBar;
-    private ArrayList<Keywords> keywordsList;
+    private String fromDate,toDate;
+    private ConnectionDetector cd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,13 +94,18 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
         actionBar.setTitle(campaignType.toUpperCase());
 
-        keywordsList = new ArrayList<Keywords>();
-        ll = (TableLayout) findViewById(R.id.tableLayout);
+        cd = new ConnectionDetector(this);
+
         swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
         textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        llContainer = (LinearLayout) findViewById(R.id.llContainer);
+        llDataContainer = (LinearLayout) findViewById(R.id.llDataContainer);
         textMessage = (TextView) findViewById(R.id.textMessage);
+        tlValues = (TableLayout) findViewById(R.id.tlValues);
+        tlName = (TableLayout) findViewById(R.id.tlName);
+        hrone = (HorizontalScrollView) findViewById(R.id.hrone);
+        hrsecond = (HorizontalScrollView) findViewById(R.id.hrsecond);
+        hrbottom = (HorizontalScrollView) findViewById(R.id.hrbottom);
 
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
         filterLayout = getLayoutInflater().inflate(R.layout.custom_filter_layout, null);
@@ -131,1028 +142,26 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textCustom.setOnClickListener(this);
 
         userData = session.getUsuarioDetails();
-        requestCampaign();
-    }
 
-    private void requestCampaign() {
-        switch (campaignType) {
-            case "ads":
-                setAdsHeaderRow();
-                getAdsData();
-                break;
-            case "keywords":
-                setKeywordsHeaderRow();
-                getKeywordsData();
-                break;
-            case "campaign":
-                createCampaignHeaderRow();
-                getCampaignData();
-                break;
-            case "adgroup":
-                setAdgroupHeaderRow();
-                getAdGroupData();
-                break;
-        }
-    }
-
-    private void getAdGroupData() {
-        Post apiAddClientService = ApiClient.getClient().create(Post.class);
-        RequestDataAdgroup requestKeywords = new RequestDataAdgroup();
-        requestKeywords.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
-        requestKeywords.setpId("1");
-        requestKeywords.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestKeywords.setfDate("2017-06-02");
-        requestKeywords.settDate("2017-06-08");
-        requestKeywords.setLimit("2");
-        requestKeywords.setOrderBy("ASC");
-        requestKeywords.setSortBy("clicks");
-        requestKeywords.setpId("1");
-        requestKeywords.setOffset(offset);
-
-
-        Call<ResponseDataAdgroup> adsCall = apiAddClientService.getAdgroupList(requestKeywords);
-        adsCall.enqueue(new Callback<ResponseDataAdgroup>() {
+        hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
-            public void onResponse(Call<ResponseDataAdgroup> call, Response<ResponseDataAdgroup> response) {
-                    swipeRefreshLayout.setRefreshing(false);
-                if ( response != null ){
-                    if( response.isSuccessful() ){
-
-                        try {
-                            ResponseDataAdgroup body = response.body();
-                            ArrayList<Adgroup> data = body.getData();
-                            if( data != null ){
-                                if ( data.size() > 0 ){
-                                    llContainer.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.GONE);
-                                    textMessage.setVisibility(View.GONE);
-                                    createAdgroupTable(data);
-                                    offset = offset + 20 ;
-
-                                }else {
-                                    if( offset == 0 ){
-                                        llContainer.setVisibility(View.INVISIBLE);
-                                        progressBar.setVisibility(View.GONE);
-                                        textMessage.setVisibility(View.VISIBLE);
-                                        textMessage.setText("No Adgroups Found.");
-                                    }
-                                }
-                            }else {
-                                if( offset == 0 ){
-                                    llContainer.setVisibility(View.INVISIBLE);
-                                    progressBar.setVisibility(View.GONE);
-                                    textMessage.setVisibility(View.VISIBLE);
-                                    textMessage.setText("Some error occured.");
-                                }else
-                                    Toast.makeText(CampaignActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-
-                            }
-
-                        }catch (Exception e ){
-                            e.printStackTrace();
-                            if( offset == 0 ){
-                                llContainer.setVisibility(View.INVISIBLE);
-                                progressBar.setVisibility(View.GONE);
-                                textMessage.setVisibility(View.VISIBLE);
-                                textMessage.setText("Some error occured.");
-                            }else
-                                Toast.makeText(CampaignActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-                        }
-                    }else {
-                        if( offset == 0 ){
-                            llContainer.setVisibility(View.INVISIBLE);
-                            progressBar.setVisibility(View.GONE);
-                            textMessage.setVisibility(View.VISIBLE);
-                            textMessage.setText("Some error occured.");
-                        }else
-                            Toast.makeText(CampaignActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-
-                    }
-
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseDataAdgroup> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
-                if ( t != null ) t.printStackTrace();
-                if( offset == 0 ){
-                    llContainer.setVisibility(View.INVISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                    textMessage.setVisibility(View.VISIBLE);
-                    textMessage.setText("There is some connectivity issue, please try again.");
-                }else
-                    Toast.makeText(CampaignActivity.this, "There is some connectivity issue, please try again.", Toast.LENGTH_SHORT).show();
-
+            public void onScrollChanged() {
+                hrone.scrollTo(hrsecond.getScrollX(), hrsecond.getScrollY());
+                hrbottom.scrollTo(hrsecond.getScrollX(), hrsecond.getScrollY());
             }
         });
 
-    }
-
-    private void createAdgroupTable(ArrayList<Adgroup> data) {
-        for (int i = 0; i < data.size(); i++) {
-            TableRow row1 = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            lp.span = 1;
-            row1.setLayoutParams(lp);
-            setAdgroupOtherRow(row1, lp, ++rowCount, data.get(i));
-        }
-
-    }
-
-    private void setAdgroupHeaderRow() {
-        TableRow row = new TableRow(this);
-        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp.span = 1;
-        row.setLayoutParams(lp);
-
-        TextView textView = new TextView(this);
-        textView.setTextColor(getResources().getColor(R.color.black));
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(lp);
-        textView.setText("Name");
-        textView.setGravity(Gravity.CENTER);
-        row.addView(textView, lp);
-
-        TextView textView1 = new TextView(this);
-        textView1.setTextColor(getResources().getColor(R.color.black));
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(lp);
-        textView1.setText("Impressions");
-        textView1.setGravity(Gravity.CENTER);
-        row.addView(textView1, lp);
-
-        TextView textView2 = new TextView(this);
-        textView2.setTextColor(getResources().getColor(R.color.black));
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(lp);
-        textView2.setText("CTR");
-        textView2.setGravity(Gravity.CENTER);
-        row.addView(textView2, lp);
-
-
-        TextView textView3 = new TextView(this);
-        textView3.setTextColor(getResources().getColor(R.color.black));
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(lp);
-        textView3.setText("Clicks");
-        textView3.setGravity(Gravity.CENTER);
-        row.addView(textView3, lp);
-
-
-        TextView textView4 = new TextView(this);
-        textView4.setTextColor(getResources().getColor(R.color.black));
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(lp);
-        textView4.setText("Cost");
-        textView4.setGravity(Gravity.CENTER);
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setTextColor(getResources().getColor(R.color.black));
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(lp);
-        textView5.setText("Conv.");
-        textView5.setGravity(Gravity.CENTER);
-        row.addView(textView5, lp);
-
-
-        TextView textView6 = new TextView(this);
-        textView6.setTextColor(getResources().getColor(R.color.black));
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setLayoutParams(lp);
-        textView6.setText("Avg. CPC");
-        textView6.setGravity(Gravity.CENTER);
-        row.addView(textView6, lp);
-
-
-        TextView textView7 = new TextView(this);
-        textView7.setTextColor(getResources().getColor(R.color.black));
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setLayoutParams(lp);
-        textView7.setText("Avg. POS");
-        textView7.setGravity(Gravity.CENTER);
-        row.addView(textView7, lp);
-
-        TextView textView8 = new TextView(this);
-        textView8.setTextColor(getResources().getColor(R.color.black));
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setLayoutParams(lp);
-        textView8.setText("Cost/Conv.");
-        textView8.setGravity(Gravity.CENTER);
-        row.addView(textView8, lp);
-
-
-        TextView textView9 = new TextView(this);
-        textView9.setTextColor(getResources().getColor(R.color.black));
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setLayoutParams(lp);
-        textView9.setText("Conv. Rate");
-        textView9.setGravity(Gravity.CENTER);
-        row.addView(textView9, lp);
-
-
-        ll.addView(row, 0);
-    }
-
-    private void setAdgroupOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Adgroup data) {
-        TextView textView = new TextView(this);
-        textView.setBackgroundResource(R.drawable.cell_shape);
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(lp);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setText(data.getAdgroup());
-        row.addView(textView, lp);
-
-        TextView textView1 = new TextView(this);
-        textView1.setBackgroundResource(R.drawable.cell_shape);
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(lp);
-        textView1.setGravity(Gravity.CENTER_VERTICAL);
-        textView1.setText(data.getImpressions());
-        row.addView(textView1, lp);
-
-        TextView textView2 = new TextView(this);
-        textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(lp);
-        textView2.setGravity(Gravity.CENTER_VERTICAL);
-        textView2.setText(data.getCtr());
-        row.addView(textView2, lp);
-
-        TextView textView3 = new TextView(this);
-        textView3.setBackgroundResource(R.drawable.cell_shape);
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(lp);
-        textView3.setGravity(Gravity.CENTER_VERTICAL);
-        textView3.setText(data.getClicks());
-        row.addView(textView3, lp);
-
-        TextView textView4 = new TextView(this);
-        textView4.setBackgroundResource(R.drawable.cell_shape);
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(lp);
-        textView4.setGravity(Gravity.CENTER_VERTICAL);
-        textView4.setText(data.getCost());
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setBackgroundResource(R.drawable.cell_shape);
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(lp);
-        textView5.setGravity(Gravity.CENTER_VERTICAL);
-        textView5.setText(data.getConverted_clicks());
-        row.addView(textView5, lp);
-
-
-        TextView textView6 = new TextView(this);
-        textView6.setBackgroundResource(R.drawable.cell_shape);
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setLayoutParams(lp);
-        textView6.setGravity(Gravity.CENTER_VERTICAL);
-        textView6.setText("");
-        row.addView(textView6, lp);
-
-
-        TextView textView7 = new TextView(this);
-        textView7.setBackgroundResource(R.drawable.cell_shape);
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setLayoutParams(lp);
-        textView7.setGravity(Gravity.CENTER_VERTICAL);
-        textView7.setText("");
-        row.addView(textView7, lp);
-
-
-        TextView textView8 = new TextView(this);
-        textView8.setBackgroundResource(R.drawable.cell_shape);
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setLayoutParams(lp);
-        textView8.setGravity(Gravity.CENTER_VERTICAL);
-        textView8.setText("");
-        row.addView(textView8, lp);
-
-
-
-        TextView textView9 = new TextView(this);
-        textView9.setBackgroundResource(R.drawable.cell_shape);
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setLayoutParams(lp);
-        textView9.setGravity(Gravity.CENTER_VERTICAL);
-        textView9.setText("");
-        row.addView(textView9, lp);
-
-        ll.addView(row, i);
-    }
-
-    private void getKeywordsData() {
-        Post apiAddClientService = ApiClient.getClient().create(Post.class);
-        RequestDataKeywords requestKeywords = new RequestDataKeywords();
-        requestKeywords.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
-
-        requestKeywords.setpId("1");
-        requestKeywords.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestKeywords.setfDate("2017-06-02");
-        requestKeywords.settDate("2017-06-08");
-        requestKeywords.setLimit("10");
-        requestKeywords.setOrderBy("ASC");
-        requestKeywords.setSortBy("clicks");
-        requestKeywords.setpId("1");
-        requestKeywords.setOffset(offset);
-
-        Call<ResponseDataKeywords> adsCall = apiAddClientService.getKeywordsList(requestKeywords);
-        adsCall.enqueue(new Callback<ResponseDataKeywords>() {
+        /*hrone.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
-            public void onResponse(Call<ResponseDataKeywords> call, Response<ResponseDataKeywords> response) {
-                swipeRefreshLayout.setRefreshing(false);
-                if (response != null) {
-                    if (response.isSuccessful()) {
-                        try {
-                            ResponseDataKeywords res = response.body();
-                            ArrayList<Keywords> keywords = res.getData();
-                            if( keywords != null ){
-                                if( keywords.size() > 0 ){
-                                    llContainer.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.GONE);
-                                    textMessage.setVisibility(View.GONE);
-                                    keywordsList.addAll(keywords);
-                                    createKeywordsTable(keywords);
-                                    offset = offset + 20;
-                                }else {
-                                    if( offset == 0 ){
-                                        llContainer.setVisibility(View.INVISIBLE);
-                                        progressBar.setVisibility(View.GONE);
-                                        textMessage.setVisibility(View.VISIBLE);
-                                        textMessage.setText("No Keywords Found.");
-                                    }
-                                }
-                            }
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            if( offset == 0 ){
-                                llContainer.setVisibility(View.INVISIBLE);
-                                progressBar.setVisibility(View.GONE);
-                                textMessage.setVisibility(View.VISIBLE);
-                                textMessage.setText("Some error occured.");
-                            }else {
-                                Toast.makeText(CampaignActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                    } else {
-                        if( offset == 0 ){
-                            llContainer.setVisibility(View.INVISIBLE);
-                            progressBar.setVisibility(View.GONE);
-                            textMessage.setVisibility(View.VISIBLE);
-                            textMessage.setText("Some error occured.");
-                        }else Toast.makeText(CampaignActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-
-                    }
-                } else {
-                    if( offset == 0 ){
-                        llContainer.setVisibility(View.INVISIBLE);
-                        progressBar.setVisibility(View.GONE);
-                        textMessage.setVisibility(View.VISIBLE);
-                        textMessage.setText("Some error occured.");
-                    }else {
-                        Toast.makeText(CampaignActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-                    }
-
-                }
+            public void onScrollChanged() {
+                hrsecond.scrollTo(hrone.getScrollX(), hrone.getScrollY());
 
             }
-
-            @Override
-            public void onFailure(Call<ResponseDataKeywords> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
-                if (t != null) Log.d("TAG", t.getMessage());
-                if( offset == 0 ){
-                    llContainer.setVisibility(View.INVISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                    textMessage.setVisibility(View.VISIBLE);
-                    textMessage.setText("There is some connectivity issue, please try again.");
-                }else {
-                    Toast.makeText(CampaignActivity.this, "There is some connectivity issue, please try again.", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-    }
-
-    private void createKeywordsTable(ArrayList<Keywords> keywordsData) {
-        if( rowCount != 0 )
-        removeKeywordsTotalRows();
-        for (int i = 0; i < keywordsData.size(); i++) {
-            TableRow row1 = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            lp.span = 1;
-            row1.setLayoutParams(lp);
-            setKeywordsOtherRow(row1, lp, ++rowCount, keywordsData.get(i));
-        }
-        setKeywordsTotalRows();
-    }
-
-    private void removeKeywordsTotalRows() {
-        ll.removeViewAt(ll.getChildCount()-1);
-    }
-
-    private void setKeywordsTotalRows() {
-        TableRow row = new TableRow(this);
-        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp.span = 1;
-        row.setLayoutParams(lp);
-
-        TextView textView = new TextView(this);
-        textView.setBackgroundResource(R.drawable.cell_shape);
-        LinearLayout.LayoutParams  layoutParams = new LinearLayout.LayoutParams( 20,LinearLayout.LayoutParams.WRAP_CONTENT);
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(layoutParams);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setText("Total");
-        row.addView(textView, lp);
-
-        TextView textView1 = new TextView(this);
-        textView1.setBackgroundResource(R.drawable.cell_shape);
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(layoutParams);
-        textView1.setGravity(Gravity.CENTER_VERTICAL);
-        textView1.setText("");
-        row.addView(textView1, lp);
-
-
-        TextView textView2 = new TextView(this);
-        textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(layoutParams);
-        textView2.setGravity(Gravity.CENTER_VERTICAL);
-        textView2.setText("");
-        row.addView(textView2, lp);
-
-
-        TextView textView3 = new TextView(this);
-        textView3.setBackgroundResource(R.drawable.cell_shape);
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(layoutParams);
-        textView3.setGravity(Gravity.CENTER_VERTICAL);
-        textView3.setText("");
-        row.addView(textView3, lp);
-
-        TextView textView4 = new TextView(this);
-        textView4.setBackgroundResource(R.drawable.cell_shape);
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(layoutParams);
-        textView4.setGravity(Gravity.CENTER_VERTICAL);
-        textView4.setText("");
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setBackgroundResource(R.drawable.cell_shape);
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(layoutParams);
-        textView5.setGravity(Gravity.CENTER_VERTICAL);
-        textView5.setText("");
-        row.addView(textView5, lp);
-
-
-        TextView textView6 = new TextView(this);
-        textView6.setBackgroundResource(R.drawable.cell_shape);
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setLayoutParams(layoutParams);
-        textView6.setGravity(Gravity.CENTER_VERTICAL);
-        textView6.setText("");
-        row.addView(textView6, lp);
-
-
-        TextView textView7 = new TextView(this);
-        textView7.setBackgroundResource(R.drawable.cell_shape);
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setLayoutParams(layoutParams);
-        textView7.setGravity(Gravity.CENTER_VERTICAL);
-        textView7.setText("");
-        row.addView(textView7, lp);
-
-
-        TextView textView8 = new TextView(this);
-        textView8.setBackgroundResource(R.drawable.cell_shape);
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setLayoutParams(layoutParams);
-        textView8.setGravity(Gravity.CENTER_VERTICAL);
-        textView8.setText("");
-        row.addView(textView8, lp);
-
-
-
-        TextView textView9 = new TextView(this);
-        textView9.setBackgroundResource(R.drawable.cell_shape);
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setLayoutParams(layoutParams);
-        textView9.setGravity(Gravity.CENTER_VERTICAL);
-        textView9.setText("");
-        row.addView(textView9, lp);
-
-
-        TextView textView10 = new TextView(this);
-        textView10.setBackgroundResource(R.drawable.cell_shape);
-        textView10.setPadding(20, 20, 20, 20);
-        textView10.setLayoutParams(layoutParams);
-        textView10.setGravity(Gravity.CENTER_VERTICAL);
-        textView10.setText("");
-        row.addView(textView10, lp);
-
-
-        ll.addView(row, ll.getChildCount());
-    }
-
-
-    private void setKeywordsOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Keywords keyword) {
-        TextView textView = new TextView(this);
-        textView.setBackgroundResource(R.drawable.cell_shape);
-        LinearLayout.LayoutParams  layoutParams = new LinearLayout.LayoutParams( 20,LinearLayout.LayoutParams.WRAP_CONTENT);
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(layoutParams);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setText(keyword.getKeyword_name());
-        row.addView(textView, lp);
-
-        TextView textView1 = new TextView(this);
-        textView1.setBackgroundResource(R.drawable.cell_shape);
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(layoutParams);
-        textView1.setGravity(Gravity.CENTER_VERTICAL);
-        textView1.setText(keyword.getImpressions());
-        row.addView(textView1, lp);
-
-
-        TextView textView2 = new TextView(this);
-        textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(layoutParams);
-        textView2.setGravity(Gravity.CENTER_VERTICAL);
-        textView2.setText(keyword.getClicks());
-        row.addView(textView2, lp);
-
-
-        TextView textView3 = new TextView(this);
-        textView3.setBackgroundResource(R.drawable.cell_shape);
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(layoutParams);
-        textView3.setGravity(Gravity.CENTER_VERTICAL);
-        textView3.setText(keyword.getCost());
-        row.addView(textView3, lp);
-
-        TextView textView4 = new TextView(this);
-        textView4.setBackgroundResource(R.drawable.cell_shape);
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(layoutParams);
-        textView4.setGravity(Gravity.CENTER_VERTICAL);
-        textView4.setText(keyword.getConverted_clicks());
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setBackgroundResource(R.drawable.cell_shape);
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(layoutParams);
-        textView5.setGravity(Gravity.CENTER_VERTICAL);
-        textView5.setText(keyword.getAvg_cpc());
-        row.addView(textView5, lp);
-
-
-        TextView textView6 = new TextView(this);
-        textView6.setBackgroundResource(R.drawable.cell_shape);
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setLayoutParams(layoutParams);
-        textView6.setGravity(Gravity.CENTER_VERTICAL);
-        textView6.setText(keyword.getCpa());
-        row.addView(textView6, lp);
-
-
-        TextView textView7 = new TextView(this);
-        textView7.setBackgroundResource(R.drawable.cell_shape);
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setLayoutParams(layoutParams);
-        textView7.setGravity(Gravity.CENTER_VERTICAL);
-        textView7.setText(keyword.getKeyword_state());
-        row.addView(textView7, lp);
-
-
-        TextView textView8 = new TextView(this);
-        textView8.setBackgroundResource(R.drawable.cell_shape);
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setLayoutParams(layoutParams);
-        textView8.setGravity(Gravity.CENTER_VERTICAL);
-        textView8.setText("");
-        row.addView(textView8, lp);
-
-
-
-        TextView textView9 = new TextView(this);
-        textView9.setBackgroundResource(R.drawable.cell_shape);
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setLayoutParams(layoutParams);
-        textView9.setGravity(Gravity.CENTER_VERTICAL);
-        textView9.setText("");
-        row.addView(textView9, lp);
-
-
-        TextView textView10 = new TextView(this);
-        textView10.setBackgroundResource(R.drawable.cell_shape);
-        textView10.setPadding(20, 20, 20, 20);
-        textView10.setLayoutParams(layoutParams);
-        textView10.setGravity(Gravity.CENTER_VERTICAL);
-        textView10.setText("");
-        row.addView(textView10, lp);
-
-
-
-        ll.addView(row, i);
-    }
-
-    private void setKeywordsHeaderRow() {
-        TableRow row = new TableRow(this);
-        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp.span = 1;
-        row.setLayoutParams(lp);
-
-        TextView textView = new TextView(this);
-        textView.setTextColor(getResources().getColor(R.color.black));
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(lp);
-        textView.setText("Name");
-        textView.setGravity(Gravity.CENTER);
-        row.addView(textView, lp);
-
-        TextView textView1 = new TextView(this);
-        textView1.setTextColor(getResources().getColor(R.color.black));
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(lp);
-        textView1.setText("Impressions");
-        textView1.setGravity(Gravity.CENTER);
-        row.addView(textView1, lp);
-
-
-        TextView textView3 = new TextView(this);
-        textView3.setTextColor(getResources().getColor(R.color.black));
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(lp);
-        textView3.setText("Clicks");
-        textView3.setGravity(Gravity.CENTER);
-        row.addView(textView3, lp);
-
-
-        TextView textView4 = new TextView(this);
-        textView4.setTextColor(getResources().getColor(R.color.black));
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(lp);
-        textView4.setText("Cost");
-        textView4.setGravity(Gravity.CENTER);
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setTextColor(getResources().getColor(R.color.black));
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(lp);
-        textView5.setText("Conv.");
-        textView5.setGravity(Gravity.CENTER);
-        row.addView(textView5, lp);
-
-        TextView textView6 = new TextView(this);
-        textView6.setTextColor(getResources().getColor(R.color.black));
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setLayoutParams(lp);
-        textView6.setText("Avg. CPC");
-        textView6.setGravity(Gravity.CENTER);
-        row.addView(textView6, lp);
-
-
-        TextView textView8 = new TextView(this);
-        textView8.setTextColor(getResources().getColor(R.color.black));
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setLayoutParams(lp);
-        textView8.setText("CPA");
-        textView8.setGravity(Gravity.CENTER);
-        row.addView(textView8, lp);
-
-
-        TextView textView9 = new TextView(this);
-        textView9.setTextColor(getResources().getColor(R.color.black));
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setLayoutParams(lp);
-        textView9.setText("Status");
-        textView9.setGravity(Gravity.CENTER);
-        row.addView(textView9, lp);
-
-        TextView textView10 = new TextView(this);
-        textView10.setTextColor(getResources().getColor(R.color.black));
-        textView10.setPadding(20, 20, 20, 20);
-        textView10.setLayoutParams(lp);
-        textView10.setText("CTR");
-        textView10.setGravity(Gravity.CENTER);
-        row.addView(textView10, lp);
-
-
-        TextView textView11 = new TextView(this);
-        textView11.setTextColor(getResources().getColor(R.color.black));
-        textView11.setPadding(20, 20, 20, 20);
-        textView11.setLayoutParams(lp);
-        textView11.setText("Avg. Pos");
-        textView11.setGravity(Gravity.CENTER);
-        row.addView(textView11, lp);
-
-        TextView textView12 = new TextView(this);
-        textView12.setTextColor(getResources().getColor(R.color.black));
-        textView12.setPadding(20, 20, 20, 20);
-        textView12.setLayoutParams(lp);
-        textView12.setText("Cost/Conv.");
-        textView12.setGravity(Gravity.CENTER);
-        row.addView(textView12, lp);
-
-
-        ll.addView(row, 0);
-    }
-
-    private void getAdsData() {
-        Post apiAddClientService = ApiClient.getClient().create(Post.class);
-        RequestDataAds requestDataAds = new RequestDataAds();
-        requestDataAds.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
-
-        requestDataAds.setpId("1");
-        requestDataAds.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestDataAds.setfDate("2017-06-02");
-        requestDataAds.settDate("2017-06-08");
-        requestDataAds.setLimit("2");
-        requestDataAds.setOrderBy("DESC");
-        requestDataAds.setSortBy("clicks");
-        requestDataAds.setpId("1");
-        requestDataAds.setOffset(offset);
-
-
-        Call<ResponseDataAds> adsCall = apiAddClientService.getAdsData(requestDataAds);
-        adsCall.enqueue(new Callback<ResponseDataAds>() {
-            @Override
-            public void onResponse(Call<ResponseDataAds> call, Response<ResponseDataAds> response) {
-                swipeRefreshLayout.setRefreshing(false);
-                if( response != null ){
-                    if( response.isSuccessful() ){
-                        try {
-                            ResponseDataAds adsData = response.body();
-                            ArrayList<AdListingData> adListingData = adsData.getData();
-                            if( adListingData != null ){
-                                if ( adListingData.size() > 0 ){
-                                    llContainer.setVisibility(View.VISIBLE);
-                                    progressBar.setVisibility(View.GONE);
-                                    textMessage.setVisibility(View.GONE);
-                                    createAdsTable(adListingData);
-                                    offset = offset + 20 ;
-                                }else {
-                                    if( offset == 0 ){
-                                        llContainer.setVisibility(View.INVISIBLE);
-                                        progressBar.setVisibility(View.GONE);
-                                        textMessage.setVisibility(View.VISIBLE);
-                                        textMessage.setText("No Ads Found.");
-                                    }
-                                }
-                            }
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            llContainer.setVisibility(View.INVISIBLE);
-                            progressBar.setVisibility(View.GONE);
-                            textMessage.setVisibility(View.VISIBLE);
-                            textMessage.setText("Some error occured.");
-                        }
-                    }else {
-                        llContainer.setVisibility(View.INVISIBLE);
-                        progressBar.setVisibility(View.GONE);
-                        textMessage.setVisibility(View.VISIBLE);
-                        textMessage.setText("Some error occured.");
-                    }
-                }else {
-                    llContainer.setVisibility(View.INVISIBLE);
-                    progressBar.setVisibility(View.GONE);
-                    textMessage.setVisibility(View.VISIBLE);
-                    textMessage.setText("Some error occured.");
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseDataAds> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
-                if( t != null ) Log.d("TAG",t.getMessage()+"");
-                llContainer.setVisibility(View.INVISIBLE);
-                progressBar.setVisibility(View.GONE);
-                textMessage.setVisibility(View.VISIBLE);
-                textMessage.setText("There is some connectivity issue, please try again.");
-            }
-        });
-
-
-    }
-
-    private void createAdsTable(ArrayList<AdListingData> adListingData) {
-        for (int i = 0; i < adListingData.size(); i++) {
-            TableRow row1 = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            lp.span = 1;
-            row1.setLayoutParams(lp);
-            setAdsOtherRow(row1, lp, ++rowCount, adListingData.get(i));
-        }
-    }
-
-    private void setAdsOtherRow(TableRow row, TableRow.LayoutParams lp, int i, AdListingData adListingData) {
-
-        TextView textView = new TextView(this);
-        ViewGroup.LayoutParams  layoutParams = new ViewGroup.LayoutParams( 200,ViewGroup.LayoutParams.WRAP_CONTENT);
-        textView.setBackgroundResource(R.drawable.cell_shape);
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(layoutParams);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setText(adListingData.getAd());
-        row.addView(textView, lp);
-
-        TextView textView1 = new TextView(this);
-        textView1.setBackgroundResource(R.drawable.cell_shape);
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(lp);
-        textView1.setGravity(Gravity.CENTER_VERTICAL);
-        textView1.setText(adListingData.getImpressions());
-        row.addView(textView1, lp);
-
-        TextView textView2 = new TextView(this);
-        textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(lp);
-        textView2.setGravity(Gravity.CENTER_VERTICAL);
-        textView2.setText(adListingData.getCtr());
-        row.addView(textView2, lp);
-
-        TextView textView3 = new TextView(this);
-        textView3.setBackgroundResource(R.drawable.cell_shape);
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(lp);
-        textView3.setGravity(Gravity.CENTER_VERTICAL);
-        textView3.setText(adListingData.getClicks());
-        row.addView(textView3, lp);
-
-        TextView textView4 = new TextView(this);
-        textView4.setBackgroundResource(R.drawable.cell_shape);
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(lp);
-        textView4.setGravity(Gravity.CENTER_VERTICAL);
-        textView4.setText(adListingData.getCost());
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setBackgroundResource(R.drawable.cell_shape);
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(lp);
-        textView5.setGravity(Gravity.CENTER_VERTICAL);
-        textView5.setText(adListingData.getConverted_clicks());
-        row.addView(textView5, lp);
-
-
-        TextView textView6 = new TextView(this);
-        textView6.setBackgroundResource(R.drawable.cell_shape);
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setLayoutParams(lp);
-        textView6.setGravity(Gravity.CENTER_VERTICAL);
-        textView6.setText("");
-        row.addView(textView6, lp);
-
-        TextView textView7 = new TextView(this);
-        textView7.setBackgroundResource(R.drawable.cell_shape);
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setLayoutParams(lp);
-        textView7.setGravity(Gravity.CENTER_VERTICAL);
-        textView7.setText("");
-        row.addView(textView7, lp);
-
-
-
-        TextView textView8 = new TextView(this);
-        textView8.setBackgroundResource(R.drawable.cell_shape);
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setLayoutParams(lp);
-        textView8.setGravity(Gravity.CENTER_VERTICAL);
-        textView8.setText("");
-        row.addView(textView8, lp);
-
-
-        TextView textView9 = new TextView(this);
-        textView9.setBackgroundResource(R.drawable.cell_shape);
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setLayoutParams(lp);
-        textView9.setGravity(Gravity.CENTER_VERTICAL);
-        textView9.setText("");
-        row.addView(textView9, lp);
-
-
-
-        ll.addView(row, i);
-
-    }
-
-    private void setAdsHeaderRow() {
-        TableRow row = new TableRow(this);
-        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp.span = 1;
-        row.setLayoutParams(lp);
-
-        TextView textView = new TextView(this);
-        textView.setTextColor(getResources().getColor(R.color.black));
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(lp);
-        textView.setText("Name");
-        textView.setGravity(Gravity.CENTER);
-        row.addView(textView, lp);
-
-        TextView textView1 = new TextView(this);
-        textView1.setTextColor(getResources().getColor(R.color.black));
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(lp);
-        textView1.setText("Impressions");
-        textView1.setGravity(Gravity.CENTER);
-        row.addView(textView1, lp);
-
-        TextView textView2 = new TextView(this);
-        textView2.setTextColor(getResources().getColor(R.color.black));
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(lp);
-        textView2.setText("CTR");
-        textView2.setGravity(Gravity.CENTER);
-        row.addView(textView2, lp);
-
-
-        TextView textView3 = new TextView(this);
-        textView3.setTextColor(getResources().getColor(R.color.black));
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(lp);
-        textView3.setText("Clicks");
-        textView3.setGravity(Gravity.CENTER);
-        row.addView(textView3, lp);
-
-
-        TextView textView4 = new TextView(this);
-        textView4.setTextColor(getResources().getColor(R.color.black));
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(lp);
-        textView4.setText("Cost");
-        textView4.setGravity(Gravity.CENTER);
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setTextColor(getResources().getColor(R.color.black));
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(lp);
-        textView5.setText("Conv.");
-        textView5.setGravity(Gravity.CENTER);
-        row.addView(textView5, lp);
-
-        TextView textView6 = new TextView(this);
-        textView6.setTextColor(getResources().getColor(R.color.black));
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setLayoutParams(lp);
-        textView6.setText("Avg. CPC");
-        textView6.setGravity(Gravity.CENTER);
-        row.addView(textView6, lp);
-
-        TextView textView7 = new TextView(this);
-        textView7.setTextColor(getResources().getColor(R.color.black));
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setLayoutParams(lp);
-        textView7.setText("Avg. Pos");
-        textView7.setGravity(Gravity.CENTER);
-        row.addView(textView7, lp);
-
-        TextView textView8 = new TextView(this);
-        textView8.setTextColor(getResources().getColor(R.color.black));
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setLayoutParams(lp);
-        textView8.setText("Cost/Conv");
-        textView8.setGravity(Gravity.CENTER);
-        row.addView(textView8, lp);
-
-        TextView textView9 = new TextView(this);
-        textView9.setTextColor(getResources().getColor(R.color.black));
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setLayoutParams(lp);
-        textView9.setText("Conv. Rate");
-        textView9.setGravity(Gravity.CENTER);
-        row.addView(textView9, lp);
-
-
-        ll.addView(row, 0);
+        });*/
+
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        getCampaignData();
     }
 
     private void getCampaignData() {
@@ -1161,13 +170,19 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         requestDataCampaignDetails.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
         requestDataCampaignDetails.setpId("1");
         requestDataCampaignDetails.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestDataCampaignDetails.setfDate("2017-06-02");
-        requestDataCampaignDetails.settDate("2017-06-08");
-        requestDataCampaignDetails.setLimit("20");
+        requestDataCampaignDetails.setfDate(fromDate);
+        requestDataCampaignDetails.settDate(toDate);
+        requestDataCampaignDetails.setLimit(limit+"");
         requestDataCampaignDetails.setOrderBy("DESC");
         requestDataCampaignDetails.setSortBy("clicks");
         requestDataCampaignDetails.setOffset(offset);
 
+        if( offset == 0 ){
+            // Show loading on first time
+            llDataContainer.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            textMessage.setVisibility(View.GONE);
+        }
         Call<ResponseDataCampaignDetails> campaignCall = apiAddClientService.getCampaignData(requestDataCampaignDetails);
         campaignCall.enqueue(new Callback<ResponseDataCampaignDetails>() {
             @Override
@@ -1180,14 +195,14 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                         ArrayList<CampaignData> data = campaignData.getData();
                         if( data != null ){
                             if( data.size() > 0 ){
-                                llContainer.setVisibility(View.VISIBLE);
+                                llDataContainer.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.GONE);
                                 createCampaignTable(data);
-                                offset = offset + 20;
+                                offset = offset + limit;
                             }else {
                                 if( offset == 0 ){
-                                    llContainer.setVisibility(View.INVISIBLE);
+                                    llDataContainer.setVisibility(View.INVISIBLE);
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.VISIBLE);
                                     textMessage.setText("No Keywords Found.");
@@ -1195,7 +210,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                             }
                         }else {
                             if( offset == 0 ){
-                                llContainer.setVisibility(View.INVISIBLE);
+                                llDataContainer.setVisibility(View.INVISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.VISIBLE);
                                 textMessage.setText("Some error occured");
@@ -1206,7 +221,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                     } catch (Exception e) {
                         e.printStackTrace();
                         if( offset == 0 ){
-                            llContainer.setVisibility(View.INVISIBLE);
+                            llDataContainer.setVisibility(View.INVISIBLE);
                             progressBar.setVisibility(View.GONE);
                             textMessage.setVisibility(View.VISIBLE);
                             textMessage.setText("Some error occured");
@@ -1214,7 +229,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                     }
                 } else {
                     if( offset == 0 ){
-                        llContainer.setVisibility(View.INVISIBLE);
+                        llDataContainer.setVisibility(View.INVISIBLE);
                         progressBar.setVisibility(View.GONE);
                         textMessage.setVisibility(View.VISIBLE);
                         textMessage.setText("Some error occured");
@@ -1230,7 +245,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                     Log.d("TAG", t.getMessage());
                 }
                 if( offset == 0 ){
-                    llContainer.setVisibility(View.INVISIBLE);
+                    llDataContainer.setVisibility(View.INVISIBLE);
                     progressBar.setVisibility(View.GONE);
                     textMessage.setVisibility(View.VISIBLE);
                     textMessage.setText("There is some connectivity issue.");
@@ -1263,88 +278,120 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void setOtherRow(TableRow row, TableRow.LayoutParams lp, int i, CampaignData campaignData) {
-        TextView textView = new TextView(this);
-        textView.setBackgroundResource(R.drawable.cell_shape);
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(lp);
-        textView.setText(campaignData.getCampaign());
-        row.addView(textView, lp);
 
-        TextView textView1 = new TextView(this);
-        textView1.setBackgroundResource(R.drawable.cell_shape);
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(lp);
-        textView1.setText(campaignData.getImpressions());
-        textView1.setGravity(Gravity.CENTER);
-        row.addView(textView1, lp);
+        setCampaignName(i,campaignData);
+
+        View view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+
+        TextView textView1 = (TextView) view.findViewById(R.id.text_view);
+        textView1.setText(campaignData.getBudget());
+        row.addView(textView1);
+
 
         TextView textView2 = new TextView(this);
         textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setText(campaignData.getCtr());
         textView2.setPadding(20, 20, 20, 20);
         textView2.setGravity(Gravity.CENTER);
         textView2.setLayoutParams(lp);
-        row.addView(textView2, lp);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        textView2 = (TextView) view.findViewById(R.id.text_view);
+        textView2.setText(campaignData.getClicks());
+        row.addView(textView2);
 
         TextView textView3 = new TextView(this);
-        textView3.setText(campaignData.getClicks());
         textView3.setPadding(20, 20, 20, 20);
         textView3.setLayoutParams(lp);
         textView3.setGravity(Gravity.CENTER);
         textView3.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView3, lp);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        textView3 = (TextView) view.findViewById(R.id.text_view);
+        textView3.setText(campaignData.getImpressions());
+        row.addView(textView3);
 
 
         TextView textView4 = new TextView(this);
-        textView4.setText("");
         textView4.setPadding(20, 20, 20, 20);
         textView4.setLayoutParams(lp);
         textView4.setGravity(Gravity.CENTER);
         textView4.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView4, lp);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        textView4 = (TextView) view.findViewById(R.id.text_view);
+        textView4.setText(campaignData.getAvg_cpc());
+        row.addView(textView4);
 
         TextView textView5 = new TextView(this);
-        textView5.setText("");
         textView5.setPadding(20, 20, 20, 20);
         textView5.setLayoutParams(lp);
         textView5.setGravity(Gravity.CENTER);
         textView5.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView5, lp);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        textView5 = (TextView) view.findViewById(R.id.text_view);
+        textView5.setText(campaignData.getCost());
+        row.addView(textView5);
 
         TextView textView6 = new TextView(this);
-        textView6.setText("");
         textView6.setPadding(20, 20, 20, 20);
         textView6.setLayoutParams(lp);
         textView6.setGravity(Gravity.CENTER);
         textView6.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView6, lp);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        textView6 = (TextView) view.findViewById(R.id.text_view);
+        textView6.setText(campaignData.getCtr());
+        row.addView(textView6);
 
         TextView textView7 = new TextView(this);
-        textView7.setText("");
+
         textView7.setPadding(20, 20, 20, 20);
         textView7.setLayoutParams(lp);
         textView7.setGravity(Gravity.CENTER);
         textView7.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView7, lp);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        textView7 = (TextView) view.findViewById(R.id.text_view);
+        textView7.setText(campaignData.getAvg_position());
+        row.addView(textView7);
+
 
         TextView textView8 = new TextView(this);
-        textView8.setText("");
         textView8.setPadding(20, 20, 20, 20);
         textView8.setLayoutParams(lp);
         textView8.setGravity(Gravity.CENTER);
         textView8.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView8, lp);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        textView8 = (TextView) view.findViewById(R.id.text_view);
+        textView8.setText(campaignData.getConverted_clicks());
+        row.addView(textView8);
 
         TextView textView9 = new TextView(this);
-        textView9.setText("");
         textView9.setPadding(20, 20, 20, 20);
         textView9.setLayoutParams(lp);
         textView9.setGravity(Gravity.CENTER);
         textView9.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView9, lp);
 
-        ll.addView(row, i);
+        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
+        textView9 = (TextView) view.findViewById(R.id.text_view);
+        textView9.setText(campaignData.getCpa());
+        row.addView(textView9);
+
+        tlValues.addView(row, i);
+        rowCount++;
     }
+
+    private void setCampaignName(int i, CampaignData data) {
+        TableRow row = new TableRow(this);
+        View v = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
+        TextView tv = (TextView)v.findViewById(R.id.text_view);
+        tv.setText(data.getCampaign());
+        tlName.addView(v, i);
+
+    }
+
 
 
 
@@ -1370,6 +417,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.textYesterday :
                 setYesterday();
+
                 break;
             case R.id.textLastSevenDays :
                 setLastSeven();
@@ -1384,152 +432,61 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setYesterday() {
+        if( !cd.isConnectedToInternet() ) return;
         textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getYesterdayDate());
+        fromDate = Utils.getYesterdayDate();
+        toDate = Utils.getYesterdayDate();
+        textSelectedDateRange.setText(fromDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getCampaignData();
+
     }
 
     private void setLastSeven() {
+        if( !cd.isConnectedToInternet() ) return;
         textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getSevenDayBeforeDate()+"-"+Utils.getCurrentDate());
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getCampaignData();
     }
 
     private void setLastThirty() {
+        if( !cd.isConnectedToInternet() ) return;
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getThirtyDayBeforeDate()+"-"+Utils.getCurrentDate());
+        fromDate = Utils.getThirtyDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getCampaignData();
     }
 
 
-    private void createCampaignHeaderRow(){
-        TableRow row = new TableRow(this);
-        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-        lp.span = 1;
-        row.setLayoutParams(lp);
-
-        TextView textView = new TextView(this);
-        textView.setTextColor(getResources().getColor(R.color.black));
-        textView.setPadding(20, 20, 20, 20);
-        textView.setLayoutParams(lp);
-        textView.setText("Name");
-        textView.setGravity(Gravity.CENTER);
-        row.addView(textView, lp);
-
-        TextView textView1 = new TextView(this);
-        textView1.setTextColor(getResources().getColor(R.color.black));
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(lp);
-        textView1.setText("Impressions");
-        textView1.setGravity(Gravity.CENTER);
-        row.addView(textView1, lp);
-
-        TextView textView2 = new TextView(this);
-        textView2.setTextColor(getResources().getColor(R.color.black));
-        textView2.setText("CTR");
-        textView2.setGravity(Gravity.CENTER);
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(lp);
-        row.addView(textView2, lp);
-
-        TextView textView3 = new TextView(this);
-        textView3.setText("Clicks");
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setGravity(Gravity.CENTER);
-        textView3.setLayoutParams(lp);
-        textView3.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView3, lp);
-
-
-        TextView textView4 = new TextView(this);
-        textView4.setText("Budget");
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setGravity(Gravity.CENTER);
-        textView4.setLayoutParams(lp);
-        textView4.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView4, lp);
-
-
-        TextView textView5 = new TextView(this);
-        textView5.setText("Avg. CPC");
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setGravity(Gravity.CENTER);
-        textView5.setLayoutParams(lp);
-        textView5.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView5, lp);
-
-
-        TextView textView6 = new TextView(this);
-        textView6.setText("Cost");
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setGravity(Gravity.CENTER);
-        textView6.setLayoutParams(lp);
-        textView6.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView6, lp);
-
-
-        TextView textView7 = new TextView(this);
-        textView7.setText("Avg. Pos");
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setGravity(Gravity.CENTER);
-        textView7.setLayoutParams(lp);
-        textView7.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView7, lp);
-
-        TextView textView8 = new TextView(this);
-        textView8.setText("Conv.");
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setGravity(Gravity.CENTER);
-        textView8.setLayoutParams(lp);
-        textView8.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView8, lp);
-
-
-        TextView textView9 = new TextView(this);
-        textView9.setText("Cost/Conv.");
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setGravity(Gravity.CENTER);
-        textView9.setLayoutParams(lp);
-        textView9.setTextColor(getResources().getColor(R.color.black));
-        row.addView(textView9, lp);
-
-
-
-        ll.addView(row, 0);
-    }
 
     private void createCampaignTable(ArrayList<CampaignData> campaignDatas) {
         for (int i = 0; i < campaignDatas.size(); i++) {
             TableRow row1 = new TableRow(this);
-            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
-            lp.span = 1;
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
             row1.setLayoutParams(lp);
-            setOtherRow(row1, lp, ++rowCount, campaignDatas.get(i));
+            setOtherRow(row1, lp, rowCount, campaignDatas.get(i));
         }
     }
 
     @Override
     public void onRefresh() {
-        switch (campaignType) {
-            case "ads":
-                getAdsData();
-                break;
-            case "keywords":
-                getKeywordsData();
-                break;
-            case "campaign":
-                getCampaignData();
-                break;
-            case "adgroup":
-                getAdGroupData();
-                break;
-        }
-
+        getCampaignData();
     }
 }
