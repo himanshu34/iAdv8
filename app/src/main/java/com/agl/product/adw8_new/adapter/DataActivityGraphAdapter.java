@@ -1,6 +1,6 @@
 package com.agl.product.adw8_new.adapter;
 
-import android.graphics.Color;
+import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.activity.DataActivity;
+import com.agl.product.adw8_new.decoration.ActionItem;
+import com.agl.product.adw8_new.decoration.QuickAction;
 import com.agl.product.adw8_new.model.Graph;
 import com.agl.product.adw8_new.model.GraphView;
 import com.github.mikephil.charting.charts.LineChart;
@@ -20,12 +22,11 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivityGraphAdapter.MyViewHolder>{
+public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivityGraphAdapter.MyViewHolder> {
 
     private DataActivity activity;
     private ArrayList<Graph> list;
@@ -43,10 +44,17 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
         Graph graphData = list.get(position);
         holder.titleTextView.setText(graphData.getKey().toUpperCase());
         holder.countTextView.setText(graphData.getTotal());
+
+        holder.hintTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showQuickAction(holder.hintTextView, activity, "Test Hint");
+            }
+        });
 
         ArrayList<GraphView> graphViewList = graphData.getGraphViewList();
         ArrayList<String> keys = new ArrayList<String>();
@@ -65,7 +73,7 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
         setComp.setLineWidth(1f);
         setComp.setCircleRadius(3f);
         setComp.setDrawCircleHole(false);
-        setComp.setValueTextSize(8f);
+        setComp.setValueTextSize(10f);
 //        setComp.setDrawFilled(true);
 
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
@@ -89,6 +97,7 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
 
         XAxis xAxis = holder.mLineChart.getXAxis();
         xAxis.setGranularity(4f); // minimum axis-step (interval) is 5
+        xAxis.setTextSize(12f);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         holder.mLineChart.getAxisRight().setEnabled(false);
         xAxis.setValueFormatter(formatter);
@@ -98,6 +107,7 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
         leftAxis.removeAllLimitLines();
         leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
         leftAxis.setStartAtZero(false);
+        leftAxis.setTextSize(12f);
         leftAxis.setDrawLimitLinesBehindData(true);
         leftAxis.setDrawGridLines(true);
     }
@@ -109,14 +119,23 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView titleTextView, countTextView;
+        private TextView titleTextView, hintTextView, countTextView;
         private LineChart mLineChart;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             titleTextView = (TextView) itemView.findViewById(R.id.textView_title);
+            hintTextView = (TextView) itemView.findViewById(R.id.hint_textView);
             countTextView = (TextView) itemView.findViewById(R.id.textView_count);
             mLineChart = (LineChart) itemView.findViewById(R.id.lineChart);
         }
+    }
+
+    public void showQuickAction(final TextView textView, final Activity activity, String hint) {
+        final QuickAction quickAction = new QuickAction(activity, QuickAction.VERTICAL);
+        ActionItem actionItem = new ActionItem(hint);
+        quickAction.addActionItem(actionItem);
+        quickAction.show(textView);
+        quickAction.setAnimStyle(QuickAction.ANIM_REFLECT);
     }
 }

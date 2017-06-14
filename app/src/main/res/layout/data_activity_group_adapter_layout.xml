@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parentView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -24,7 +25,7 @@
 
             <LinearLayout
                 android:layout_width="@dimen/_125sdp"
-                android:layout_height="@dimen/_100sdp"
+                android:layout_height="@dimen/_105sdp"
                 android:layout_gravity="center"
                 android:orientation="vertical">
 
@@ -37,6 +38,8 @@
                     android:singleLine="true"
                     android:textAllCaps="true"
                     android:textColor="@color/black"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
                     android:textSize="@dimen/_14sdp" />
 
                 <TextView
@@ -46,7 +49,9 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:singleLine="true"
-                    android:textStyle="bold"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/Roboto-Black.ttf"
+                    android:textColor="#9d9d9d"
                     android:textSize="@dimen/_22sdp" />
 
                 <View
@@ -58,7 +63,7 @@
     </FrameLayout>
 
     <LinearLayout
-        android:layout_width="@dimen/_80sdp"
+        android:layout_width="@dimen/_90sdp"
         android:layout_height="@dimen/_23sdp"
         android:layout_marginBottom="@dimen/_3sdp"
         android:layout_gravity="center|bottom"
@@ -75,7 +80,7 @@
             android:textColor="@android:color/white" />
 
         <View
-            android:layout_width="5dp"
+            android:layout_width="10dp"
             android:layout_height="1dp"/>
 
         <ImageButton

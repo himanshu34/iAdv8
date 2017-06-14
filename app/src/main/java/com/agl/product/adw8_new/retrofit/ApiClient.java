@@ -18,7 +18,7 @@ public class ApiClient {
         final OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(interceptor)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .connectTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(3, TimeUnit.MINUTES)
+                .writeTimeout(2, TimeUnit.MINUTES)
                 .build();
 
         if (retrofit==null) {

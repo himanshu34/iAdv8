@@ -11,8 +11,8 @@ public class ApplicationController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-//        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/HelveticaNeue.ttf")
-//                .setFontAttrId(R.attr.fontPath).build());
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder().setDefaultFontPath("fonts/Roboto-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath).build());
     }
 
     protected void attachBaseContext(Context base) {

@@ -15,6 +15,15 @@ public class Graph {
     @SerializedName("total")
     private String total;
 
+    private boolean is_clicked = false;
+
+    public Graph(String key, ArrayList<GraphView> graphViewList, String total, boolean is_clicked) {
+        this.key = key;
+        this.graphViewList = graphViewList;
+        this.total = total;
+        this.is_clicked = is_clicked;
+    }
+
     public String getKey() {
         return key;
     }
@@ -37,5 +46,13 @@ public class Graph {
 
     public void setTotal(String total) {
         this.total = total;
+    }
+
+    public boolean is_clicked() {
+        return is_clicked;
+    }
+
+    public void setIs_clicked(boolean is_clicked) {
+        this.is_clicked = is_clicked;
     }
 }

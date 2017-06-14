@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/_275sdp"
     android:layout_height="match_parent"
     android:layout_gravity="center"
     card_view:cardUseCompatPadding="true"
-    android:layout_marginBottom="@dimen/_8sdp"
+    android:layout_marginBottom="@dimen/_4sdp"
     android:layout_marginLeft="@dimen/_2sdp"
     android:layout_marginRight="@dimen/_2sdp"
-    android:layout_marginTop="@dimen/_8sdp"
+    android:layout_marginTop="@dimen/_4sdp"
     card_view:cardCornerRadius="@dimen/_4sdp"
     card_view:cardElevation="@dimen/_2sdp">
 
@@ -35,22 +35,23 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/_14sdp"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/Roboto-Medium.ttf"
                     android:textColor="@color/black" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"/>
-
                 <TextView
+                    android:id="@+id/hint_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/what_is_this"
                     android:textSize="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_2sdp"
+                    android:paddingBottom="@dimen/_2sdp"
                     android:textColor="@color/blue_color" />
             </LinearLayout>
 
             <View
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
@@ -58,7 +59,10 @@
                 android:id="@+id/textView_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/_22sdp" />
+                tools:ignore="MissingPrefix"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:textSize="@dimen/_22sdp"
+                android:textColor="#707070"/>
         </LinearLayout>
 
         <View
@@ -66,10 +70,17 @@
             android:layout_height="@dimen/_1sdp"
             android:background="@color/tab_unselected_color" />
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/lineChart"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </com.github.mikephil.charting.charts.LineChart>
+            android:layout_height="match_parent"
+            android:padding="@dimen/_4sdp">
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/lineChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true">
+            </com.github.mikephil.charting.charts.LineChart>
+        </RelativeLayout>
     </LinearLayout>
 </android.support.v7.widget.CardView>

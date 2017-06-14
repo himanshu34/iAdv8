@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
+import com.agl.product.adw8_new.adapter.DataActivityContentAdapter;
 import com.agl.product.adw8_new.adapter.DataActivityGraphAdapter;
 import com.agl.product.adw8_new.adapter.DataActivityGroupAdapter;
 import com.agl.product.adw8_new.fragment.DataAdsFragment;
@@ -49,24 +50,28 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DataActivity extends ActivityBase implements TabLayout.OnTabSelectedListener, View.OnClickListener,
-        Callback<ResponseDataCampaign> {
+public class DataActivity extends ActivityBase implements TabLayout.OnTabSelectedListener, View.OnClickListener {
 
     public String TAG = "DataActivity";
-    private RecyclerView rvGroupData, rvGraph;
+    LinearLayout headerLayout;
+    private RecyclerView rvHeaderData, rvGroupData, rvGraph;
     private TabLayout tabLayout;
     private LinearLayout lldefaultSpends;
     private PopupWindow customDatePopup;
     private View customPopupLayout;
     Session session;
     HashMap<String, String> userData;
+    ArrayList<Graph> graphsListing;
     private ArrayList<Graph> graphList;
     private ArrayList<Counts> countsList;
     private ArrayList<CampaignData> campaignList;
     private ArrayList<Keywords> keywordList;
     private ArrayList<Ads> adsList;
+    DataActivityContentAdapter contentAdapter;
     DataActivityGroupAdapter mAdapter;
     DataActivityGraphAdapter graphAdapter;
+    Call<ResponseDataCampaign> campaignCall;
+    Call<ResponseDataGraphCampaign> campaignGraphCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,15 +96,21 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         customDatePopup.setBackgroundDrawable(new BitmapDrawable());
         customDatePopup.setFocusable(true);
 
+        headerLayout = (LinearLayout) findViewById(R.id.header_layout);
+        rvHeaderData = (RecyclerView) findViewById(R.id.rvHeaderData);
+        rvHeaderData.setNestedScrollingEnabled(false);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvHeaderData.setLayoutManager( mLayoutManager);
+
         rvGroupData = (RecyclerView) findViewById(R.id.rvGroupData);
         rvGroupData.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvGroupData.setLayoutManager(mLayoutManager);
+        RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvGroupData.setLayoutManager(mLayoutManager1);
 
         rvGraph = (RecyclerView) findViewById(R.id.rvGraph);
         rvGraph.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvGraph.setLayoutManager(mLayoutManager1);
+        RecyclerView.LayoutManager mLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        rvGraph.setLayoutManager(mLayoutManager2);
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         lldefaultSpends.setOnClickListener(this);
@@ -107,6 +118,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
         userData = session.getUsuarioDetails();
 
+        graphsListing = new ArrayList<Graph>();
         graphList = new ArrayList<Graph>();
         countsList = new ArrayList<Counts>();
         campaignList = new ArrayList<CampaignData>();
@@ -129,8 +141,62 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         requestDataCampaign.setOrder("DESC");
         requestDataCampaign.setSort("clicks");
 
-        Call<ResponseDataCampaign> campaignCall = apiAddClientService.getDashboardData(requestDataCampaign);
-        campaignCall.enqueue(this);
+        campaignCall = apiAddClientService.getDashboardData(requestDataCampaign);
+        campaignCall.enqueue(new Callback<ResponseDataCampaign>() {
+            @Override
+            public void onResponse(Call<ResponseDataCampaign>call, Response<ResponseDataCampaign> response) {
+                if (response != null) {
+                    if (response.isSuccessful()) {
+                        if (response.body().getError() == 0) {
+                            Log.d(TAG, response.body().toString());
+
+                            if(response.body().getCountsList() != null) {
+                                if(response.body().getCountsList().size() > 0) {
+                                    countsList = response.body().getCountsList();
+                                }
+                            }
+                            setCountListAdapter();
+
+                            if(response.body().getCamapign_data() != null) {
+                                if(response.body().getCamapign_data().size() > 0) {
+                                    campaignList = response.body().getCamapign_data();
+                                }
+                            }
+
+                            if(response.body().getKeyword_data() != null) {
+                                if(response.body().getKeyword_data().size() > 0) {
+                                    keywordList = response.body().getKeyword_data();
+                                }
+                            }
+
+                            if(response.body().getAds_data() != null) {
+                                if(response.body().getAds_data().size() > 0) {
+                                    adsList = response.body().getAds_data();
+                                }
+                            }
+
+                            setCampaignFragmentData();
+                        } else {
+                            AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                            builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            builder.setCanceledOnTouchOutside(false);
+                            builder.setCancelable(false);
+                            builder.show();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDataCampaign>call, Throwable t) {
+                Log.e(TAG, t.toString());
+                AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                builder.setCanceledOnTouchOutside(false);
+                builder.setCancelable(false);
+                builder.show();
+            }
+        });
     }
 
     private void requestGraphDashboardData() {
@@ -143,7 +209,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         requestDataGraphCampaign.settDate("2017-06-08");
         requestDataGraphCampaign.setLimit("5");
 
-        Call<ResponseDataGraphCampaign> campaignGraphCall = apiAddClientService.getGraphDashboardData(requestDataGraphCampaign);
+        campaignGraphCall = apiAddClientService.getGraphDashboardData(requestDataGraphCampaign);
         campaignGraphCall.enqueue(new Callback<ResponseDataGraphCampaign>() {
             @Override
             public void onResponse(Call<ResponseDataGraphCampaign>call, Response<ResponseDataGraphCampaign> response) {
@@ -154,9 +220,18 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                             if(response.body().getGraphList() != null) {
                                 if(response.body().getGraphList().size() > 0) {
                                     graphList = response.body().getGraphList();
+                                    for(int i=0; i<graphList.size(); i++) {
+                                        Graph graphData = graphList.get(i);
+                                        if(i==0) {
+                                            graphsListing.add(new Graph(graphData.getKey(), graphData.getGraphViewList(), graphData.getTotal(), true));
+                                        } else {
+                                            graphsListing.add(new Graph(graphData.getKey(), graphData.getGraphViewList(), graphData.getTotal(), false));
+                                        }
+                                    }
                                 }
                             }
 
+                            setGraphHeaderAdapter();
                             setGraphListAdapter();
                         } else {
                             AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
@@ -235,51 +310,33 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     }
 
     @Override
-    public void onResponse(Call<ResponseDataCampaign> call, Response<ResponseDataCampaign> response) {
-        if (response.isSuccessful()) {
-            if (response != null) {
-                if (response.body().getError() == 0) {
-                    Log.d(TAG, response.body().toString());
+    protected void onDestroy() {
+        if(campaignCall != null) {
+            campaignCall.cancel();
+        }
 
-                    if(response.body().getCountsList() != null) {
-                        if(response.body().getCountsList().size() > 0) {
-                            countsList = response.body().getCountsList();
-                        }
-                    }
-                    setCountListAdapter();
+        if(campaignGraphCall != null) {
+            campaignGraphCall.cancel();
+        }
+        super.onDestroy();
+    }
 
-                    if(response.body().getCamapign_data() != null) {
-                        if(response.body().getCamapign_data().size() > 0) {
-                            campaignList = response.body().getCamapign_data();
-                        }
-                    }
-
-                    if(response.body().getKeyword_data() != null) {
-                        if(response.body().getKeyword_data().size() > 0) {
-                            keywordList = response.body().getKeyword_data();
-                        }
-                    }
-
-                    if(response.body().getAds_data() != null) {
-                        if(response.body().getAds_data().size() > 0) {
-                            adsList = response.body().getAds_data();
-                        }
-                    }
-
-                    setCampaignFragmentData();
-                } else {
-                    AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
-                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    builder.setCanceledOnTouchOutside(false);
-                    builder.setCancelable(false);
-                    builder.show();
-                }
+    private void setGraphHeaderAdapter() {
+        if(graphsListing != null) {
+            if(graphsListing.size() > 0) {
+                headerLayout.setVisibility(View.VISIBLE);
+                contentAdapter = new DataActivityContentAdapter(DataActivity.this, graphsListing);
+                rvHeaderData.setAdapter(contentAdapter);
+                contentAdapter.notifyDataSetChanged();
+            } else {
+                headerLayout.setVisibility(View.GONE);
             }
+        } else {
+            headerLayout.setVisibility(View.GONE);
         }
     }
 
     private void setGraphListAdapter() {
-        //Add Graph Adapter here
         if(graphList != null) {
             if(graphList.size() > 0) {
                 graphAdapter = new DataActivityGraphAdapter(DataActivity.this, graphList);
@@ -333,17 +390,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         ft.replace(R.id.frame_container, adsFragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commitAllowingStateLoss();
-    }
-
-    @Override
-    public void onFailure(Call<ResponseDataCampaign> call, Throwable t) {
-        //Alert
-        Log.e(TAG, t.toString());
-        AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
-        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        builder.setCanceledOnTouchOutside(false);
-        builder.setCancelable(false);
-        builder.show();
     }
 
     private class showErrorDialog extends AlertDialog {
