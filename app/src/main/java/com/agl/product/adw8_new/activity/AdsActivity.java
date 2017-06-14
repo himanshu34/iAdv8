@@ -34,6 +34,7 @@ import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
 import com.agl.product.adw8_new.service.data.RequestDataAds;
 import com.agl.product.adw8_new.service.data.ResponseDataAds;
+import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
 
@@ -59,6 +60,8 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
     private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange,textMessage;
     private ProgressBar progressBar;
     private ArrayList<Keywords> keywordsList;
+    private String fromDate,toDate;
+    private ConnectionDetector cd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +121,8 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         textLastThirtyDays.setOnClickListener(this);
         textCustom.setOnClickListener(this);
 
+        cd = new ConnectionDetector(this );
+
         userData = session.getUsuarioDetails();
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -127,6 +132,9 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
             }
         });
 
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         getAdsData();
     }
 
@@ -158,14 +166,20 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
 
         requestDataAds.setpId("1");
         requestDataAds.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestDataAds.setfDate("2017-06-02");
-        requestDataAds.settDate("2017-06-08");
+        requestDataAds.setfDate(fromDate);
+        requestDataAds.settDate(toDate);
         requestDataAds.setLimit(limit+"");
         requestDataAds.setOrderBy("DESC");
         requestDataAds.setSortBy("clicks");
         requestDataAds.setpId("1");
         requestDataAds.setOffset(offset);
 
+        if( offset == 0 ){
+            // Show loading on first time
+            llDataContainer.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            textMessage.setVisibility(View.GONE);
+        }
 
         Call<ResponseDataAds> adsCall = apiAddClientService.getAdsData(requestDataAds);
         adsCall.enqueue(new Callback<ResponseDataAds>() {
@@ -317,27 +331,45 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     private void setYesterday() {
+        if( !cd.isConnectedToInternet() ) return;
         textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getYesterdayDate());
+        fromDate = Utils.getYesterdayDate();
+        toDate = Utils.getYesterdayDate();
+        textSelectedDateRange.setText(fromDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getAdsData();
     }
 
     private void setLastSeven() {
+        if( !cd.isConnectedToInternet() ) return;
         textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getSevenDayBeforeDate()+"-"+Utils.getCurrentDate());
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getAdsData();
     }
 
     private void setLastThirty() {
+        if( !cd.isConnectedToInternet() ) return;
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getThirtyDayBeforeDate()+"-"+Utils.getCurrentDate());
+        fromDate = Utils.getThirtyDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getAdsData();
     }
 
 

@@ -35,6 +35,7 @@ import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
 import com.agl.product.adw8_new.service.data.RequestDataKeywords;
 import com.agl.product.adw8_new.service.data.ResponseDataKeywords;
+import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
 
@@ -47,7 +48,6 @@ import retrofit2.Response;
 
 public class KeywordsActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
 
-    private TableLayout ll;
     private PopupWindow filterPopup, customDatePopup;
     private View filterLayout, customPopupLayout;
     private LinearLayout llDateLayout,llDataContainer;
@@ -61,6 +61,9 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
     private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange,textMessage;
     private ProgressBar progressBar;
     private ArrayList<Keywords> keywordsList;
+    private String fromDate,toDate;
+    private ConnectionDetector cd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +77,9 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
 
+        cd = new ConnectionDetector( this );
+
         keywordsList = new ArrayList<Keywords>();
-        ll = (TableLayout) findViewById(R.id.tableLayout);
         swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
         textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -131,6 +135,9 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         getKeywordsData();
 
     }
@@ -183,27 +190,46 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
 
 
     private void setYesterday() {
+        if( !cd.isConnectedToInternet() ) return;
         textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getYesterdayDate());
+        fromDate = Utils.getYesterdayDate();
+        toDate = Utils.getYesterdayDate();
+        textSelectedDateRange.setText(fromDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getKeywordsData();
     }
 
     private void setLastSeven() {
+        if( !cd.isConnectedToInternet() ) return;
         textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getSevenDayBeforeDate()+"-"+Utils.getCurrentDate());
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getKeywordsData();
+
     }
 
     private void setLastThirty() {
+        if( !cd.isConnectedToInternet() ) return;
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
-        textSelectedDateRange.setText(Utils.getThirtyDayBeforeDate()+"-"+Utils.getCurrentDate());
+        fromDate = Utils.getThirtyDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getKeywordsData();
     }
 
 
@@ -230,14 +256,20 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
 
         requestKeywords.setpId("1");
         requestKeywords.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestKeywords.setfDate("2017-06-02");
-        requestKeywords.settDate("2017-06-08");
+        requestKeywords.setfDate(fromDate);
+        requestKeywords.settDate(toDate);
         requestKeywords.setLimit(limit+"");
         requestKeywords.setOrderBy("ASC");
         requestKeywords.setSortBy("clicks");
         requestKeywords.setpId("1");
         requestKeywords.setOffset(offset);
 
+        if( offset == 0 ){
+            // Show loading on first time
+            llDataContainer.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            textMessage.setVisibility(View.GONE);
+        }
         Call<ResponseDataKeywords> adsCall = apiAddClientService.getKeywordsList(requestKeywords);
         adsCall.enqueue(new Callback<ResponseDataKeywords>() {
             @Override

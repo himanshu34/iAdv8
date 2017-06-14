@@ -161,6 +161,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
+        textSelectedDateRange.setText(fromDate+"-"+toDate);
         getCampaignData();
     }
 
