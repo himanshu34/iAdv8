@@ -66,81 +66,62 @@ public class DataAdsFragment extends Fragment {
 
     private void setOtherRow(int pos, Ads adsData) {
         TableRow row = new TableRow(getActivity());
-        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT);
-        lp.span = 1;
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
         row.setLayoutParams(lp);
 
-        TextView textView1 = new TextView(getActivity());
-        textView1.setBackgroundResource(R.drawable.cell_shape);
-        textView1.setPadding(20, 20, 20, 20);
-        textView1.setLayoutParams(lp);
-        textView1.setGravity(Gravity.CENTER);
+
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView1 = (TextView) view.findViewById(R.id.text_view);
         textView1.setText(adsData.getClicks());
-        row.addView(textView1, lp);
+        row.addView(textView1);
 
-        TextView textView2 = new TextView(getActivity());
-        textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(lp);
-        textView2.setGravity(Gravity.CENTER);
+
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView2 = (TextView) view.findViewById(R.id.text_view);
         textView2.setText(adsData.getImpressions());
-        row.addView(textView2, lp);
+        row.addView(textView2);
 
-        TextView textView3 = new TextView(getActivity());
+
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView3 = (TextView) view.findViewById(R.id.text_view);
         textView3.setText(adsData.getAvg_cpc());
-        textView3.setPadding(20, 20, 20, 20);
-        textView3.setLayoutParams(lp);
-        textView3.setGravity(Gravity.CENTER);
-        textView3.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView3, lp);
+        row.addView(textView3);
 
-        TextView textView4 = new TextView(getActivity());
+
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView4 = (TextView) view.findViewById(R.id.text_view);
         textView4.setText(adsData.getCost());
-        textView4.setPadding(20, 20, 20, 20);
-        textView4.setLayoutParams(lp);
-        textView4.setGravity(Gravity.CENTER);
-        textView4.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView4, lp);
+        row.addView(textView4);
 
-        TextView textView5 = new TextView(getActivity());
+
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(adsData.getCtr());
-        textView5.setPadding(20, 20, 20, 20);
-        textView5.setLayoutParams(lp);
-        textView5.setGravity(Gravity.CENTER);
-        textView5.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView5, lp);
+        row.addView(textView5);
 
-        TextView textView6 = new TextView(getActivity());
+
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView6 = (TextView) view.findViewById(R.id.text_view);
         textView6.setText("");
-        textView6.setPadding(20, 20, 20, 20);
-        textView6.setGravity(Gravity.CENTER);
-        textView6.setLayoutParams(lp);
-        textView6.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView6, lp);
+        row.addView(textView6);
 
-        TextView textView7 = new TextView(getActivity());
+
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView7 = (TextView) view.findViewById(R.id.text_view);
         textView7.setText(adsData.getConverted_clicks());
-        textView7.setPadding(20, 20, 20, 20);
-        textView7.setGravity(Gravity.CENTER);
-        textView7.setLayoutParams(lp);
-        textView7.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView7, lp);
+        row.addView(textView7);
 
-        TextView textView8 = new TextView(getActivity());
+
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView8 = (TextView) view.findViewById(R.id.text_view);
         textView8.setText("");
-        textView8.setPadding(20, 20, 20, 20);
-        textView8.setGravity(Gravity.CENTER);
-        textView8.setLayoutParams(lp);
-        textView8.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView8, lp);
+        row.addView(textView8);
 
-        TextView textView9 = new TextView(getActivity());
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        TextView textView9 = (TextView) view.findViewById(R.id.text_view);
         textView9.setText("");
-        textView9.setPadding(20, 20, 20, 20);
-        textView9.setGravity(Gravity.CENTER);
-        textView9.setLayoutParams(lp);
-        textView9.setBackgroundResource(R.drawable.cell_shape);
-        row.addView(textView9, lp);
+        row.addView(textView9);
 
         tlDataTable.addView(row, pos, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));
     }
@@ -150,7 +131,6 @@ public class DataAdsFragment extends Fragment {
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.first_row, row, false);
         TextView tv = (TextView)v.findViewById(R.id.text_view);
         tv.setText(adsData.getAd());
-
         tlAddName.addView(v, pos);
     }
 }

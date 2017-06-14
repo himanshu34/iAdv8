@@ -234,19 +234,25 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                             setGraphHeaderAdapter();
                             setGraphListAdapter();
                         } else {
-                            AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
-                            builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                            builder.setCanceledOnTouchOutside(false);
-                            builder.setCancelable(false);
-                            builder.show();
+                            if(! DataActivity.this.isFinishing()){
+                                AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
+                                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                                builder.setCanceledOnTouchOutside(false);
+                                builder.setCancelable(false);
+                                builder.show();
+                            }
+
                         }
                     }
                 } else {
-                    AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
-                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    builder.setCanceledOnTouchOutside(false);
-                    builder.setCancelable(false);
-                    builder.show();
+                    if(! DataActivity.this.isFinishing()){
+                        AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        builder.setCanceledOnTouchOutside(false);
+                        builder.setCancelable(false);
+                        builder.show();
+                    }
+
                 }
             }
 
@@ -254,11 +260,14 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
             public void onFailure(Call<ResponseDataGraphCampaign>call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
-                AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
-                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                builder.setCanceledOnTouchOutside(false);
-                builder.setCancelable(false);
-                builder.show();
+                if(! DataActivity.this.isFinishing()){
+                    AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    builder.setCanceledOnTouchOutside(false);
+                    builder.setCancelable(false);
+                    builder.show();
+                }
+
             }
         });
     }
