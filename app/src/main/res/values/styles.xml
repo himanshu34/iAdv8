@@ -21,6 +21,13 @@
         <item name="colorControlHighlight">@color/black</item>
     </style>
 
+    <style name="datepicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+
+    </style>
+
     <style name="AppTheme.PrimaryAccent">
         <item name="colorAccent">@color/colorPrimary</item> <!-- Whatever color you want-->
     </style>

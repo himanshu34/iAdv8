@@ -1,5 +1,6 @@
 package com.agl.product.adw8_new.activity;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,10 +18,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
@@ -41,10 +46,17 @@ import com.agl.product.adw8_new.service.data.RequestDataGraphCampaign;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataCampaign;
 import com.agl.product.adw8_new.service.data.ResponseDataGraphCampaign;
+import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
+import com.agl.product.adw8_new.utils.Utils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,13 +64,14 @@ import retrofit2.Response;
 
 public class DataActivity extends ActivityBase implements TabLayout.OnTabSelectedListener, View.OnClickListener {
 
-    public String TAG = "DataActivity";
+    public String TAG = "DataActivity", fromDate, toDate,fromDateToShow,toDateToShow;
     LinearLayout headerLayout;
     private RecyclerView rvHeaderData, rvGroupData, rvGraph;
     private TabLayout tabLayout;
     private LinearLayout lldefaultSpends, tabsLayout;
     private PopupWindow customDatePopup;
     private View customPopupLayout;
+    private ProgressBar progressBar;
     Session session;
     HashMap<String, String> userData;
     ArrayList<Graph> graphsListing;
@@ -72,6 +85,9 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     DataActivityGraphAdapter graphAdapter;
     Call<ResponseDataCampaign> campaignCall;
     Call<ResponseDataGraphCampaign> campaignGraphCall;
+    private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange;
+    private ConnectionDetector cd;
+    private DatePickerDialog datePickerDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +101,11 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowTitleEnabled(false);
 
+        cd = new ConnectionDetector(this);
+
         lldefaultSpends = (LinearLayout) findViewById(R.id.lldefaultSpends);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
 
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
         customDatePopup = new PopupWindow(this);
@@ -96,11 +116,18 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         customDatePopup.setBackgroundDrawable(new BitmapDrawable());
         customDatePopup.setFocusable(true);
 
+        textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
+        textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
+        textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
+        textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
+
+
+
         headerLayout = (LinearLayout) findViewById(R.id.header_layout);
         rvHeaderData = (RecyclerView) findViewById(R.id.rvHeaderData);
         rvHeaderData.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        rvHeaderData.setLayoutManager( mLayoutManager);
+        rvHeaderData.setLayoutManager(mLayoutManager);
 
         rvGroupData = (RecyclerView) findViewById(R.id.rvGroupData);
         rvGroupData.setNestedScrollingEnabled(false);
@@ -115,19 +142,36 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         tabsLayout = (LinearLayout) findViewById(R.id.tabs_layout);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         lldefaultSpends.setOnClickListener(this);
+        textYesterday.setOnClickListener(this);
+        textLastSevenDays.setOnClickListener(this);
+        textLastThirtyDays.setOnClickListener(this);
+        textCustom.setOnClickListener(this);
         setupTabLayout();
 
         userData = session.getUsuarioDetails();
 
+        setList();
+
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+
+        textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
+
+        requestDashboardData();
+
+        requestGraphDashboardData();
+    }
+
+
+    private void setList() {
         graphsListing = new ArrayList<Graph>();
         graphList = new ArrayList<Graph>();
         countsList = new ArrayList<Counts>();
         campaignList = new ArrayList<CampaignData>();
         keywordList = new ArrayList<Keywords>();
         adsList = new ArrayList<Ads>();
-        requestDashboardData();
-
-        requestGraphDashboardData();
     }
 
     private void requestDashboardData() {
@@ -136,8 +180,8 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         requestDataCampaign.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
         requestDataCampaign.setpId("1");
         requestDataCampaign.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestDataCampaign.setfDate("2017-06-02");
-        requestDataCampaign.settDate("2017-06-08");
+        requestDataCampaign.setfDate(fromDate);
+        requestDataCampaign.settDate(toDate);
         requestDataCampaign.setLimit("5");
         requestDataCampaign.setOrder("DESC");
         requestDataCampaign.setSort("clicks");
@@ -145,39 +189,41 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         campaignCall = apiAddClientService.getDashboardData(requestDataCampaign);
         campaignCall.enqueue(new Callback<ResponseDataCampaign>() {
             @Override
-            public void onResponse(Call<ResponseDataCampaign>call, Response<ResponseDataCampaign> response) {
+            public void onResponse(Call<ResponseDataCampaign> call, Response<ResponseDataCampaign> response) {
                 if (response != null) {
                     if (response.isSuccessful()) {
                         if (response.body().getError() == 0) {
                             Log.d(TAG, response.body().toString());
                             tabsLayout.setVisibility(View.VISIBLE);
-                            if(response.body().getCountsList() != null) {
-                                if(response.body().getCountsList().size() > 0) {
+                            progressBar.setVisibility(View.GONE);
+                            if (response.body().getCountsList() != null) {
+                                if (response.body().getCountsList().size() > 0) {
                                     countsList = response.body().getCountsList();
                                 }
                             }
                             setCountListAdapter();
 
-                            if(response.body().getCamapign_data() != null) {
-                                if(response.body().getCamapign_data().size() > 0) {
+                            if (response.body().getCamapign_data() != null) {
+                                if (response.body().getCamapign_data().size() > 0) {
                                     campaignList = response.body().getCamapign_data();
                                 }
                             }
 
-                            if(response.body().getKeyword_data() != null) {
-                                if(response.body().getKeyword_data().size() > 0) {
+                            if (response.body().getKeyword_data() != null) {
+                                if (response.body().getKeyword_data().size() > 0) {
                                     keywordList = response.body().getKeyword_data();
                                 }
                             }
 
-                            if(response.body().getAds_data() != null) {
-                                if(response.body().getAds_data().size() > 0) {
+                            if (response.body().getAds_data() != null) {
+                                if (response.body().getAds_data().size() > 0) {
                                     adsList = response.body().getAds_data();
                                 }
                             }
 
                             setCampaignFragmentData();
                         } else {
+                            progressBar.setVisibility(View.GONE);
                             AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
                             builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                             builder.setCanceledOnTouchOutside(false);
@@ -189,9 +235,9 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
             }
 
             @Override
-            public void onFailure(Call<ResponseDataCampaign>call, Throwable t) {
+            public void onFailure(Call<ResponseDataCampaign> call, Throwable t) {
                 Log.e(TAG, t.toString());
-                if(! DataActivity.this.isFinishing()) {
+                if (!DataActivity.this.isFinishing()) {
                     AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
                     builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     builder.setCanceledOnTouchOutside(false);
@@ -208,24 +254,24 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         requestDataGraphCampaign.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
         requestDataGraphCampaign.setpId("1");
         requestDataGraphCampaign.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
-        requestDataGraphCampaign.setfDate("2017-06-02");
-        requestDataGraphCampaign.settDate("2017-06-08");
+        requestDataGraphCampaign.setfDate(fromDate);
+        requestDataGraphCampaign.settDate(toDate);
         requestDataGraphCampaign.setLimit("5");
 
         campaignGraphCall = apiAddClientService.getGraphDashboardData(requestDataGraphCampaign);
         campaignGraphCall.enqueue(new Callback<ResponseDataGraphCampaign>() {
             @Override
-            public void onResponse(Call<ResponseDataGraphCampaign>call, Response<ResponseDataGraphCampaign> response) {
-                if(response.isSuccessful()) {
-                    if(response != null) {
+            public void onResponse(Call<ResponseDataGraphCampaign> call, Response<ResponseDataGraphCampaign> response) {
+                if (response.isSuccessful()) {
+                    if (response != null) {
                         Log.e(TAG, response.body().getMessage());
-                        if(response.body().getError() == 0) {
-                            if(response.body().getGraphList() != null) {
-                                if(response.body().getGraphList().size() > 0) {
+                        if (response.body().getError() == 0) {
+                            if (response.body().getGraphList() != null) {
+                                if (response.body().getGraphList().size() > 0) {
                                     graphList = response.body().getGraphList();
-                                    for(int i=0; i<graphList.size(); i++) {
+                                    for (int i = 0; i < graphList.size(); i++) {
                                         Graph graphData = graphList.get(i);
-                                        if(i==0) {
+                                        if (i == 0) {
                                             graphsListing.add(new Graph(graphData.getKey(), graphData.getGraphViewList(), graphData.getTotal(), true));
                                         } else {
                                             graphsListing.add(new Graph(graphData.getKey(), graphData.getGraphViewList(), graphData.getTotal(), false));
@@ -237,7 +283,8 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                             setGraphHeaderAdapter();
                             setGraphListAdapter();
                         } else {
-                            if(! DataActivity.this.isFinishing()){
+                            progressBar.setVisibility(View.GONE);
+                            if (!DataActivity.this.isFinishing()) {
                                 AlertDialog builder = new showErrorDialog(DataActivity.this, response.body().getMessage());
                                 builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                                 builder.setCanceledOnTouchOutside(false);
@@ -248,7 +295,8 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                         }
                     }
                 } else {
-                    if(! DataActivity.this.isFinishing()){
+                    progressBar.setVisibility(View.GONE);
+                    if (!DataActivity.this.isFinishing()) {
                         AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
                         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         builder.setCanceledOnTouchOutside(false);
@@ -260,10 +308,11 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
             }
 
             @Override
-            public void onFailure(Call<ResponseDataGraphCampaign>call, Throwable t) {
+            public void onFailure(Call<ResponseDataGraphCampaign> call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
-                if(! DataActivity.this.isFinishing()){
+                progressBar.setVisibility(View.GONE);
+                if (!DataActivity.this.isFinishing()) {
                     AlertDialog builder = new showErrorDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
                     builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                     builder.setCanceledOnTouchOutside(false);
@@ -318,28 +367,114 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
             case R.id.lldefaultSpends:
                 customDatePopup.showAsDropDown(lldefaultSpends, -5, -5);
                 break;
+            case R.id.textYesterday:
+                setYesterday();
+                break;
+            case R.id.textLastSevenDays:
+                setLastSeven();
+                break;
+            case R.id.textLastThirtyDays:
+                setLastThirty();
+                break;
+            case R.id.textCustom:
+
+                AlertDialog builder = new ShowDateRangeDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                builder.setCanceledOnTouchOutside(false);
+                builder.setCancelable(false);
+                builder.show();
+                break;
         }
     }
 
+    private void setYesterday() {
+        if (!cd.isConnectedToInternet()) return;
+        textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        fromDate = Utils.getYesterdayDate();
+        toDate = Utils.getYesterdayDate();
+        fromDateToShow = Utils.getDisplayYesterdayDate();
+        toDateToShow = Utils.getDisplayYesterdayDate();
+        textSelectedDateRange.setText(Utils.getDisplayYesterdayDate());
+        customDatePopup.dismiss();
+        headerLayout.setVisibility(View.GONE);
+        rvGraph.setVisibility(View.GONE);
+        tabsLayout.setVisibility(View.GONE);
+        rvGroupData.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        requestDashboardData();
+        requestGraphDashboardData();
+
+
+    }
+
+    private void setLastSeven() {
+        if (!cd.isConnectedToInternet()) return;
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate() + " - " + Utils.getDisplayCurrentDate());
+        customDatePopup.dismiss();
+
+        headerLayout.setVisibility(View.GONE);
+        rvGraph.setVisibility(View.GONE);
+        tabsLayout.setVisibility(View.GONE);
+        rvGroupData.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        requestDashboardData();
+        requestGraphDashboardData();
+    }
+
+    private void setLastThirty() {
+        if (!cd.isConnectedToInternet()) return;
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        fromDate = Utils.getThirtyDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        fromDateToShow = Utils.getDisplayThirtyDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+        textSelectedDateRange.setText(Utils.getDisplayThirtyDayBeforeDate() + " - " + Utils.getDisplayCurrentDate());
+        customDatePopup.dismiss();
+
+        headerLayout.setVisibility(View.GONE);
+        rvGraph.setVisibility(View.GONE);
+        tabsLayout.setVisibility(View.GONE);
+        rvGroupData.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        requestDashboardData();
+        requestGraphDashboardData();
+    }
+
+
     @Override
     protected void onDestroy() {
-        if(campaignCall != null) {
+        if (campaignCall != null) {
             campaignCall.cancel();
         }
 
-        if(campaignGraphCall != null) {
+        if (campaignGraphCall != null) {
             campaignGraphCall.cancel();
         }
         super.onDestroy();
     }
 
     private void setGraphHeaderAdapter() {
-        if(graphsListing != null) {
-            if(graphsListing.size() > 0) {
+        if (graphsListing != null) {
+            if (graphsListing.size() > 0) {
                 headerLayout.setVisibility(View.VISIBLE);
                 contentAdapter = new DataActivityContentAdapter(DataActivity.this, graphsListing);
                 rvHeaderData.setAdapter(contentAdapter);
                 contentAdapter.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
             } else {
                 headerLayout.setVisibility(View.GONE);
             }
@@ -349,8 +484,8 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     }
 
     private void setGraphListAdapter() {
-        if(graphList != null) {
-            if(graphList.size() > 0) {
+        if (graphList != null) {
+            if (graphList.size() > 0) {
                 rvGraph.setVisibility(View.VISIBLE);
                 graphAdapter = new DataActivityGraphAdapter(DataActivity.this, graphList);
                 rvGraph.setAdapter(graphAdapter);
@@ -364,8 +499,8 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     }
 
     private void setCountListAdapter() {
-        if(countsList != null) {
-            if(countsList.size() > 0) {
+        if (countsList != null) {
+            if (countsList.size() > 0) {
                 rvGroupData.setVisibility(View.VISIBLE);
                 mAdapter = new DataActivityGroupAdapter(DataActivity.this, countsList);
                 rvGroupData.setAdapter(mAdapter);
@@ -414,12 +549,15 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         ft.commitAllowingStateLoss();
     }
 
+
+
     private class showErrorDialog extends AlertDialog {
         protected showErrorDialog(Context context, String message) {
             super(context);
             LayoutInflater inflater = getLayoutInflater();
             final View dialogLayout = inflater.inflate(R.layout.custom_alert_layout_single, (ViewGroup) getCurrentFocus());
             setView(dialogLayout);
+
             final TextView textViewTitle = (TextView) dialogLayout.findViewById(R.id.textview_title);
             textViewTitle.setText(getResources().getString(R.string.app_name));
             final TextView textViewMessage = (TextView) dialogLayout.findViewById(R.id.textview_text);
@@ -433,4 +571,100 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
             });
         }
     }
+
+
+    private class ShowDateRangeDialog extends AlertDialog {
+        protected ShowDateRangeDialog(Context context, String message) {
+            super(context);
+            LayoutInflater inflater = getLayoutInflater();
+            final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
+            setView(dialogLayout);
+
+            final TextView textStartDate = (TextView) dialogLayout.findViewById(R.id.textStartDate);
+            final TextView textEndDate = (TextView) dialogLayout.findViewById(R.id.textEndDate);
+            final TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
+            final TextView textApply = (TextView) dialogLayout.findViewById(R.id.textApply);
+            textStartDate.setText(fromDateToShow);
+            textEndDate.setText(toDateToShow);
+            textStartDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   /* AlertDialog builder = new startDateDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    builder.setCanceledOnTouchOutside(false);
+                    builder.setCancelable(false);
+                    builder.show();*/
+                    datePickerDialog = new DatePickerDialog(DataActivity.this, R.style.datepicker, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                            DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+                            Date date = new Date(calendar.getTimeInMillis());
+                            textStartDate.setText(dateFormat.format(date));
+
+                        }
+
+
+                    }, 2000, 12, 12);
+
+                    datePickerDialog.show();
+
+                }
+            });
+
+            textEndDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+
+            textCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+
+            textApply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            });
+
+
+        }
+    }
+
+    private class startDateDialog extends AlertDialog {
+        protected startDateDialog(Context context, String message) {
+            super(context);
+            LayoutInflater inflater = getLayoutInflater();
+            final View dialogLayout = inflater.inflate(R.layout.datepicker, (ViewGroup) getCurrentFocus());
+            setView(dialogLayout);
+            Button btn_cancel = (
+                    Button) dialogLayout.findViewById(R.id.btn_cancel);
+            Button btn_ok = (Button) dialogLayout.findViewById(R.id.btn_ok);
+
+            final DatePicker datePicker_start = (DatePicker) dialogLayout.findViewById(R.id.datePicker_start);
+            btn_ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(DataActivity.this, "Date" + datePicker_start.getMinDate(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            btn_cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+
+
+        }
+    }
+
 }

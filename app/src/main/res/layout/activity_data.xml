@@ -38,6 +38,7 @@
                     android:gravity="center_vertical">
 
                     <TextView
+                        android:id="@+id/textSelectedDateRange"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Jun 2 - Jun 8,2017"
@@ -193,4 +194,12 @@
                 android:visibility="gone"/>
         </LinearLayout>
     </com.agl.product.adw8_new.custom_view.MyNestedScrollView>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:max="500"
+        android:progress="0"
+        android:theme="@style/AppTheme.PrimaryAccent" />
 </android.support.design.widget.CoordinatorLayout>
