@@ -638,33 +638,5 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         }
     }
 
-    private class startDateDialog extends AlertDialog {
-        protected startDateDialog(Context context, String message) {
-            super(context);
-            LayoutInflater inflater = getLayoutInflater();
-            final View dialogLayout = inflater.inflate(R.layout.datepicker, (ViewGroup) getCurrentFocus());
-            setView(dialogLayout);
-            Button btn_cancel = (
-                    Button) dialogLayout.findViewById(R.id.btn_cancel);
-            Button btn_ok = (Button) dialogLayout.findViewById(R.id.btn_ok);
-
-            final DatePicker datePicker_start = (DatePicker) dialogLayout.findViewById(R.id.datePicker_start);
-            btn_ok.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(DataActivity.this, "Date" + datePicker_start.getMinDate(), Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            btn_cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    dismiss();
-                }
-            });
-
-
-        }
-    }
 
 }

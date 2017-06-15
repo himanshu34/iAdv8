@@ -17,6 +17,18 @@ public class Utils {
 
     public static final int VERTICAL_ITEM_SPACE = 20;
 
+    public static final String TYPE_YESTERDAY = "typeYesterday";
+    public static final String TYPE_LAST_WEEK = "typeLastWeek";
+    public static final String TYPE_LAST_MONTH = "typeLastMonth";
+    public static final String TYPE_CUSTOM_DATE = "typeCustomDate";
+    public static final String ID_TYPE_CAMPAIGN_UNITS = "campaignIds";
+    public static final String ID_TYPE_LANDING_PAGES = "landingPageIds";
+    public static final String ID_TYPE_OWNERS = "ownerIds";
+    public static final String ID_TYPE_STATUS = "statusIds";
+    public static final int BTN_FROM_START = 1;
+    public static final int BTN_FROM_END = 2;
+    public static final int BTN_TO_START = 3;
+
     public static boolean closeKeyboard(Context context, View view) {
         InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if(imm != null) {

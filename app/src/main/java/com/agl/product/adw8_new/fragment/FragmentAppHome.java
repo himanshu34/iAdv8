@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.activity.DataActivity;
+import com.agl.product.adw8_new.activity.LeadDashBoardActivity;
 import com.agl.product.adw8_new.adapter.AdapterAppHome;
 import com.agl.product.adw8_new.model.BeanAppHomeGrid;
 
@@ -84,7 +85,6 @@ public class FragmentAppHome extends Fragment {
     }
 
     private void LaunchActivity(int position) {
-        Boolean isPermission = false;
         switch (position) {
             case 0:
                 Intent intentCampaign = new Intent(activity, DataActivity.class);
@@ -97,8 +97,8 @@ public class FragmentAppHome extends Fragment {
                 break;
 
             case 2:
-//                Intent intentLms1 = new Intent(activity, LeadDashBoardNew.class);
-//                startActivity(intentLms1);
+                Intent intentLeads = new Intent(activity, LeadDashBoardActivity.class);
+                startActivity(intentLeads);
                 break;
 
             case 3:

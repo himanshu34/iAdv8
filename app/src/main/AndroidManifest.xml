@@ -36,11 +36,10 @@
             android:name=".activity.CampaignActivity"
             android:label="@string/title_activity_campaign"
             android:theme="@style/AppTheme.NoActionBar" />
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
+        <activity
+            android:name=".activity.LeadDashBoardActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.KeywordsActivity"
             android:label="@string/title_activity_keywords"
@@ -52,7 +51,10 @@
         <activity
             android:name=".activity.AdgroupActivity"
             android:label="@string/title_activity_adgroup"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

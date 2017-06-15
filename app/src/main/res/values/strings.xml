@@ -29,4 +29,19 @@
     <string name="title_activity_keywords">Keywords</string>
     <string name="title_activity_ads">Ads</string>
     <string name="title_activity_adgroup">Adgroups</string>
+
+    <string-array name="spinner_date_selector">
+        <item>Yesterday</item>
+        <item>Last 7 days</item>
+        <item>Last 30 days</item>
+        <item>Custom</item>
+        <item></item>
+    </string-array>
+    <string name="NA">NA</string>
+
+    <string name="text_title">Set time range</string>
+    <string name="txt_ok">OK</string>
+    <string name="txt_cancel">Cancel</string>
+    <string name="txt_apply">Apply</string>
+
 </resources>
