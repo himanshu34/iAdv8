@@ -28,6 +28,14 @@ public class Utils {
     public static final int BTN_FROM_START = 1;
     public static final int BTN_FROM_END = 2;
     public static final int BTN_TO_START = 3;
+    public static final String CURRENT__FROM_DATE="current_from_date";
+    public static final String CURRENT_TO_DATE="current_to_date";
+    public static final String DATE_TYPE="date_type";
+    public static final String TAG_DIALOG_DATE_SELECTOR = "tagDialogDateSelector";
+    public static final String WEB_FORM_ID="wId";
+    public static final String LEAD_ID = "leadId";
+    public static final String TYPE_LEAD_WEB = "Web";
+    public static final String TYPE_LEAD_CALL = "Call";
 
     public static boolean closeKeyboard(Context context, View view) {
         InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
