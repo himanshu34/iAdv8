@@ -40,10 +40,10 @@ public class DataActivityContentAdapter extends RecyclerView.Adapter<DataActivit
         } else {
             holder.parentView.setBackgroundColor(activity.getResources().getColor(R.color.white));
             holder.titleTextView.setTextColor(activity.getResources().getColor(R.color.black));
-            holder.countTextView.setTextColor(Color.parseColor("#707070"));
+            holder.countTextView.setTextColor(Color.parseColor("#9d9d9d"));
         }
 
-        holder.titleTextView.setText(getCaseSensitiveWords(graphData.getKey()));
+        holder.titleTextView.setText(graphData.getKey());
         holder.countTextView.setText(graphData.getTotal());
     }
 

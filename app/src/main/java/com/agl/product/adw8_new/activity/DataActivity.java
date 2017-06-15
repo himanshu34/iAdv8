@@ -56,7 +56,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     LinearLayout headerLayout;
     private RecyclerView rvHeaderData, rvGroupData, rvGraph;
     private TabLayout tabLayout;
-    private LinearLayout lldefaultSpends;
+    private LinearLayout lldefaultSpends, tabsLayout;
     private PopupWindow customDatePopup;
     private View customPopupLayout;
     Session session;
@@ -112,6 +112,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         RecyclerView.LayoutManager mLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvGraph.setLayoutManager(mLayoutManager2);
 
+        tabsLayout = (LinearLayout) findViewById(R.id.tabs_layout);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         lldefaultSpends.setOnClickListener(this);
         setupTabLayout();
@@ -149,7 +150,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                     if (response.isSuccessful()) {
                         if (response.body().getError() == 0) {
                             Log.d(TAG, response.body().toString());
-
+                            tabsLayout.setVisibility(View.VISIBLE);
                             if(response.body().getCountsList() != null) {
                                 if(response.body().getCountsList().size() > 0) {
                                     countsList = response.body().getCountsList();
@@ -350,20 +351,30 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     private void setGraphListAdapter() {
         if(graphList != null) {
             if(graphList.size() > 0) {
+                rvGraph.setVisibility(View.VISIBLE);
                 graphAdapter = new DataActivityGraphAdapter(DataActivity.this, graphList);
                 rvGraph.setAdapter(graphAdapter);
                 graphAdapter.notifyDataSetChanged();
+            } else {
+                rvGraph.setVisibility(View.GONE);
             }
+        } else {
+            rvGraph.setVisibility(View.GONE);
         }
     }
 
     private void setCountListAdapter() {
         if(countsList != null) {
             if(countsList.size() > 0) {
+                rvGroupData.setVisibility(View.VISIBLE);
                 mAdapter = new DataActivityGroupAdapter(DataActivity.this, countsList);
                 rvGroupData.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
+            } else {
+                rvGroupData.setVisibility(View.GONE);
             }
+        } else {
+            rvGroupData.setVisibility(View.GONE);
         }
     }
 

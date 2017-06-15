@@ -25,7 +25,7 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_3sdp"
+        android:layout_margin="@dimen/_2sdp"
         app:cardCornerRadius="@dimen/_4sdp"
         app:cardElevation="@dimen/_3sdp"
         app:cardUseCompatPadding="true"
@@ -39,59 +39,37 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/llDateRange"
+                android:id="@+id/llDateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center|left"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="@dimen/_8sdp">
+                android:padding="@dimen/_10sdp">
 
                 <TextView
+                    android:id="@+id/textSelectedDateRange"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_8sdp"
-                    android:layout_marginRight="@dimen/_8sdp"
-                    android:text="Date Range"
+                    android:text="Jun 2 - Jun 8,2017"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/_16sdp"
-                    android:textStyle="bold" />
+                    android:textSize="@dimen/_14sdp" />
 
-                <LinearLayout
-                    android:id="@+id/llDateLayout"
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="1dp" />
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bottom_border_theme_background"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/_1sdp">
-
-                    <TextView
-                        android:id="@+id/textSelectedDateRange"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Jun 2 - Jun 8,2017"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/_10sdp" />
-
-                    <View
-                        android:layout_width="5dp"
-                        android:layout_height="1dp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/ic_edit" />
-                </LinearLayout>
-
-
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_edit" />
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/border" />
-
+                android:background="#f7f7f7" />
 
             <LinearLayout
                 android:id="@+id/llDataContainer"
@@ -107,13 +85,14 @@
 
                     <TextView
                         android:id="@+id/text"
-                        android:layout_width="125dp"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="Name"
+                        android:textSize="@dimen/_12sdp"
                         android:minHeight="50dp"
-                        android:background="@color/border"
+                        android:background="#f7f7f7"
                         android:textColor="@color/black" />
 
                     <HorizontalScrollView
@@ -133,9 +112,10 @@
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Budget"
+                                android:textSize="@dimen/_12sdp"
                                 android:singleLine="true"
                                 android:textColor="@color/black"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
                                 android:id="@+id/textView" />
 
@@ -145,8 +125,9 @@
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Clicks"
+                                android:textSize="@dimen/_12sdp"
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
@@ -157,8 +138,9 @@
                                 android:padding="5dp"
                                 android:minHeight="50dp"
                                 android:text="Impr"
+                                android:textSize="@dimen/_12sdp"
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -167,8 +149,9 @@
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Avg CPC"
+                                android:textSize="@dimen/_12sdp"
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
@@ -177,8 +160,9 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:text="Cost"
+                                android:textSize="@dimen/_12sdp"
                                 android:singleLine="true"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
@@ -189,8 +173,9 @@
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="CTR"
+                                android:textSize="@dimen/_12sdp"
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
@@ -199,9 +184,10 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:padding="5dp"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
                                 android:text="Avg. Pos"
+                                android:textSize="@dimen/_12sdp"
                                 android:singleLine="true"
                                 android:textColor="@color/black" />
 
@@ -211,8 +197,9 @@
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Conv"
+                                android:textSize="@dimen/_12sdp"
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
                                 android:textColor="@color/black" />
 
@@ -222,9 +209,10 @@
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:text="Cost/Conv"
+                                android:textSize="@dimen/_12sdp"
                                 android:minHeight="50dp"
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:textColor="@color/black" />
                         </LinearLayout>
 
@@ -252,7 +240,7 @@
 
                             <TableLayout
                                 android:id="@+id/tlName"
-                                android:layout_width="125dp"
+                                android:layout_width="150dp"
                                 android:layout_height="wrap_content">
 
                             </TableLayout>
@@ -267,10 +255,10 @@
                                 <TableLayout
                                     android:id="@+id/tlValues"
                                     android:layout_width="match_parent"
-                                    android:layout_height="match_parent"></TableLayout>
+                                    android:layout_height="match_parent">
+
+                                </TableLayout>
                             </HorizontalScrollView>
-
-
                         </LinearLayout>
                     </android.support.v4.widget.NestedScrollView>
                 </com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom>
@@ -282,14 +270,15 @@
 
                     <TextView
                         android:id="@+id/text1"
-                        android:layout_width="125dp"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:padding="5dp"
                         android:text="Total"
                         android:singleLine="true"
-                        android:background="@color/border"
+                        android:background="#f7f7f7"
                         android:minHeight="50dp"
+                        android:textSize="@dimen/_12sdp"
                         android:textColor="@color/black" />
 
                     <HorizontalScrollView
@@ -310,8 +299,9 @@
                                 android:padding="5dp"
                                 android:text=""
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -320,20 +310,10 @@
                                 android:gravity="center"
                                 android:padding="5dp"
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:text=""
                                 android:minHeight="50dp"
-                                android:textColor="@color/black" />
-
-                            <TextView
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:padding="5dp"
-                                android:text=""
-                                android:singleLine="true"
-                                android:background="@color/border"
-                                android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -343,8 +323,9 @@
                                 android:padding="5dp"
                                 android:text=""
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -354,8 +335,9 @@
                                 android:padding="5dp"
                                 android:text=""
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -365,8 +347,9 @@
                                 android:padding="5dp"
                                 android:text=""
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -376,8 +359,9 @@
                                 android:padding="5dp"
                                 android:text=""
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -387,8 +371,9 @@
                                 android:padding="5dp"
                                 android:text=""
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -398,8 +383,9 @@
                                 android:padding="5dp"
                                 android:text=""
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
                             <TextView
@@ -409,8 +395,21 @@
                                 android:padding="5dp"
                                 android:text=""
                                 android:singleLine="true"
-                                android:background="@color/border"
+                                android:background="#f7f7f7"
                                 android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
+                                android:textColor="@color/black" />
+
+                            <TextView
+                                android:layout_width="80dp"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:padding="5dp"
+                                android:text=""
+                                android:singleLine="true"
+                                android:background="#f7f7f7"
+                                android:minHeight="50dp"
+                                android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
                         </LinearLayout>
                     </HorizontalScrollView>

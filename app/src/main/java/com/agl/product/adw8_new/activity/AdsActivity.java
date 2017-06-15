@@ -62,6 +62,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
     private ArrayList<Keywords> keywordsList;
     private String fromDate,toDate;
     private ConnectionDetector cd;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +135,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
 
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         getAdsData();
     }
 
@@ -337,7 +338,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getYesterdayDate();
         toDate = Utils.getYesterdayDate();
-        textSelectedDateRange.setText(fromDate);
+        textSelectedDateRange.setText(Utils.getDisplayYesterdayDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -351,7 +352,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -365,7 +366,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplayThirtyDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;

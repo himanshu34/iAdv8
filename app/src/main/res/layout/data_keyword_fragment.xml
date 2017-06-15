@@ -11,10 +11,14 @@
         android:gravity="center_vertical">
 
         <TextView
-            android:layout_width="125dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="5dp"
+            android:minHeight="40dp"
+            android:singleLine="true"
+            android:textSize="@dimen/_12sdp"
+            android:background="#f7f7f7"
             android:textColor="@color/black"
             android:text="Keyword" />
 
@@ -34,7 +38,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="Clicks" />
 
@@ -43,7 +50,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="Impr" />
 
@@ -52,7 +62,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="Avg CPC" />
 
@@ -61,7 +74,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="Cost" />
 
@@ -70,7 +86,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="CTR" />
 
@@ -79,7 +98,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="Avg Pos" />
 
@@ -88,7 +110,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="Conv" />
 
@@ -97,7 +122,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="Cost/Conv" />
 
@@ -106,7 +134,10 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:padding="5dp"
+                    android:minHeight="40dp"
                     android:singleLine="true"
+                    android:textSize="@dimen/_12sdp"
+                    android:background="#f7f7f7"
                     android:textColor="@color/black"
                     android:text="Status" />
             </LinearLayout>
@@ -120,7 +151,7 @@
 
         <TableLayout
             android:id="@+id/tlAdName"
-            android:layout_width="125dp"
+            android:layout_width="150dp"
             android:layout_height="match_parent">
 
         </TableLayout>

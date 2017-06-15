@@ -67,51 +67,51 @@ public class DataCampaignFragment extends Fragment {
         TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
         row.setLayoutParams(lp);
 
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView1 = (TextView) view.findViewById(R.id.text_view);
         textView1.setText(campaignData.getBudget());
         row.addView(textView1);
 
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView2 = (TextView) view.findViewById(R.id.text_view);
         textView2.setText(campaignData.getClicks());
         row.addView(textView2);
 
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView3 = (TextView) view.findViewById(R.id.text_view);
         textView3.setText(campaignData.getImpressions());
         row.addView(textView3);
 
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView4 = (TextView) view.findViewById(R.id.text_view);
         textView4.setText(campaignData.getAvg_cpc());
         row.addView(textView4);
 
 
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(campaignData.getCost());
         row.addView(textView5);
 
 
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView6 = (TextView) view.findViewById(R.id.text_view);
         textView6.setText(campaignData.getCtr());
         row.addView(textView6);
 
 
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView7 = (TextView) view.findViewById(R.id.text_view);
         textView7.setText(campaignData.getAvg_position());
         row.addView(textView7);
 
 
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView8 = (TextView) view.findViewById(R.id.text_view);
         textView8.setText(campaignData.getConverted_clicks());
         row.addView(textView8);
 
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.row_textview,row,false );
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView9 = (TextView) view.findViewById(R.id.text_view);
         textView9.setText(campaignData.getCpa());
         row.addView(textView9);
@@ -121,7 +121,7 @@ public class DataCampaignFragment extends Fragment {
 
     private void setFirstRow(int pos, CampaignData campaignData) {
         TableRow row = new TableRow(getActivity());
-        View v = LayoutInflater.from(getActivity()).inflate(R.layout.first_row, row, false);
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.top_first_row, row, false);
         TextView tv = (TextView)v.findViewById(R.id.text_view);
         tv.setText(campaignData.getCampaign());
         tlAddName.addView(v, pos);

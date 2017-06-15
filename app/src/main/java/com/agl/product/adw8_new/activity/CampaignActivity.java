@@ -142,7 +142,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textCustom.setOnClickListener(this);
 
         userData = session.getUsuarioDetails();
-
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
@@ -151,17 +150,9 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        /*hrone.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
-            @Override
-            public void onScrollChanged() {
-                hrsecond.scrollTo(hrone.getScrollX(), hrone.getScrollY());
-
-            }
-        });*/
-
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         getCampaignData();
     }
 
@@ -206,7 +197,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                                     llDataContainer.setVisibility(View.INVISIBLE);
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.VISIBLE);
-                                    textMessage.setText("No Keywords Found.");
+                                    textMessage.setText("No Campaigns Found.");
                                 }
                             }
                         }else {
@@ -435,7 +426,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getYesterdayDate();
         toDate = Utils.getYesterdayDate();
-        textSelectedDateRange.setText(fromDate);
+        textSelectedDateRange.setText(Utils.getDisplayYesterdayDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -450,7 +441,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -464,14 +455,12 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplayThirtyDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
         getCampaignData();
     }
-
-
 
     private void createCampaignTable(ArrayList<CampaignData> campaignDatas) {
         for (int i = 0; i < campaignDatas.size(); i++) {

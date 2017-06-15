@@ -137,7 +137,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
 
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         getKeywordsData();
 
     }
@@ -196,7 +196,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getYesterdayDate();
         toDate = Utils.getYesterdayDate();
-        textSelectedDateRange.setText(fromDate);
+        textSelectedDateRange.setText(Utils.getDisplayYesterdayDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -210,7 +210,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -225,7 +225,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplayThirtyDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;

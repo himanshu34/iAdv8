@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Utils {
 
@@ -44,33 +45,57 @@ public class Utils {
         return false;
     }
 
-    public static String getYesterdayDate(){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    public static String getDisplayYesterdayDate() {
+        DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.add(java.util.Calendar.DATE, -1);
         return dateFormat.format(cal.getTime());
     }
 
+    public static String getYesterdayDate() {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(java.util.Calendar.DATE, -1);
+        return dateFormat.format(cal.getTime());
+    }
+
+    public static String getDisplaySevenDayBeforeDate(){
+        DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(java.util.Calendar.DATE, -7);
+        return dateFormat.format(cal.getTime());
+    }
+
     public static String getSevenDayBeforeDate(){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.add(java.util.Calendar.DATE, -7);
         return dateFormat.format(cal.getTime());
     }
 
     public static String getCurrentDate(){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        return dateFormat.format(cal.getTime());
+    }
+
+    public static String getDisplayCurrentDate() {
+        DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
         java.util.Calendar cal = java.util.Calendar.getInstance();
         return dateFormat.format(cal.getTime());
     }
 
     public static String getThirtyDayBeforeDate(){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.add(java.util.Calendar.DATE, -30);
         return dateFormat.format(cal.getTime());
     }
 
-
-
+    public static String getDisplayThirtyDayBeforeDate() {
+        DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        cal.add(java.util.Calendar.DATE, -30);
+        return dateFormat.format(cal.getTime());
+    }
 }

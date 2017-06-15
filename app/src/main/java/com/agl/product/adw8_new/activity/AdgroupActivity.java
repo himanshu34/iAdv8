@@ -92,7 +92,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         filterPopup.setBackgroundDrawable(new BitmapDrawable());
         filterPopup.setFocusable(true);
 
-
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
 
         customDatePopup = new PopupWindow(this);
@@ -135,7 +134,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         });
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate+"-"+toDate);
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         getAdGroupData();
 
     }
@@ -202,7 +201,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getYesterdayDate();
         toDate = Utils.getYesterdayDate();
-        textSelectedDateRange.setText(fromDate);
+        textSelectedDateRange.setText(Utils.getDisplayYesterdayDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -216,7 +215,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate + "-" + toDate);
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate() + " - " + Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -230,7 +229,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(fromDate + "-" + toDate);
+        textSelectedDateRange.setText(Utils.getDisplayThirtyDayBeforeDate() + " - " + Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -315,10 +314,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                             textMessage.setText("Some error occured.");
                         } else
                             Toast.makeText(AdgroupActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-
                     }
-
-
                 }
             }
 
@@ -336,7 +332,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         });
-
     }
 
     private void createAdgroupTable(ArrayList<Adgroup> data) {
