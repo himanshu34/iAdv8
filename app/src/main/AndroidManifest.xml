@@ -41,6 +41,10 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".activity.LeadListDashboardActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".activity.KeywordsActivity"
             android:label="@string/title_activity_keywords"
             android:theme="@style/AppTheme.NoActionBar" />

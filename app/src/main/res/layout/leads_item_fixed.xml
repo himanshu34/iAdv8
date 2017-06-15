@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lms_lead_row_height"
+        android:gravity="center"
+        android:weightSum="4" >
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1.2"
+            android:background="@drawable/lms_lead_row_left"
+            android:gravity="center_vertical"
+            android:paddingLeft="@dimen/margin_small"
+            android:text="Follow Up"
+            android:textColor="@color/black"
+            android:textSize="@dimen/lms_lead_row_left"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.8"
+            android:background="@drawable/lms_lead_row_right"
+            android:gravity="center_vertical"
+            android:weightSum="2" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#FF906D"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Last: "
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/lms_lead_row_right" />
+
+                <TextView
+                    android:id="@+id/txt_last_follow_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nov 8, 2014"
+                    android:textSize="@dimen/lms_lead_row_right"
+                    android:textColor="@color/white"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#FE7246"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Next: "
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/lms_lead_row_right" />
+
+                <TextView
+                    android:id="@+id/txt_next_follow_val"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nov 8, 2014"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/lms_lead_row_right"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

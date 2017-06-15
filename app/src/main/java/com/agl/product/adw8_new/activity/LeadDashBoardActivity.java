@@ -181,11 +181,12 @@ public class LeadDashBoardActivity extends ActivityBase implements OnCustomDateD
         lvDashboardNew.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                startActivity(new Intent(LeadDashBoardActivity.this, LeadListDashboardActivity.class)
-//                        .putExtra(Constants.CURRENT__FROM_DATE, currentFromDate)
-//                        .putExtra(Constants.CURRENT_TO_DATE, currentToDate)
-//                        .putExtra(Constants.DATE_TYPE, dataType)
-//                        .putExtra(Constants.ID_TYPE_STATUS,arrayList.get(position).getStausId().toString()+","));
+                Leads leadsData = leadsArrayList.get(position);
+                startActivity(new Intent(LeadDashBoardActivity.this, LeadListDashboardActivity.class)
+                        .putExtra(Utils.CURRENT__FROM_DATE, currentFromDate)
+                        .putExtra(Utils.CURRENT_TO_DATE, currentToDate)
+                        .putExtra(Utils.DATE_TYPE, dataType)
+                        .putExtra(Utils.ID_TYPE_STATUS, leadsData.getStatus_id()+","));
             }
         });
     }
@@ -223,11 +224,11 @@ public class LeadDashBoardActivity extends ActivityBase implements OnCustomDateD
     }
 
     public void showCustomDateSelectorDialog() {
-        customDateSelectorDialog = (CustomDateSelectorDialog) fragmentManager.findFragmentByTag("tagDialogDateSelector");
+        customDateSelectorDialog = (CustomDateSelectorDialog) fragmentManager.findFragmentByTag(Utils.TAG_DIALOG_DATE_SELECTOR);
         if (customDateSelectorDialog == null) {
             customDateSelectorDialog = CustomDateSelectorDialog.newInstance(false);
         }
-        customDateSelectorDialog.show(fragmentManager, "tagDialogDateSelector");
+        customDateSelectorDialog.show(fragmentManager, Utils.TAG_DIALOG_DATE_SELECTOR);
     }
 
     @Override

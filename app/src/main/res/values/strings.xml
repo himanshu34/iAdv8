@@ -44,4 +44,7 @@
     <string name="txt_cancel">Cancel</string>
     <string name="txt_apply">Apply</string>
 
+    <string name="txt_lms_lead_date">Nov 8, 2014 10:45 AM</string>
+    <string name="txt_lms_lead_time">2h ago</string>
+
 </resources>
