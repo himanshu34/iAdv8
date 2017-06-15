@@ -10,9 +10,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     public static final String BASE_URL = "http://agldashboard.adv8.co/service/";
-    private static Retrofit retrofit = null;
+    public static final String BASE_URL_OLD = "http://adv8kuber.in/";
 
     public static Retrofit getClient() {
+        Retrofit retrofit = null;
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         final OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(interceptor)
@@ -24,6 +25,26 @@ public class ApiClient {
         if (retrofit==null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
+                    .client(okHttpClient)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
+
+    public static Retrofit getClientEarlier() {
+        Retrofit retrofit = null;
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        final OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(interceptor)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(2, TimeUnit.MINUTES)
+                .build();
+
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL_OLD)
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
