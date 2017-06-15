@@ -96,7 +96,15 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
         holder.mLineChart.getDescription().setText("");
 
         XAxis xAxis = holder.mLineChart.getXAxis();
-        xAxis.setGranularity(4f); // minimum axis-step (interval) is 5
+        if(entries.size() >= 1) {
+            xAxis.setGranularity(4f); // minimum axis-step (interval) is 4
+        } if(entries.size() >= 7) {
+            xAxis.setGranularity(5f);
+        } if(entries.size() >= 20) {
+            xAxis.setGranularity(10f);
+        } if(entries.size() >= 40) {
+            xAxis.setGranularity(20f);
+        }
         xAxis.setTextSize(12f);
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         holder.mLineChart.getAxisRight().setEnabled(false);

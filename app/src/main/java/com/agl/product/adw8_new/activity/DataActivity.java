@@ -121,8 +121,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
         textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
 
-
-
         headerLayout = (LinearLayout) findViewById(R.id.header_layout);
         rvHeaderData = (RecyclerView) findViewById(R.id.rvHeaderData);
         rvHeaderData.setNestedScrollingEnabled(false);
@@ -150,8 +148,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
         userData = session.getUsuarioDetails();
 
-        setList();
-
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
@@ -159,11 +155,10 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
 
+        setList();
         requestDashboardData();
-
         requestGraphDashboardData();
     }
-
 
     private void setList() {
         graphsListing = new ArrayList<Graph>();
@@ -404,10 +399,9 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         rvGroupData.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
+        setList();
         requestDashboardData();
         requestGraphDashboardData();
-
-
     }
 
     private void setLastSeven() {
@@ -428,6 +422,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         rvGroupData.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
+        setList();
         requestDashboardData();
         requestGraphDashboardData();
     }
@@ -450,6 +445,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         rvGroupData.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
 
+        setList();
         requestDashboardData();
         requestGraphDashboardData();
     }
