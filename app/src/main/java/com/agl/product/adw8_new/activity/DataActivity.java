@@ -64,7 +64,7 @@ import retrofit2.Response;
 
 public class DataActivity extends ActivityBase implements TabLayout.OnTabSelectedListener, View.OnClickListener {
 
-    public String TAG = "DataActivity", fromDate, toDate,fromDateToShow,toDateToShow;
+    public String TAG = "DataActivity", fromDate, toDate, fromDateToShow, toDateToShow;
     LinearLayout headerLayout;
     private RecyclerView rvHeaderData, rvGroupData, rvGraph;
     private TabLayout tabLayout;
@@ -88,6 +88,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange;
     private ConnectionDetector cd;
     private DatePickerDialog datePickerDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -372,7 +373,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                 setLastThirty();
                 break;
             case R.id.textCustom:
-
+                customDatePopup.dismiss();
                 AlertDialog builder = new ShowDateRangeDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
                 builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 builder.setCanceledOnTouchOutside(false);
@@ -402,6 +403,20 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         setList();
         requestDashboardData();
         requestGraphDashboardData();
+    }
+
+    private void setCustomDay(){
+        if (!cd.isConnectedToInternet()) return;
+        headerLayout.setVisibility(View.GONE);
+        rvGraph.setVisibility(View.GONE);
+        tabsLayout.setVisibility(View.GONE);
+        rvGroupData.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+        textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
+        setList();
+        requestDashboardData();
+        requestGraphDashboardData();
+
     }
 
     private void setLastSeven() {
@@ -546,7 +561,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     }
 
 
-
     private class showErrorDialog extends AlertDialog {
         protected showErrorDialog(Context context, String message) {
             super(context);
@@ -570,26 +584,32 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
 
     private class ShowDateRangeDialog extends AlertDialog {
+        String fromDisplay, toDisplay;
+        String fromDay, toDay;
+
         protected ShowDateRangeDialog(Context context, String message) {
             super(context);
             LayoutInflater inflater = getLayoutInflater();
             final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
             setView(dialogLayout);
 
+            LinearLayout llStartDate = (LinearLayout) dialogLayout.findViewById(R.id.llStartDate);
             final TextView textStartDate = (TextView) dialogLayout.findViewById(R.id.textStartDate);
+
+            LinearLayout llEndDate = (LinearLayout) dialogLayout.findViewById(R.id.llEndDate);
             final TextView textEndDate = (TextView) dialogLayout.findViewById(R.id.textEndDate);
-            final TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
-            final TextView textApply = (TextView) dialogLayout.findViewById(R.id.textApply);
+
+            TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
+            TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
+
+
+
+
             textStartDate.setText(fromDateToShow);
             textEndDate.setText(toDateToShow);
-            textStartDate.setOnClickListener(new View.OnClickListener() {
+            llStartDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                   /* AlertDialog builder = new startDateDialog(DataActivity.this, getResources().getString(R.string.instabilidade_servidor));
-                    builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                    builder.setCanceledOnTouchOutside(false);
-                    builder.setCancelable(false);
-                    builder.show();*/
                     datePickerDialog = new DatePickerDialog(DataActivity.this, R.style.datepicker, new DatePickerDialog.OnDateSetListener() {
                         @Override
                         public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
@@ -597,22 +617,46 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                             calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
                             DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
                             Date date = new Date(calendar.getTimeInMillis());
-                            textStartDate.setText(dateFormat.format(date));
+                            fromDisplay = dateFormat.format(date);
+
+                            DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                            Date date1 = new Date(calendar.getTimeInMillis());
+                            textStartDate.setText(fromDisplay);
+                            fromDay = dateFormat1.format(date1);
 
                         }
 
 
-                    }, 2000, 12, 12);
+                    }, 2017, 05, 15);
 
                     datePickerDialog.show();
 
                 }
             });
 
-            textEndDate.setOnClickListener(new View.OnClickListener() {
+            llEndDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    datePickerDialog = new DatePickerDialog(DataActivity.this, R.style.datepicker, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                            DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+                            Date date = new Date(calendar.getTimeInMillis());
+                            toDisplay = dateFormat.format(date);
 
+                            DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                            Date date1 = new Date(calendar.getTimeInMillis());
+                            textEndDate.setText(toDisplay);
+                            toDay = dateFormat1.format(date1);
+
+                        }
+
+
+                    },2017, 05, 15);
+
+                    datePickerDialog.show();
                 }
             });
 
@@ -623,10 +667,17 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                 }
             });
 
-            textApply.setOnClickListener(new View.OnClickListener() {
+            textOk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    if( fromDay != null && toDay != null && fromDisplay != null && toDisplay!= null  ){
+                        fromDate = fromDay;
+                        toDate = toDay;
+                        fromDateToShow = fromDisplay;
+                        toDateToShow = toDisplay;
+                    }
+                    setCustomDay();
+                    dismiss();
                 }
             });
 

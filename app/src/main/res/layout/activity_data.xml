@@ -112,37 +112,18 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <LinearLayout
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
                     android:paddingBottom="@dimen/_5sdp"
                     android:paddingLeft="@dimen/_12sdp"
                     android:paddingRight="@dimen/_12sdp"
-                    android:paddingTop="@dimen/_5sdp">
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="1dp"
-                        android:layout_weight="1"
-                        android:background="@color/black_berry" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_5sdp"
-                        android:layout_marginRight="@dimen/_5sdp"
-                        android:text="TOP PERFORMER"
-                        android:textColor="@color/black_berry"
-                        android:textSize="@dimen/_16sdp" />
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="1dp"
-                        android:layout_weight="1"
-                        android:background="@color/black_berry" />
-                </LinearLayout>
+                    android:paddingTop="@dimen/_10sdp"
+                    android:text="Top Performer"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/Roboto-Black.ttf"
+                    android:textColor="#7a7a7a"
+                    android:textSize="@dimen/_16sdp" />
 
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"

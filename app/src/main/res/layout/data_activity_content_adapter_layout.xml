@@ -9,15 +9,13 @@
     android:gravity="center_horizontal"
     android:layout_marginLeft="0.25dp"
     android:layout_marginRight="0.25dp"
-    android:padding="@dimen/_6sdp">
+    android:padding="@dimen/_8sdp">
 
     <TextView
         android:id="@+id/textView_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/_14sdp"
-        tools:ignore="MissingPrefix"
-        fontPath="fonts/Roboto-Medium.ttf" />
+        android:textSize="@dimen/_14sdp" />
 
     <View
         android:layout_width="1dp"
