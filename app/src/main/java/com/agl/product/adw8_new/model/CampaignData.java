@@ -7,6 +7,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class CampaignData implements Parcelable {
 
+    @SerializedName("advertising_channel")
+    private String advertising_channel;
+
     @SerializedName("campaign")
     private String campaign;
 
@@ -171,6 +174,7 @@ public class CampaignData implements Parcelable {
     }
 
     private void readFromParcel(Parcel in) {
+        this.advertising_channel = advertising_channel;
         this.campaign = in.readString();
         this.budget = in.readString();
         this.clicks = in.readString();
@@ -194,6 +198,7 @@ public class CampaignData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(advertising_channel);
         parcel.writeString(campaign);
         parcel.writeString(budget);
         parcel.writeString(clicks);
@@ -219,4 +224,12 @@ public class CampaignData implements Parcelable {
             return new CampaignData[size];
         }
     };
+
+    public String getAdvertising_channel() {
+        return advertising_channel;
+    }
+
+    public void setAdvertising_channel(String advertising_channel) {
+        this.advertising_channel = advertising_channel;
+    }
 }
