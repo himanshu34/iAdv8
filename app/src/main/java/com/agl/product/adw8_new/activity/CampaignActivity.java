@@ -22,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -91,6 +93,11 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private ConnectionDetector cd;
     private DatePickerDialog datePickerDialog;
     ImageView editIcon;
+    private CheckBox checkDisplay,checkSearch,checkEnabled;
+    private TextView textClear,textApply;
+    private String filterNetwork,filterNetworkValue;
+    private String filterEnable,filterEnableValue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +171,9 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textCustom.setOnClickListener(this);
 
 
+        textClear = (TextView) findViewById(R.id.textClear);
+        textApply = (TextView) findViewById(R.id.textApply);
+
         textCpa.setOnClickListener(this);
         textConv.setOnClickListener(this);
         textCtr.setOnClickListener(this);
@@ -172,6 +182,65 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textImpr.setOnClickListener(this);
         textClicks.setOnClickListener(this);
         textBudget.setOnClickListener(this);
+        textClear.setOnClickListener(this);
+        textApply.setOnClickListener(this);
+
+
+
+        checkDisplay = (CheckBox) findViewById(R.id.checkDisplay);
+        checkEnabled = (CheckBox) findViewById(R.id.checkEnabled);
+        checkSearch = (CheckBox) findViewById(R.id.checkSearch);
+
+        checkDisplay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                checkEnabled.setChecked(false);
+                checkSearch.setChecked(false);
+                if(b){
+                    filterNetwork = "advertising_channel";
+                    filterNetworkValue = "Display";
+                }else {
+                    filterNetwork = null;
+                    filterNetworkValue = null ;
+                }
+            }
+        });
+
+
+
+        checkEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                checkDisplay.setChecked(false);
+                checkSearch.setChecked(false);
+                if(b){
+                    filterEnable = "campaign_state";
+                    filterEnableValue = "enabled";
+                }else {
+                    filterEnable = null;
+                    filterEnableValue = null ;
+                }
+            }
+        });
+
+
+
+        checkSearch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                checkEnabled.setChecked(false);
+                checkDisplay.setChecked(false);
+                if(b){
+                    filterNetwork = "advertising_channel";
+                    filterNetworkValue = "Search";
+                }else {
+                    filterNetwork = null;
+                    filterNetworkValue = null ;
+                }
+            }
+        });
+
+
 
         userData = session.getUsuarioDetails();
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -207,6 +276,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         requestDataCampaignDetails.setOrderBy(sortingOrder);
         requestDataCampaignDetails.setSortBy(sortBy);
         requestDataCampaignDetails.setOffset(offset);
+
 
         if (offset == 0) {
             // Show loading on first time
@@ -412,11 +482,25 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setCampaignName(int i, CampaignData data) {
-        TableRow row = new TableRow(this);
+       /* TableRow row = new TableRow(this);
         View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
         TextView tv = (TextView) v.findViewById(R.id.text_view);
         tv.setText(data.getCampaign());
+        tlName.addView(v, i);*/
+
+
+        TableRow row = new TableRow(this);
+        View v = LayoutInflater.from(this).inflate(R.layout.top_campaign_first_row, row, false);
+        ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
+        TextView tv = (TextView) v.findViewById(R.id.text_view);
+        if(data.getAdvertising_channel().equalsIgnoreCase("display")) {
+            imageView.setImageResource(R.drawable.ic_campaign_display);
+        } else {
+            imageView.setImageResource(R.drawable.ic_campaign_search);
+        }
+        tv.setText(data.getCampaign());
         tlName.addView(v, i);
+
     }
 
     public void displayFilterLayout() {
@@ -438,6 +522,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()) {
             case R.id.llDateLayout:
                 customDatePopup.showAsDropDown(editIcon, 0, 20);
+//                filterPopup.showAtLocation(findViewById(R.id.menu_filter), Gravity.RIGHT | Gravity.TOP, 20, getActionBarHeight());
                 break;
             case R.id.textYesterday:
                 setYesterday();
@@ -473,6 +558,18 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             case R.id.textClicks:
                 break;
             case R.id.textBudget:
+                break;
+            case R.id.textClear:
+                checkDisplay.setChecked(false);
+                checkEnabled.setChecked(false);
+                checkSearch.setChecked(false);
+                break ;
+            case R.id.textApply:
+                if (!cd.isConnectedToInternet()) return;
+                offset = 0;
+                rowCount = 0;
+                getCampaignData();
+                filterPopup.dismiss();
                 break;
 
 

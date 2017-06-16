@@ -31,6 +31,30 @@ public class RequestDataCampaignDetails {
     @SerializedName("offset")
     private int offset;
 
+    @SerializedName("advertising_channel")
+    private String advertising_channel;
+
+    @SerializedName("campaign_state")
+    private String campaign_state;
+
+    public String getCampaign_state() {
+        return campaign_state;
+    }
+
+    public void setCampaign_state(String campaign_state) {
+        this.campaign_state = campaign_state;
+    }
+
+    public String getAdvertising_channel() {
+        return advertising_channel;
+    }
+
+
+
+    public void setAdvertising_channel(String advertising_channel) {
+        this.advertising_channel = advertising_channel;
+    }
+
     public String getAccess_token() {
         return access_token;
     }

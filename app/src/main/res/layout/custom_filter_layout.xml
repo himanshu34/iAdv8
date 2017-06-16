@@ -26,29 +26,32 @@
             />
 
         <CheckBox
+            android:id="@+id/checkDisplay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Network"
+            android:text="Display"
             android:paddingLeft="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_3sdp"
-            android:id="@+id/checkBox2" />
+             />
 
         <CheckBox
+            android:id="@+id/checkSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="All Campaign"
+            android:text="Search"
             android:paddingLeft="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_3sdp"
             android:layout_marginBottom="@dimen/_3sdp"
             />
 
         <CheckBox
+            android:id="@+id/checkEnabled"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Enabled Campaign"
             android:paddingLeft="@dimen/_15sdp"
             android:layout_marginBottom="@dimen/_3sdp"
-            android:id="@+id/checkBox" />
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -59,6 +62,7 @@
             android:layout_marginBottom="@dimen/_2sdp"
             >
             <TextView
+                android:id="@+id/textClear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="CLEAR"
@@ -69,6 +73,7 @@
                 android:padding="@dimen/_2sdp"
                 />
             <TextView
+                android:id="@+id/textApply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="APPLY"
