@@ -293,11 +293,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         row.addView(textView2);
 
 
-        // Avg Pos
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
-        TextView textView7 = (TextView) view.findViewById(R.id.text_view);
-        textView7.setText(adListingData.getAvg_position());
-        row.addView(textView7);
+        // conv.
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);

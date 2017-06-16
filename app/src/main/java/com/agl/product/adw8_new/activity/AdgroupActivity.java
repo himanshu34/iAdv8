@@ -382,13 +382,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textView2.setText(data.getCtr());
         row.addView(textView2);
 
-        // Avg Pos
-
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
-        TextView textView6 = (TextView) view.findViewById(R.id.text_view);
-        textView6.setText(data.getAvg_position());
-        row.addView(textView6);
-
+       // Conv
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
