@@ -19,6 +19,8 @@
     <string name="what_is_this">(What is this ?)</string>
     <string name="search_title">search</string>
 
+    <string name="rupee">\u20B9</string>
+
     <!--Compaign-->
     <string name="title_activity_campaign">Campaign</string>
 

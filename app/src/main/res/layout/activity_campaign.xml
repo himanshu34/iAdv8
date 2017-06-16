@@ -292,6 +292,7 @@
                             android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/textBudgetTotal"
                                 android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -304,6 +305,7 @@
                                 android:textColor="@color/black" />
 
                             <TextView
+                                android:id="@+id/textClicksTotal"
                                 android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -316,6 +318,7 @@
                                 android:textColor="@color/black" />
 
                             <TextView
+                                android:id="@+id/textImprTotal"
                                 android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -328,6 +331,7 @@
                                 android:textColor="@color/black" />
 
                             <TextView
+                                android:id="@+id/textAvgCpcTotal"
                                 android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -340,6 +344,7 @@
                                 android:textColor="@color/black" />
 
                             <TextView
+                                android:id="@+id/textCostTotal"
                                 android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -352,6 +357,7 @@
                                 android:textColor="@color/black" />
 
                             <TextView
+                                android:id="@+id/textCtrTotal"
                                 android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -366,6 +372,7 @@
 
 
                             <TextView
+                                android:id="@+id/textConvTotal"
                                 android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -378,6 +385,7 @@
                                 android:textColor="@color/black" />
 
                             <TextView
+                                android:id="@+id/textCpaTotal"
                                 android:layout_width="80dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
@@ -389,17 +397,7 @@
                                 android:textSize="@dimen/_12sdp"
                                 android:textColor="@color/black" />
 
-                            <TextView
-                                android:layout_width="80dp"
-                                android:layout_height="wrap_content"
-                                android:gravity="center"
-                                android:padding="5dp"
-                                android:text=""
-                                android:singleLine="true"
-                                android:background="#f7f7f7"
-                                android:minHeight="50dp"
-                                android:textSize="@dimen/_12sdp"
-                                android:textColor="@color/black" />
+
                         </LinearLayout>
                     </HorizontalScrollView>
                 </LinearLayout>

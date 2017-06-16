@@ -2,8 +2,10 @@ package com.agl.product.adw8_new.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 
-public class AdListingData {
+
+public class AdListingData implements Serializable {
 
 
     @SerializedName("ad")
@@ -41,6 +43,17 @@ public class AdListingData {
 
     @SerializedName("currency")
     private String currency;
+
+    @SerializedName("ad_type_custom")
+    private String ad_type_custom;
+
+    public String getAd_type_custom() {
+        return ad_type_custom;
+    }
+
+    public void setAd_type_custom(String ad_type_custom) {
+        this.ad_type_custom = ad_type_custom;
+    }
 
     public String getAd() {
         return ad;

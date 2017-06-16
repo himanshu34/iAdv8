@@ -92,10 +92,12 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private ConnectionDetector cd;
     private DatePickerDialog datePickerDialog;
     ImageView editIcon;
-    private CheckBox checkDisplay, checkSearch, checkEnabled;
+    private CheckBox checkDisplay, checkSearch, checkEnabled,checkDisabled;
     private TextView textClear, textApply;
     private String filterNetwork, filterNetworkValue;
     private String filterEnable, filterEnableValue;
+    private TextView textBudgetTotal, textClicksTotal,textImprTotal,textAvgCpcTotal,textCostTotal,textCtrTotal,textConvTotal,textCpaTotal;
+    private String rupeeSymbol;
 
 
     @Override
@@ -112,6 +114,8 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
 
         cd = new ConnectionDetector(this);
+
+        rupeeSymbol = getString(R.string.rupee);
 
         swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
         textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
@@ -134,6 +138,16 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textClicks = (TextView) findViewById(R.id.textClicks);
         textBudget = (TextView) findViewById(R.id.textBudget);
 
+//        , ,,,,,,;
+        textBudgetTotal = (TextView) findViewById(R.id.textBudgetTotal);
+        textClicksTotal = (TextView) findViewById(R.id.textClicksTotal);
+        textImprTotal = (TextView) findViewById(R.id.textImprTotal);
+        textAvgCpcTotal = (TextView) findViewById(R.id.textAvgCpcTotal);
+        textCostTotal = (TextView) findViewById(R.id.textCostTotal);
+        textCtrTotal = (TextView) findViewById(R.id.textCtrTotal);
+        textConvTotal = (TextView) findViewById(R.id.textConvTotal);
+        textCpaTotal = (TextView) findViewById(R.id.textCpaTotal);
+
 
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
         filterLayout = getLayoutInflater().inflate(R.layout.custom_filter_layout, null);
@@ -151,6 +165,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         checkDisplay = (CheckBox) filterLayout.findViewById(R.id.checkDisplay);
         checkEnabled = (CheckBox) filterLayout.findViewById(R.id.checkEnabled);
         checkSearch = (CheckBox) filterLayout.findViewById(R.id.checkSearch);
+        checkDisabled = (CheckBox) filterLayout.findViewById(R.id.checkDisabled);
 
 
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
@@ -193,6 +208,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(View view) {
                 checkEnabled.setChecked(false);
                 checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
                 if (checkDisplay.isChecked()) {
                     filterNetwork = "advertising_channel";
                     filterNetworkValue = "Display";
@@ -212,6 +228,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(View view) {
                 checkDisplay.setChecked(false);
                 checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
                 if (checkEnabled.isChecked()) {
                     filterEnable = "campaign_state";
                     filterEnableValue = "enabled";
@@ -231,6 +248,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             public void onClick(View view) {
                 checkEnabled.setChecked(false);
                 checkDisplay.setChecked(false);
+                checkDisabled.setChecked(false);
                 if (checkSearch.isChecked()) {
                     filterNetwork = "advertising_channel";
                     filterNetworkValue = "Search";
@@ -242,6 +260,28 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                     filterEnableValue = null ;
                     filterEnable = null ;
                 }
+            }
+        });
+
+        checkDisabled.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkSearch.setChecked(false);
+                checkDisplay.setChecked(false);
+                checkEnabled.setChecked(false);
+
+                if( checkDisabled.isChecked() ){
+                    filterEnable = "campaign_state";
+                    filterEnableValue = "disabled";
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                } else {
+                    filterEnable = null;
+                    filterEnableValue = null;
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                }
+
             }
         });
 
@@ -306,6 +346,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                                 llDataContainer.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.GONE);
+                                setTotalRow(campaignData);
                                 createCampaignTable(data);
                                 offset = offset + limit;
                             } else {
@@ -366,6 +407,26 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
+    private void setTotalRow(ResponseDataCampaignDetails campaignData) {
+       /*  = (TextView) findViewById(R.id.textBudgetTotal);
+         = (TextView) findViewById(R.id.textClicksTotal);
+         = (TextView) findViewById(R.id.textImprTotal);
+         = (TextView) findViewById(R.id.textAvgCpcTotal);
+         = (TextView) findViewById(R.id.textCostTotal);
+         = (TextView) findViewById(R.id.textCtrTotal);
+         = (TextView) findViewById(R.id.textConvTotal);
+         = (TextView) findViewById(R.id.textCpaTotal);*/
+        textBudgetTotal.setText(rupeeSymbol+" "+campaignData.getTotal().getBudget());
+        textClicksTotal.setText(campaignData.getTotal().getClicks());
+        textImprTotal.setText(campaignData.getTotal().getImpressions());
+        textAvgCpcTotal.setText(rupeeSymbol+" "+campaignData.getTotal().getAvg_cpc());
+        textCostTotal.setText(rupeeSymbol+" "+campaignData.getTotal().getCost());
+        textCtrTotal.setText(campaignData.getTotal().getCtr());
+        textConvTotal.setText(campaignData.getTotal().getConverted_clicks());
+        textCpaTotal.setText(rupeeSymbol+" "+campaignData.getTotal().getCpa());
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -394,7 +455,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         View view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
 
         TextView textView1 = (TextView) view.findViewById(R.id.text_view);
-        textView1.setText(campaignData.getBudget());
+        textView1.setText(rupeeSymbol+" "+campaignData.getBudget());
         row.addView(textView1);
 
 
@@ -429,7 +490,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         textView4 = (TextView) view.findViewById(R.id.text_view);
-        textView4.setText(campaignData.getAvg_cpc());
+        textView4.setText(rupeeSymbol+" "+campaignData.getAvg_cpc());
         row.addView(textView4);
 
         TextView textView5 = new TextView(this);
@@ -440,7 +501,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         textView5 = (TextView) view.findViewById(R.id.text_view);
-        textView5.setText(campaignData.getCost());
+        textView5.setText(rupeeSymbol+" "+campaignData.getCost());
         row.addView(textView5);
 
         TextView textView6 = new TextView(this);
@@ -481,7 +542,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         textView9 = (TextView) view.findViewById(R.id.text_view);
-        textView9.setText(campaignData.getCpa());
+        textView9.setText(rupeeSymbol+" "+campaignData.getCpa());
         row.addView(textView9);
 
         tlValues.addView(row, i);
@@ -495,7 +556,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         TextView tv = (TextView) v.findViewById(R.id.text_view);
         if (data.getAdvertising_channel().equalsIgnoreCase("display")) {
             imageView.setImageResource(R.drawable.ic_campaign_display);
-        } else {
+        } else{
             imageView.setImageResource(R.drawable.ic_campaign_search);
         }
         tv.setText(data.getCampaign());
@@ -521,7 +582,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         switch (view.getId()) {
             case R.id.llDateLayout:
                 customDatePopup.showAsDropDown(editIcon, 0, 20);
-//                filterPopup.showAtLocation(findViewById(R.id.menu_filter), Gravity.RIGHT | Gravity.TOP, 20, getActionBarHeight());
                 break;
             case R.id.textYesterday:
                 setYesterday();
@@ -566,6 +626,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                 checkDisplay.setChecked(false);
                 checkEnabled.setChecked(false);
                 checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
                 break;
             case R.id.textApply:
                 if (!cd.isConnectedToInternet()) return;

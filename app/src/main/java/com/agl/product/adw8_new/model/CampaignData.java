@@ -168,6 +168,14 @@ public class CampaignData implements Parcelable {
         this.avg_position = avg_position;
     }
 
+    public String getAdvertising_channel() {
+        return advertising_channel;
+    }
+
+    public void setAdvertising_channel(String advertising_channel) {
+        this.advertising_channel = advertising_channel;
+    }
+
     public CampaignData(Parcel in) {
         this();
         readFromParcel(in);
@@ -225,11 +233,5 @@ public class CampaignData implements Parcelable {
         }
     };
 
-    public String getAdvertising_channel() {
-        return advertising_channel;
-    }
 
-    public void setAdvertising_channel(String advertising_channel) {
-        this.advertising_channel = advertising_channel;
-    }
 }

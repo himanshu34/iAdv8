@@ -24,6 +24,7 @@ public class DataAdsFragment extends Fragment {
     HorizontalScrollView hrHeader, hrData;
     TableLayout tlAddName, tlDataTable;
     private ArrayList<Ads> adData;
+    private String rupeeSymbol;
 
     @Nullable
     @Override
@@ -34,7 +35,7 @@ public class DataAdsFragment extends Fragment {
         tlAddName = (TableLayout) rootView.findViewById(R.id.tlAdName);
         hrData = (HorizontalScrollView) rootView.findViewById(R.id.hrData);
         tlDataTable = (TableLayout) rootView.findViewById(R.id.data_table_layout);
-
+        rupeeSymbol = getString(R.string.rupee);
         if(getArguments().containsKey("adsList")) {
             adData = getArguments().getParcelableArrayList("adsList");
             createTable(adData);
@@ -81,12 +82,12 @@ public class DataAdsFragment extends Fragment {
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView3 = (TextView) view.findViewById(R.id.text_view);
-        textView3.setText(adsData.getAvg_cpc());
+        textView3.setText(rupeeSymbol+" "+adsData.getAvg_cpc());
         row.addView(textView3);
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView4 = (TextView) view.findViewById(R.id.text_view);
-        textView4.setText(adsData.getCost());
+        textView4.setText(rupeeSymbol+" "+adsData.getCost());
         row.addView(textView4);
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
@@ -101,7 +102,7 @@ public class DataAdsFragment extends Fragment {
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView8 = (TextView) view.findViewById(R.id.text_view);
-        textView8.setText(adsData.getCpa());
+        textView8.setText(rupeeSymbol+" "+adsData.getCpa());
         row.addView(textView8);
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );

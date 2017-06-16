@@ -2,6 +2,7 @@ package com.agl.product.adw8_new.service.data;
 
 
 import com.agl.product.adw8_new.model.Keywords;
+import com.agl.product.adw8_new.model.Total;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
@@ -16,6 +17,9 @@ public class ResponseDataKeywords {
 
     @SerializedName("data")
     private ArrayList<Keywords> data;
+
+    @SerializedName("total")
+    private Total total;
 
     public int getError() {
         return error;
@@ -39,5 +43,13 @@ public class ResponseDataKeywords {
 
     public void setData(ArrayList<Keywords> data) {
         this.data = data;
+    }
+
+    public Total getTotal() {
+        return total;
+    }
+
+    public void setTotal(Total total) {
+        this.total = total;
     }
 }

@@ -24,6 +24,7 @@ public class DataCampaignFragment extends Fragment {
     HorizontalScrollView hrHeader, hrData;
     TableLayout tlAddName, tlDataTable;
     private ArrayList<CampaignData> campaignData;
+    private String rupeeSymbol;
 
     @Nullable
     @Override
@@ -33,6 +34,8 @@ public class DataCampaignFragment extends Fragment {
         tlAddName = (TableLayout) rootView.findViewById(R.id.tlAdName);
         hrData = (HorizontalScrollView) rootView.findViewById(R.id.hrData);
         tlDataTable = (TableLayout) rootView.findViewById(R.id.data_table_layout);
+
+        rupeeSymbol = getString(R.string.rupee);
 
         if(getArguments().containsKey("campaignList")) {
             campaignData = getArguments().getParcelableArrayList("campaignList");
@@ -70,7 +73,7 @@ public class DataCampaignFragment extends Fragment {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView1 = (TextView) view.findViewById(R.id.text_view);
-        textView1.setText(campaignData.getBudget());
+        textView1.setText(rupeeSymbol+" "+campaignData.getBudget());
         row.addView(textView1);
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
@@ -85,12 +88,12 @@ public class DataCampaignFragment extends Fragment {
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView4 = (TextView) view.findViewById(R.id.text_view);
-        textView4.setText(campaignData.getAvg_cpc());
+        textView4.setText(rupeeSymbol+" "+campaignData.getAvg_cpc());
         row.addView(textView4);
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
-        textView5.setText(campaignData.getCost());
+        textView5.setText(rupeeSymbol+" "+campaignData.getCost());
         row.addView(textView5);
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
@@ -105,7 +108,7 @@ public class DataCampaignFragment extends Fragment {
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView9 = (TextView) view.findViewById(R.id.text_view);
-        textView9.setText(campaignData.getCpa());
+        textView9.setText(rupeeSymbol+" "+campaignData.getCpa());
         row.addView(textView9);
 
         tlDataTable.addView(row, pos, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));

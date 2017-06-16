@@ -31,10 +31,12 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
     private DataActivity activity;
     private ArrayList<Graph> list;
     String[] mStringArray;
+    private String rupeeSymbol;
 
     public DataActivityGraphAdapter(DataActivity activity, ArrayList<Graph> list) {
         this.activity = activity;
         this.list = list;
+        rupeeSymbol = this.activity.getString(R.string.rupee);
     }
 
     @Override
@@ -46,8 +48,15 @@ public class DataActivityGraphAdapter  extends RecyclerView.Adapter<DataActivity
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Graph graphData = list.get(position);
+
+        String textShow = "";
+        if(graphData.getKey().equalsIgnoreCase("cost")||graphData.getKey().equalsIgnoreCase("cpa") ){
+            textShow = rupeeSymbol+" ";
+        }
+        textShow = textShow+graphData.getTotal();
+
         holder.titleTextView.setText(graphData.getKey().toUpperCase());
-        holder.countTextView.setText(graphData.getTotal());
+        holder.countTextView.setText(textShow);
 
         holder.hintTextView.setOnClickListener(new View.OnClickListener() {
             @Override

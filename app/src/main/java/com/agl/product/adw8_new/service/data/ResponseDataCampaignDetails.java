@@ -1,6 +1,7 @@
 package com.agl.product.adw8_new.service.data;
 
 import com.agl.product.adw8_new.model.CampaignData;
+import com.agl.product.adw8_new.model.Total;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -16,6 +17,18 @@ public class ResponseDataCampaignDetails implements Serializable {
 
     @SerializedName("data")
     private ArrayList<CampaignData> data;
+
+    public Total getTotal() {
+        return total;
+    }
+
+    public void setTotal(Total total) {
+        this.total = total;
+    }
+
+    @SerializedName("total")
+
+    private Total total;
 
     public String getError() {
         return error;

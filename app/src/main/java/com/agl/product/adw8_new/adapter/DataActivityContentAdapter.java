@@ -18,10 +18,12 @@ public class DataActivityContentAdapter extends RecyclerView.Adapter<DataActivit
 
     private DataActivity activity;
     private ArrayList<Graph> list;
+    private String rupeeSymbol;
 
     public DataActivityContentAdapter(DataActivity activity, ArrayList<Graph> list) {
         this.activity = activity;
         this.list = list;
+        rupeeSymbol = this.activity.getString(R.string.rupee);
     }
 
     @Override
@@ -43,8 +45,13 @@ public class DataActivityContentAdapter extends RecyclerView.Adapter<DataActivit
             holder.countTextView.setTextColor(Color.parseColor("#9d9d9d"));
         }
 
+        String textShow = "";
+        if(graphData.getKey().equalsIgnoreCase("cost")||graphData.getKey().equalsIgnoreCase("cpa") ){
+            textShow = rupeeSymbol+" ";
+        }
+        textShow = textShow+graphData.getTotal();
         holder.titleTextView.setText(graphData.getKey());
-        holder.countTextView.setText(graphData.getTotal());
+        holder.countTextView.setText(textShow);
     }
 
     @Override

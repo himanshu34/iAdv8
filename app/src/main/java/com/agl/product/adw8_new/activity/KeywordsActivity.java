@@ -23,8 +23,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
@@ -76,6 +78,13 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
     private String fromDate,toDate, fromDateToShow, toDateToShow;
     private ConnectionDetector cd;
     private DatePickerDialog datePickerDialog;
+    private CheckBox checkDisplay, checkSearch, checkEnabled,checkDisabled;
+    private TextView textClear, textApply;
+    private String filterNetwork, filterNetworkValue;
+    private String filterEnable, filterEnableValue;
+    private TextView textClicksTotal,textImprTotal,textAvgCpcTotal,textCostTotal,textCtrTotal,textConvTotal,textCpaTotal;
+    private ImageView editIcon;
+    private String rupeeSymbol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +97,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
         cd = new ConnectionDetector( this );
+        rupeeSymbol = getString(R.string.rupee);
 
         keywordsList = new ArrayList<Keywords>();
         swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
@@ -102,6 +112,8 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         tlName = (TableLayout) findViewById(R.id.tlName);
         textMessage = (TextView) findViewById(R.id.textMessage);
 
+        editIcon = (ImageView) findViewById(R.id.edit_icon);
+
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
         filterLayout = getLayoutInflater().inflate(R.layout.custom_filter_layout, null);
         filterPopup = new PopupWindow(this);
@@ -112,6 +124,16 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         filterPopup.setContentView(filterLayout);
         filterPopup.setBackgroundDrawable(new BitmapDrawable());
         filterPopup.setFocusable(true);
+
+        textClear = (TextView) filterLayout.findViewById(R.id.textClear);
+        textApply = (TextView) filterLayout.findViewById(R.id.textApply);
+        checkDisplay = (CheckBox) filterLayout.findViewById(R.id.checkDisplay);
+        checkEnabled = (CheckBox) filterLayout.findViewById(R.id.checkEnabled);
+        checkSearch = (CheckBox) filterLayout.findViewById(R.id.checkSearch);
+        checkDisabled = (CheckBox) filterLayout.findViewById(R.id.checkDisabled);
+
+        checkDisplay.setVisibility(View.GONE);
+        checkSearch.setVisibility(View.GONE);
 
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
 
@@ -128,12 +150,105 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
         textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
 
+
+        textClicksTotal = (TextView) findViewById(R.id.textClicksTotal);
+        textImprTotal = (TextView) findViewById(R.id.textImprTotal);
+        textAvgCpcTotal = (TextView) findViewById(R.id.textAvgCpcTotal);
+        textCostTotal = (TextView) findViewById(R.id.textCostTotal);
+        textCtrTotal = (TextView) findViewById(R.id.textCtrTotal);
+        textConvTotal = (TextView) findViewById(R.id.textConvTotal);
+        textCpaTotal = (TextView) findViewById(R.id.textCpaTotal);
+
         llDateLayout.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
         textYesterday.setOnClickListener(this);
         textLastSevenDays.setOnClickListener(this);
         textLastThirtyDays.setOnClickListener(this);
         textCustom.setOnClickListener(this);
+        textClear.setOnClickListener(this);
+        textApply.setOnClickListener(this);
+
+        checkDisplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkEnabled.setChecked(false);
+                checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
+                if (checkDisplay.isChecked()) {
+                    filterNetwork = "advertising_channel";
+                    filterNetworkValue = "Display";
+                    filterEnable = null;
+                    filterEnableValue = null;
+                } else {
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                    filterEnableValue = null ;
+                    filterEnable = null;
+                }
+            }
+        });
+
+        checkEnabled.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkDisplay.setChecked(false);
+                checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
+                if (checkEnabled.isChecked()) {
+                    filterEnable = "campaign_state";
+                    filterEnableValue = "enabled";
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                } else {
+                    filterEnable = null;
+                    filterEnableValue = null;
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                }
+            }
+        });
+
+        checkSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkEnabled.setChecked(false);
+                checkDisplay.setChecked(false);
+                checkDisabled.setChecked(false);
+                if (checkSearch.isChecked()) {
+                    filterNetwork = "advertising_channel";
+                    filterNetworkValue = "Search";
+                    filterEnable = null;
+                    filterEnableValue = null;
+                } else {
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                    filterEnableValue = null ;
+                    filterEnable = null ;
+                }
+            }
+        });
+
+        checkDisabled.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkSearch.setChecked(false);
+                checkDisplay.setChecked(false);
+                checkEnabled.setChecked(false);
+
+                if( checkDisabled.isChecked() ){
+                    filterEnable = "campaign_state";
+                    filterEnableValue = "disabled";
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                } else {
+                    filterEnable = null;
+                    filterEnableValue = null;
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                }
+
+            }
+        });
 
         userData = session.getUsuarioDetails();
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -177,7 +292,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llDateLayout:
-                customDatePopup.showAsDropDown(llDateLayout, 0, 10);
+                customDatePopup.showAsDropDown(editIcon, 0, 20);
                 break;
             case R.id.textYesterday :
                 setYesterday();
@@ -195,6 +310,23 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                 builder.setCanceledOnTouchOutside(false);
                 builder.setCancelable(false);
                 builder.show();
+                break;
+            case R.id.textClear:
+                filterEnable = null;
+                filterEnableValue = null;
+                filterNetworkValue = null;
+                filterNetwork = null;
+                checkDisplay.setChecked(false);
+                checkEnabled.setChecked(false);
+                checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
+                break;
+            case R.id.textApply:
+                if (!cd.isConnectedToInternet()) return;
+                offset = 0;
+                rowCount = 0;
+                getKeywordsData();
+                filterPopup.dismiss();
                 break;
 
         }
@@ -292,6 +424,10 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         requestKeywords.setSortBy("clicks");
         requestKeywords.setpId("1");
         requestKeywords.setOffset(offset);
+        if (filterEnableValue != null && filterEnable != null)
+            requestKeywords.setCampaign_state(filterEnableValue);
+        if (filterNetwork != null && filterNetworkValue != null)
+            requestKeywords.setAdvertising_channel(filterNetworkValue);
         if(offset == 0) {
             llDataContainer.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
@@ -313,6 +449,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.GONE);
                                     keywordsList.addAll(keywords);
+                                    setTotalRow(res);
                                     createKeywordsTable(keywords);
                                     offset = offset + limit;
                                 }else {
@@ -372,6 +509,18 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         });
     }
 
+    private void setTotalRow(ResponseDataKeywords res) {
+//        ,,,,,,;
+        textClicksTotal.setText(res.getTotal().getClicks());
+        textImprTotal.setText(res.getTotal().getImpressions());
+        textAvgCpcTotal.setText(rupeeSymbol+" "+res.getTotal().getAvg_cpc());
+        textCostTotal.setText(rupeeSymbol+" "+res.getTotal().getCost());
+        textCtrTotal.setText(res.getTotal().getCtr());
+        textConvTotal.setText(res.getTotal().getConverted_clicks());
+        textCpaTotal.setText(rupeeSymbol+" "+res.getTotal().getCpa());
+
+    }
+
     private void createKeywordsTable(ArrayList<Keywords> keywordsData) {
         for (int i = 0; i < keywordsData.size(); i++) {
             TableRow row1 = new TableRow(this);
@@ -397,12 +546,12 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
-        textView5.setText(keyword.getAvg_cpc());
+        textView5.setText(rupeeSymbol+" "+keyword.getAvg_cpc());
         row.addView(textView5);
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView3 = (TextView) view.findViewById(R.id.text_view);
-        textView3.setText(keyword.getCost());
+        textView3.setText(rupeeSymbol+" "+keyword.getCost());
         row.addView(textView3);
 
         //CTR
@@ -419,7 +568,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView6 = (TextView) view.findViewById(R.id.text_view);
-        textView6.setText(keyword.getCpa());
+        textView6.setText(rupeeSymbol+" "+keyword.getCpa());
         row.addView(textView6);
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );

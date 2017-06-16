@@ -56,6 +56,16 @@
             android:layout_marginBottom="@dimen/_3sdp"
             />
 
+        <CheckBox
+            android:id="@+id/checkDisabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Disabled Campaign"
+            android:paddingLeft="@dimen/_15sdp"
+            android:theme="@style/CustomCheckBox"
+            android:layout_marginBottom="@dimen/_3sdp"
+            />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

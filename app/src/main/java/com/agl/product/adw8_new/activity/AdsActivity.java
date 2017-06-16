@@ -22,8 +22,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
@@ -74,6 +76,13 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
     private String fromDate,toDate, fromDateToShow, toDateToShow;
     private ConnectionDetector cd;
     private DatePickerDialog datePickerDialog;
+    private CheckBox checkDisplay, checkSearch, checkEnabled,checkDisabled;
+    private TextView textClear, textApply;
+    private String filterNetwork, filterNetworkValue;
+    private String filterEnable, filterEnableValue;
+    private ImageView editIcon;
+    private TextView textClicksTotal,textImprTotal,textAvgCpcTotal,textCostTotal,textCtrTotal,textConvTotal,textCpaTotal,textConvRateTotal;
+    private String rupeeSymbol;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +98,8 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
 
         keywordsList = new ArrayList<Keywords>();
+        rupeeSymbol = getString(R.string.rupee);
+
         swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
         textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -98,6 +109,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         hrsecond = (HorizontalScrollView) findViewById(R.id.hrsecond);
         hrbottom = (HorizontalScrollView) findViewById(R.id.hrbottom);
         tlName = (TableLayout) findViewById(R.id.tlName);
+        editIcon = (ImageView) findViewById(R.id.edit_icon);
         textMessage = (TextView) findViewById(R.id.textMessage);
 
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
@@ -110,6 +122,13 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         filterPopup.setContentView(filterLayout);
         filterPopup.setBackgroundDrawable(new BitmapDrawable());
         filterPopup.setFocusable(true);
+
+        textClear = (TextView) filterLayout.findViewById(R.id.textClear);
+        textApply = (TextView) filterLayout.findViewById(R.id.textApply);
+        checkDisplay = (CheckBox) filterLayout.findViewById(R.id.checkDisplay);
+        checkEnabled = (CheckBox) filterLayout.findViewById(R.id.checkEnabled);
+        checkSearch = (CheckBox) filterLayout.findViewById(R.id.checkSearch);
+        checkDisabled = (CheckBox) filterLayout.findViewById(R.id.checkDisabled);
 
 
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
@@ -127,14 +146,112 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
         textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
 
+
+
+//        ,,,,,,,;
+        textClicksTotal = (TextView) findViewById(R.id.textClicksTotal);
+        textImprTotal = (TextView) findViewById(R.id.textImprTotal);
+        textAvgCpcTotal = (TextView) findViewById(R.id.textAvgCpcTotal);
+        textCostTotal = (TextView) findViewById(R.id.textCostTotal);
+        textCtrTotal = (TextView) findViewById(R.id.textCtrTotal);
+        textConvTotal = (TextView) findViewById(R.id.textConvTotal);
+        textCpaTotal = (TextView) findViewById(R.id.textCpaTotal);
+        textConvRateTotal = (TextView) findViewById(R.id.textConvRateTotal);
+
         llDateLayout.setOnClickListener(this);
         swipeRefreshLayout.setOnRefreshListener(this);
         textYesterday.setOnClickListener(this);
         textLastSevenDays.setOnClickListener(this);
         textLastThirtyDays.setOnClickListener(this);
         textCustom.setOnClickListener(this);
+        textClear.setOnClickListener(this);
+        textApply.setOnClickListener(this);
 
         cd = new ConnectionDetector(this );
+
+
+        checkDisplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkEnabled.setChecked(false);
+                checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
+                if (checkDisplay.isChecked()) {
+                    filterNetwork = "advertising_channel";
+                    filterNetworkValue = "Display";
+                    filterEnable = null;
+                    filterEnableValue = null;
+                } else {
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                    filterEnableValue = null ;
+                    filterEnable = null;
+                }
+            }
+        });
+
+        checkEnabled.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkDisplay.setChecked(false);
+                checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
+                if (checkEnabled.isChecked()) {
+                    filterEnable = "campaign_state";
+                    filterEnableValue = "enabled";
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                } else {
+                    filterEnable = null;
+                    filterEnableValue = null;
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                }
+            }
+        });
+
+        checkSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkEnabled.setChecked(false);
+                checkDisplay.setChecked(false);
+                checkDisabled.setChecked(false);
+                if (checkSearch.isChecked()) {
+                    filterNetwork = "advertising_channel";
+                    filterNetworkValue = "Search";
+                    filterEnable = null;
+                    filterEnableValue = null;
+                } else {
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                    filterEnableValue = null ;
+                    filterEnable = null ;
+                }
+            }
+        });
+
+        checkDisabled.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkSearch.setChecked(false);
+                checkDisplay.setChecked(false);
+                checkEnabled.setChecked(false);
+
+                if( checkDisabled.isChecked() ){
+                    filterEnable = "campaign_state";
+                    filterEnableValue = "disabled";
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                } else {
+                    filterEnable = null;
+                    filterEnableValue = null;
+                    filterNetwork = null;
+                    filterNetworkValue = null;
+                }
+
+            }
+        });
+
 
         userData = session.getUsuarioDetails();
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -157,7 +274,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llDateLayout:
-                customDatePopup.showAsDropDown(llDateLayout, 0, 10);
+                customDatePopup.showAsDropDown(editIcon, 0, 20);
                 break;
             case R.id.textYesterday :
                 setYesterday();
@@ -175,6 +292,23 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
                 builder.setCanceledOnTouchOutside(false);
                 builder.setCancelable(false);
                 builder.show();
+                break;
+            case R.id.textClear:
+                filterEnable = null;
+                filterEnableValue = null;
+                filterNetworkValue = null;
+                filterNetwork = null;
+                checkDisplay.setChecked(false);
+                checkEnabled.setChecked(false);
+                checkSearch.setChecked(false);
+                checkDisabled.setChecked(false);
+                break;
+            case R.id.textApply:
+                if (!cd.isConnectedToInternet()) return;
+                offset = 0;
+                rowCount = 0;
+                getAdsData();
+                filterPopup.dismiss();
                 break;
 
         }
@@ -194,6 +328,10 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         requestDataAds.setSortBy("clicks");
         requestDataAds.setpId("1");
         requestDataAds.setOffset(offset);
+        if (filterEnableValue != null && filterEnable != null)
+            requestDataAds.setCampaign_state(filterEnableValue);
+        if (filterNetwork != null && filterNetworkValue != null)
+            requestDataAds.setAdvertising_channel(filterNetworkValue);
 
         if( offset == 0 ){
             // Show loading on first time
@@ -218,6 +356,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.GONE);
                                     createAdsTable(adListingData);
+                                    setTotalRow(adsData);
                                     offset = offset + limit ;
                                 }else {
                                     if( offset == 0 ){
@@ -264,6 +403,17 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
         });
     }
 
+    private void setTotalRow(ResponseDataAds adsData) {
+        textClicksTotal.setText(adsData.getTotal().getClicks());
+        textImprTotal.setText(adsData.getTotal().getImpressions());
+        textAvgCpcTotal.setText(rupeeSymbol+" "+adsData.getTotal().getAvg_cpc());
+        textCostTotal.setText(rupeeSymbol+" "+adsData.getTotal().getCost());
+        textCtrTotal.setText(adsData.getTotal().getCtr());
+        textConvTotal.setText(adsData.getTotal().getConverted_clicks());
+        textCpaTotal.setText(rupeeSymbol+" "+adsData.getTotal().getCpa());
+        textConvRateTotal.setText(rupeeSymbol+" "+adsData.getTotal().getCpa());
+    }
+
     private void createAdsTable(ArrayList<AdListingData> adListingData) {
         for (int i = 0; i < adListingData.size(); i++) {
             TableRow row1 = new TableRow(this);
@@ -295,14 +445,14 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView6 = (TextView) view.findViewById(R.id.text_view);
-        textView6.setText(adListingData.getAvg_cpc());
+        textView6.setText(rupeeSymbol+" "+adListingData.getAvg_cpc());
         row.addView(textView6);
 
 
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView4 = (TextView) view.findViewById(R.id.text_view);
-        textView4.setText(adListingData.getCost());
+        textView4.setText(rupeeSymbol+" "+adListingData.getCost());
         row.addView(textView4);
 
 
@@ -324,7 +474,7 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView8 = (TextView) view.findViewById(R.id.text_view);
-        textView8.setText(adListingData.getCpa());
+        textView8.setText(rupeeSymbol+" "+adListingData.getCpa());
         row.addView(textView8);
 
         // Conv rate
@@ -340,11 +490,25 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
     }
 
     private void setAdsName(int i, AdListingData data) {
-        TableRow row = new TableRow(this);
+      /*  TableRow row = new TableRow(this);
         View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
         TextView tv = (TextView)v.findViewById(R.id.text_view);
         tv.setText(data.getAd());
+        tlName.addView(v, i);*/
+
+
+        TableRow row = new TableRow(this);
+        View v = LayoutInflater.from(this).inflate(R.layout.campaign_first_row, row, false);
+        ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
+        TextView tv = (TextView) v.findViewById(R.id.text_view);
+        if (data.getAd_type_custom().equalsIgnoreCase("display")) {
+            imageView.setImageResource(R.drawable.ic_campaign_display);
+        } else if(data.getAd_type_custom().equalsIgnoreCase("search")){
+            imageView.setImageResource(R.drawable.ic_campaign_search);
+        }
+        tv.setText(data.getAd());
         tlName.addView(v, i);
+
     }
 
     private void setYesterday() {
