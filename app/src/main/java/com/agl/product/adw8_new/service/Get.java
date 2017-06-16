@@ -1,6 +1,7 @@
 package com.agl.product.adw8_new.service;
 
 import com.agl.product.adw8_new.service.data.ResponseDataLeads;
+import com.agl.product.adw8_new.service.data.ResponseDataLeadsDetails;
 import com.agl.product.adw8_new.service.data.ResponseDataLeadsListing;
 
 import retrofit2.Call;
@@ -14,4 +15,7 @@ public interface Get {
 
     @GET()
     Call<ResponseDataLeadsListing> getLeadsLmsData(@Url String url);
+
+    @GET()
+    Call<ResponseDataLeadsDetails> getLeadsDetailsData(@Url String url);
 }

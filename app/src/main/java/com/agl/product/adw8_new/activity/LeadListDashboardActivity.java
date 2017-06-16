@@ -2,7 +2,6 @@ package com.agl.product.adw8_new.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,7 +10,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
@@ -28,8 +26,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -52,9 +48,6 @@ import com.agl.product.adw8_new.utils.RecyclerTouchListener;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -73,7 +66,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
     private SwipeRefreshLayoutBottom swipeRefreshLayoutBottom;
     private RecyclerView rvLeads;
     private AdapterLeads adapterLeads;
-    private ArrayList<LmsLead> parserArrLmsLead;
     private Spinner spinnerDateSelector;
     private String arrDateSelector[];
     private AdapterSpinnerDateSelector adapterSpinnerDateSelector;
@@ -83,12 +75,9 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
     private CustomDateSelectorDialog customDateSelectorDialog;
     private FragmentManager fragmentManager;
     private int OFFSET_PAGE = 0;
-    //private String currentSearchString = "";
     private boolean ifMoreData = true;
     Intent intent;
     String WEB_FORM_ID=null;
-    private String leadDashBoardItemValue=null;
-    String GCMleadId=null;
     private String dateType = Utils.DATE_TYPE;
     private String statusId="";
     IAdv8Database database = new IAdv8Database(this,"Iadv8.db",null,1);
@@ -98,9 +87,9 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
     String ownerIds="";
     private String currentSearchString = "";
     Cursor curCampaign,curLanding,curOwners,curStatus;
-    private Button btnFilterCounter,buttonFac;
     SearchView searchView;
     Session session;
+    private ArrayList<LmsLead> leadsListing;
     HashMap<String, String> userData;
 
     @Override
@@ -131,8 +120,7 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         }
 
         userData = session.getUsuarioDetails();
-
-        btnFilterCounter=(Button)findViewById(R.id.btn_filter_counter);
+        leadsListing = new ArrayList<LmsLead>();
         swipeRefreshLayoutBottom = (SwipeRefreshLayoutBottom) findViewById(R.id.swipe_leads_list);
         swipeRefreshLayoutBottom.setOnRefreshListener(this);
         progressLeads = (ProgressBar) findViewById(R.id.progress_leads);
@@ -159,18 +147,18 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
             @Override
             public void onClick(View view, int position) {
                 String leadId = "";
-                if (parserArrLmsLead != null) {
-                    LmsLead lmsLead = parserArrLmsLead.get(position);
+                if (leadsListing != null) {
+                    LmsLead lmsLead = leadsListing.get(position);
                     leadId = lmsLead.getLead_id();
                 }
 
-//                if (!Util.isEmptyString(leadId)) {
-//                    Intent intentLeadDetails = new Intent(LeadListDashboardActivity.this, LeadDetailsPage.class);
-//                    intentLeadDetails.putExtra(Utils.LEAD_ID, leadId);
-//                    startActivity(intentLeadDetails);
-//                } else {
-//                    Log.e(TAG, "Lead id is null");
-//                }
+                if (!Utils.isEmptyString(leadId)) {
+                    Intent intentLeadDetails = new Intent(LeadListDashboardActivity.this, LeadDetailsActivity.class);
+                    intentLeadDetails.putExtra(Utils.LEAD_ID, leadId);
+                    startActivity(intentLeadDetails);
+                } else {
+                    Log.e(TAG, "Lead id is null");
+                }
             }
 
             @Override
@@ -203,19 +191,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
             spinnerDateSelector.setSelection(arrDateSelector.length - 1);
             getLeadsData(currentToDate, currentFromDate, false,"");
         }
-
-
-        buttonFac=(Button)findViewById(R.id.button_fac);
-        buttonFac.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent = new Intent(LeadListDashboardActivity.this, LeadFilterNew.class);
-//                intent.putExtra(UrlEndpoints.URL_PARAM_FROM_DATE, currentFromDate);
-//                intent.putExtra(UrlEndpoints.URL_PARAM_TO_DATE, currentToDate);
-//                startActivityForResult(intent, 1);
-            }
-        });
-        //buildFAB();
     }
 
     public Cursor getCount() {
@@ -316,7 +291,7 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         landingPageIds=  getLandingCount().toString();
         ownerIds= getOwnerCount().toString();
         Get apiLeadsDataService = ApiClient.getClientEarlier().create(Get.class);
-        String url="http://adv8kuber.in/webforms/show-data-filter1/userEmail/"+userData.get(Session.KEY_EMAIL)+"/password/"
+        String url="webforms/show-data-filter1/userEmail/"+userData.get(Session.KEY_EMAIL)+"/password/"
                 +userData.get(Session.KEY_PASSWORD)+"/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"+userData.get(Session.KEY_AGENCY_CLIENT_ID)
                 +"/offset/"+OFFSET_PAGE+"/search/"+searchKeyword+"/campaignIds/" +campaignIds+"/landingPageIds/"+landingPageIds+"/statusIds/"
                 +statusIds+"/ownerIds/"+ownerIds+"/fromDate/" +fromDate+"/toDate/"+toDate+"";
@@ -331,7 +306,8 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
 
                             if(response.body().getLmsLeadsList()!= null) {
                                 if(response.body().getLmsLeadsList().size() > 0) {
-                                    adapterLeads.addData(response.body().getLmsLeadsList(), isLazyLoading);
+                                    leadsListing = response.body().getLmsLeadsList();
+                                    adapterLeads.addData(leadsListing, isLazyLoading);
                                 }
                             }
 
@@ -378,62 +354,55 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         }
     }
 
-    /*private void getMoreLeadsData(String toDate, String fromDate, final boolean isLazyLoading) {
-        // setProgressLayout();
-        String userEmail = sharedPreferences.getString(Constants.USER_EMAIL, "");
-        String userPassword = sharedPreferences.getString(Constants.USER_PASSWORD, "");
-        String clientId = sharedPreferences.getString(Constants.AGENCY_CLIENT_ID, "");
+    private void getMoreLeadsData(String toDate, String fromDate, final boolean isLazyLoading) {
         campaignIds= getCampaignCount().toString();
         landingPageIds=  getLandingCount().toString();
         ownerIds= getOwnerCount().toString();
-        String url =  Endpoints.getShowDataFilter(userEmail, userPassword, clientId, campaignIds, landingPageIds, statusId, ownerIds, fromDate, toDate, OFFSET_PAGE,currentSearchString);
-        Log.e(TAG, "Url : " + url);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
+        Get apiLeadsDataService = ApiClient.getClientEarlier().create(Get.class);
+        String url="webforms/show-data-filter1/userEmail/"+userData.get(Session.KEY_EMAIL)+"/password/"
+                +userData.get(Session.KEY_PASSWORD)+"/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"+userData.get(Session.KEY_AGENCY_CLIENT_ID)
+                +"/offset/"+OFFSET_PAGE+"/search/"+currentSearchString+"/campaignIds/"+campaignIds+"/landingPageIds/"+landingPageIds+
+                "/statusIds/"+statusIds+"/ownerIds/"+ownerIds+"/fromDate/"+fromDate+"/toDate/"+toDate+"";
+        Call<ResponseDataLeadsListing> moreLeadsCall = apiLeadsDataService.getLeadsLmsData(url);
+        moreLeadsCall.enqueue(new Callback<ResponseDataLeadsListing>() {
+            @Override
+            public void onResponse(Call<ResponseDataLeadsListing>call, Response<ResponseDataLeadsListing> response) {
+                swipeRefreshLayoutBottom.setRefreshing(false);
+                if (response != null) {
+                    if (response.isSuccessful()) {
+                        if (response.body().getError() == 0) {
+                            Log.d(TAG, response.body().toString());
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.e(TAG, response.toString());
-                        ArrayList<LmsLead> arr = new ArrayList<LmsLead>();
-                        arr = parseLmsLeadJsonResponse(response);
-                        if (arr != null) {
-                            if(arr.size()>0) {
-                                parserArrLmsLead.addAll(arr);
-                                if (parserArrLmsLead != null && parserArrLmsLead.size() > 0) {
-                                    adapterLeads.addData(parserArrLmsLead, isLazyLoading);
-                                    swipeRefreshLayoutBottom.setRefreshing(false);
-                                    // setMainLayout();
+                            if(response.body().getLmsLeadsList()!= null) {
+                                if(response.body().getLmsLeadsList().size() > 0) {
+                                    leadsListing.addAll(response.body().getLmsLeadsList());
+                                    adapterLeads.addData(leadsListing, isLazyLoading);
                                 }
                             } else {
-                                swipeRefreshLayoutBottom.setRefreshing(false);
                                 ifMoreData = false;
                             }
                         } else {
-                            swipeRefreshLayoutBottom.setRefreshing(false);
                             ifMoreData = false;
                         }
                     }
-                }, new Response.ErrorListener() {
+                }
+            }
 
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                Log.e(TAG, "VolleyError : " + volleyError);
-                swipeRefreshLayoutBottom.setRefreshing(false);
-                // setDefaultLayout();
+            public void onFailure(Call<ResponseDataLeadsListing>call, Throwable t) {
+                Log.e(TAG, t.toString());
+                if(! LeadListDashboardActivity.this.isFinishing()) {
+                    swipeRefreshLayoutBottom.setRefreshing(false);
+                }
             }
         });
-
-        jsonObjectRequest.setRetryPolicy(new DefaultRetryPolicy(5000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        requestQueue.add(jsonObjectRequest);
-    }*/
+    }
 
     @Override
     public void onRefresh() {
         if (ifMoreData) {
             OFFSET_PAGE++;
-//            getMoreLeadsData(currentToDate, currentFromDate, true);
+            getMoreLeadsData(currentToDate, currentFromDate, true);
         } else {
             swipeRefreshLayoutBottom.setRefreshing(false);
         }
@@ -584,62 +553,14 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         customDateSelectorDialog.show(fragmentManager, Utils.TAG_DIALOG_DATE_SELECTOR);
     }
 
-    private void buildFAB() {
-        // define the icon for the main floating action button
-        ImageView iconActionButton = new ImageView(this);
-        //iconActionButton.setImageResource(R.drawable.ic_filter);
-        // set the appropriate background for the main floating action button
-        // along with its icon
-
-//        FloatingActionButton actionButton = new FloatingActionButton.Builder(
-//                this).setContentView(iconActionButton)
-//                .setBackgroundDrawable(R.drawable.btn_filter).build();
-
-//        actionButton.setOnClickListener(new View.OnClickListener() {
-
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(LeadListDashboardActivity.this, LeadFilterNew.class);
-//                intent.putExtra(UrlEndpoints.URL_PARAM_FROM_DATE, currentFromDate);
-//                intent.putExtra(UrlEndpoints.URL_PARAM_TO_DATE, currentToDate);
-//                startActivityForResult(intent, 1);
-//            }
-//        });
-    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-//        super.onActivityResult(requestCode, resultCode, intent);
-//        if (intent.getExtras()!=null) {
-//            if (!intent.getStringExtra(Constants.RESPONSE).equalsIgnoreCase("")) {
-//                String str = intent.getStringExtra(Constants.RESPONSE);
-//                try {
-//                    JSONObject jsonObject = new JSONObject(str);
-//                    parserArrLmsLead = parseLmsLeadJsonResponse(jsonObject);
-//                    if (parserArrLmsLead != null && parserArrLmsLead.size() > 0) {
-//                        adapterLeads.addData(parserArrLmsLead, false);
-//                        setMainLayout();
-//                    } else {
-//                        setDefaultLayout();
-//                    }
-//                } catch (JSONException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//            }
-//        } else {
-//            Log.e(TAG, "error");
-//        }
-//    }
-
     public void onResume() {
         super.onResume();
         Cursor cur=getCount();
         if(cur.getCount()>0) {
-            btnFilterCounter.setVisibility(View.VISIBLE);
-            btnFilterCounter.setText(""+cur.getCount());
+//            btnFilterCounter.setVisibility(View.VISIBLE);
+//            btnFilterCounter.setText(""+cur.getCount());
         } else {
-            btnFilterCounter.setVisibility(View.INVISIBLE);
+//            btnFilterCounter.setVisibility(View.INVISIBLE);
         }
     }
 
