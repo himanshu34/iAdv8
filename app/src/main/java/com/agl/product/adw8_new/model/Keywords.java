@@ -37,9 +37,6 @@ public class Keywords implements Parcelable {
     @SerializedName("converted_clicks")
     private String converted_clicks;
 
-    @SerializedName("cost_per_conversion")
-    private String cost_per_conversion;
-
     @SerializedName("cost")
     private String cost;
 
@@ -150,14 +147,6 @@ public class Keywords implements Parcelable {
         this.converted_clicks = converted_clicks;
     }
 
-    public String getCost_per_conversion() {
-        return cost_per_conversion;
-    }
-
-    public void setCost_per_conversion(String cost_per_conversion) {
-        this.cost_per_conversion = cost_per_conversion;
-    }
-
     public String getCost() {
         return cost;
     }
@@ -230,7 +219,6 @@ public class Keywords implements Parcelable {
         this.clicks = in.readString();
         this.impressions = in.readString();
         this.converted_clicks = in.readString();
-        this.cost_per_conversion = in.readString();
         this.cost = in.readString();
         this.publisher_account_id = in.readString();
         this.businessunitid = in.readString();
@@ -258,7 +246,6 @@ public class Keywords implements Parcelable {
         parcel.writeString(clicks);
         parcel.writeString(impressions);
         parcel.writeString(converted_clicks);
-        parcel.writeString(cost_per_conversion);
         parcel.writeString(cost);
         parcel.writeString(publisher_account_id);
         parcel.writeString(businessunitid);

@@ -174,7 +174,7 @@ public class CampaignData implements Parcelable {
     }
 
     private void readFromParcel(Parcel in) {
-        this.advertising_channel = advertising_channel;
+        this.advertising_channel = in.readString();
         this.campaign = in.readString();
         this.budget = in.readString();
         this.clicks = in.readString();

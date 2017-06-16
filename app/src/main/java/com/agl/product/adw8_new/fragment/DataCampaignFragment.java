@@ -88,24 +88,15 @@ public class DataCampaignFragment extends Fragment {
         textView4.setText(campaignData.getAvg_cpc());
         row.addView(textView4);
 
-
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(campaignData.getCost());
         row.addView(textView5);
 
-
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView6 = (TextView) view.findViewById(R.id.text_view);
         textView6.setText(campaignData.getCtr());
         row.addView(textView6);
-
-
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
-        TextView textView7 = (TextView) view.findViewById(R.id.text_view);
-        textView7.setText(campaignData.getAvg_position());
-        row.addView(textView7);
-
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView8 = (TextView) view.findViewById(R.id.text_view);

@@ -115,18 +115,6 @@
                     android:minHeight="40dp"
                     android:background="#f7f7f7"
                     android:textColor="@color/black"
-                    android:text="Avg Pos" />
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:textSize="@dimen/_12sdp"
-                    android:singleLine="true"
-                    android:minHeight="40dp"
-                    android:background="#f7f7f7"
-                    android:textColor="@color/black"
                     android:text="Conv" />
 
                 <TextView

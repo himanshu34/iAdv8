@@ -40,6 +40,9 @@ public class Ads implements Parcelable {
     @SerializedName("cpa")
     private String cpa;
 
+    @SerializedName("conversion_rate")
+    private String conversion_rate;
+
     public Ads() {
 
     }
@@ -138,6 +141,7 @@ public class Ads implements Parcelable {
     }
 
     private void readFromParcel(Parcel in) {
+        this.conversion_rate = in.readString();
         this.ad = in.readString();
         this.ad_id = in.readString();
         this.description1 = in.readString();
@@ -158,6 +162,7 @@ public class Ads implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(conversion_rate);
         parcel.writeString(ad);
         parcel.writeString(ad_id);
         parcel.writeString(description1);
@@ -180,4 +185,12 @@ public class Ads implements Parcelable {
             return new Ads[size];
         }
     };
+
+    public String getConversion_rate() {
+        return conversion_rate;
+    }
+
+    public void setConversion_rate(String conversion_rate) {
+        this.conversion_rate = conversion_rate;
+    }
 }

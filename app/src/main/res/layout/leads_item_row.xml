@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1.3"
             android:maxLines="2"
-            android:background="#f7f7f7"
+            android:background="@drawable/lms_lead_row_left"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/margin_small"
             android:textColor="@color/black"
