@@ -89,7 +89,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
     private ConnectionDetector cd;
     private DatePickerDialog datePickerDialog;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

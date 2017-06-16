@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -121,8 +122,14 @@ public class DataCampaignFragment extends Fragment {
 
     private void setFirstRow(int pos, CampaignData campaignData) {
         TableRow row = new TableRow(getActivity());
-        View v = LayoutInflater.from(getActivity()).inflate(R.layout.top_first_row, row, false);
-        TextView tv = (TextView)v.findViewById(R.id.text_view);
+        View v = LayoutInflater.from(getActivity()).inflate(R.layout.top_campaign_first_row, row, false);
+        ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
+        TextView tv = (TextView) v.findViewById(R.id.text_view);
+        if(campaignData.getAdvertising_channel().equalsIgnoreCase("display")) {
+            imageView.setImageResource(R.drawable.ic_campaign_display);
+        } else {
+            imageView.setImageResource(R.drawable.ic_campaign_search);
+        }
         tv.setText(campaignData.getCampaign());
         tlAddName.addView(v, pos);
     }
