@@ -24,13 +24,14 @@
             android:textColor="@color/black"
             android:textStyle="bold"
             />
+
         <CheckBox
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Network"
             android:paddingLeft="@dimen/_15sdp"
             android:layout_marginTop="@dimen/_3sdp"
-            />
+            android:id="@+id/checkBox2" />
 
         <CheckBox
             android:layout_width="match_parent"

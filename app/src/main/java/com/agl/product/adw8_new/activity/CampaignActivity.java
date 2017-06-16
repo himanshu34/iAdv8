@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.DatePicker;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
@@ -36,6 +37,8 @@ import android.widget.Toast;
 
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
+import com.agl.product.adw8_new.decoration.ActionItem;
+import com.agl.product.adw8_new.decoration.QuickAction;
 import com.agl.product.adw8_new.model.AdListingData;
 import com.agl.product.adw8_new.model.Adgroup;
 import com.agl.product.adw8_new.model.CampaignData;
@@ -87,6 +90,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private String fromDate, toDate, fromDateToShow, toDateToShow,sortBy,sortingOrder;
     private ConnectionDetector cd;
     private DatePickerDialog datePickerDialog;
+    ImageView editIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +117,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         hrone = (HorizontalScrollView) findViewById(R.id.hrone);
         hrsecond = (HorizontalScrollView) findViewById(R.id.hrsecond);
         hrbottom = (HorizontalScrollView) findViewById(R.id.hrbottom);
-
+        editIcon = (ImageView) findViewById(R.id.edit_icon);
 
         textCpa = (TextView) findViewById(R.id.textCpa);
         textConv = (TextView) findViewById(R.id.textConv);
@@ -433,7 +437,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.llDateLayout:
-                customDatePopup.showAsDropDown(llDateLayout, 0, 10);
+                customDatePopup.showAsDropDown(editIcon, 0, 20);
                 break;
             case R.id.textYesterday:
                 setYesterday();

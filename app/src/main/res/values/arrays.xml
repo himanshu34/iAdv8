@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="date_filter">
+        <item>Yesterday</item>
+        <item>Last 7 days</item>
+        <item>Last 30 days</item>
+        <item>Custom</item>
+    </string-array>
+</resources>
