@@ -31,11 +31,23 @@ public class Utils {
     public static final String CURRENT__FROM_DATE="current_from_date";
     public static final String CURRENT_TO_DATE="current_to_date";
     public static final String DATE_TYPE="date_type";
-    public static final String TAG_DIALOG_DATE_SELECTOR = "tagDialogDateSelector";
     public static final String WEB_FORM_ID="wId";
     public static final String LEAD_ID = "leadId";
+    public static final String LEAD_NAME = "name";
+    public static final String OWNER_ID = "ownerId";
+    public static final String STATUS_ID = "statusId";
     public static final String TYPE_LEAD_WEB = "Web";
     public static final String TYPE_LEAD_CALL = "Call";
+    public static final int TYPE_LEAD_DETAIL_NORMAL = 0;
+    public static final int TYPE_LEAD_DETAIL_RECORDING = 1;
+    public static final int TYPE_LEAD_DETAIL_FOLLOWUP = 2;
+    public static final int TYPE_LEAD_DETAIL_NOTIFICATION = 3;
+    public static final String NA = "NA";
+    public static final String TAG_DIALOG_DATE_SELECTOR = "tagDialogDateSelector";
+    public static final String TAG_DIALOG_CAMPAIGN_LIST = "tagDialogCampaignList";
+    public static final String TAG_PROGRESS_DIALOG = "tagProgressDialog";
+    public static final String TAG_LIST_ADD_TASK_PAGE = "tagListAddTaskPage";
+    public static final String TAG_ADD_TASK_DATE_TIME = "tagAddTaskDateTime";
 
     public static final String CAMPAIGN = "campaign";
     public static final String NAME = "name";
@@ -134,5 +146,13 @@ public class Utils {
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.add(java.util.Calendar.DATE, -30);
         return dateFormat.format(cal.getTime());
+    }
+
+    public static boolean isEmptyString(String str) {
+        if (str == null || str.equalsIgnoreCase("null")
+                || str.equalsIgnoreCase("") || str.length() < 1) {
+            return true;
+        }
+        return false;
     }
 }
