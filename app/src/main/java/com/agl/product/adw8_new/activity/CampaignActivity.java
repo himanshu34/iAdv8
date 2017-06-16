@@ -87,16 +87,16 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private int rowCount;
     private TableLayout tlName, tlValues;
     private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange, textMessage;
-    private TextView textCpa,textConv,textCtr,textCost,textAvgCpc,textImpr,textClicks,textBudget;
+    private TextView textCpa, textConv, textCtr, textCost, textAvgCpc, textImpr, textClicks, textBudget;
     private ProgressBar progressBar;
-    private String fromDate, toDate, fromDateToShow, toDateToShow,sortBy,sortingOrder;
+    private String fromDate, toDate, fromDateToShow, toDateToShow, sortBy, sortingOrder;
     private ConnectionDetector cd;
     private DatePickerDialog datePickerDialog;
     ImageView editIcon;
-    private CheckBox checkDisplay,checkSearch,checkEnabled;
-    private TextView textClear,textApply;
-    private String filterNetwork,filterNetworkValue;
-    private String filterEnable,filterEnableValue;
+    private CheckBox checkDisplay, checkSearch, checkEnabled;
+    private TextView textClear, textApply;
+    private String filterNetwork, filterNetworkValue;
+    private String filterEnable, filterEnableValue;
 
 
     @Override
@@ -147,6 +147,12 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         filterPopup.setBackgroundDrawable(new BitmapDrawable());
         filterPopup.setFocusable(true);
 
+        textClear = (TextView) filterLayout.findViewById(R.id.textClear);
+        textApply = (TextView) filterLayout.findViewById(R.id.textApply);
+        checkDisplay = (CheckBox) filterLayout.findViewById(R.id.checkDisplay);
+        checkEnabled = (CheckBox) filterLayout.findViewById(R.id.checkEnabled);
+        checkSearch = (CheckBox) filterLayout.findViewById(R.id.checkSearch);
+
 
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
 
@@ -171,9 +177,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textCustom.setOnClickListener(this);
 
 
-        textClear = (TextView) findViewById(R.id.textClear);
-        textApply = (TextView) findViewById(R.id.textApply);
-
         textCpa.setOnClickListener(this);
         textConv.setOnClickListener(this);
         textCtr.setOnClickListener(this);
@@ -186,26 +189,20 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textApply.setOnClickListener(this);
 
 
-
-        checkDisplay = (CheckBox) findViewById(R.id.checkDisplay);
-        checkEnabled = (CheckBox) findViewById(R.id.checkEnabled);
-        checkSearch = (CheckBox) findViewById(R.id.checkSearch);
-
         checkDisplay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 checkEnabled.setChecked(false);
                 checkSearch.setChecked(false);
-                if(b){
+                if (b) {
                     filterNetwork = "advertising_channel";
                     filterNetworkValue = "Display";
-                }else {
+                } else {
                     filterNetwork = null;
-                    filterNetworkValue = null ;
+                    filterNetworkValue = null;
                 }
             }
         });
-
 
 
         checkEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -213,16 +210,15 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 checkDisplay.setChecked(false);
                 checkSearch.setChecked(false);
-                if(b){
+                if (b) {
                     filterEnable = "campaign_state";
                     filterEnableValue = "enabled";
-                }else {
+                } else {
                     filterEnable = null;
-                    filterEnableValue = null ;
+                    filterEnableValue = null;
                 }
             }
         });
-
 
 
         checkSearch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -230,16 +226,15 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 checkEnabled.setChecked(false);
                 checkDisplay.setChecked(false);
-                if(b){
+                if (b) {
                     filterNetwork = "advertising_channel";
                     filterNetworkValue = "Search";
-                }else {
+                } else {
                     filterNetwork = null;
-                    filterNetworkValue = null ;
+                    filterNetworkValue = null;
                 }
             }
         });
-
 
 
         userData = session.getUsuarioDetails();
@@ -276,7 +271,10 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         requestDataCampaignDetails.setOrderBy(sortingOrder);
         requestDataCampaignDetails.setSortBy(sortBy);
         requestDataCampaignDetails.setOffset(offset);
-
+        if (filterEnableValue != null && filterEnable != null)
+            requestDataCampaignDetails.setCampaign_state(filterEnableValue);
+        if( filterNetwork != null && filterNetworkValue != null )
+            requestDataCampaignDetails.setAdvertising_channel(filterEnableValue);
 
         if (offset == 0) {
             // Show loading on first time
@@ -482,25 +480,17 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setCampaignName(int i, CampaignData data) {
-       /* TableRow row = new TableRow(this);
-        View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
-        TextView tv = (TextView) v.findViewById(R.id.text_view);
-        tv.setText(data.getCampaign());
-        tlName.addView(v, i);*/
-
-
         TableRow row = new TableRow(this);
-        View v = LayoutInflater.from(this).inflate(R.layout.top_campaign_first_row, row, false);
+        View v = LayoutInflater.from(this).inflate(R.layout.campaign_first_row, row, false);
         ImageView imageView = (ImageView) v.findViewById(R.id.imageView);
         TextView tv = (TextView) v.findViewById(R.id.text_view);
-        if(data.getAdvertising_channel().equalsIgnoreCase("display")) {
+        if (data.getAdvertising_channel().equalsIgnoreCase("display")) {
             imageView.setImageResource(R.drawable.ic_campaign_display);
         } else {
             imageView.setImageResource(R.drawable.ic_campaign_search);
         }
         tv.setText(data.getCampaign());
         tlName.addView(v, i);
-
     }
 
     public void displayFilterLayout() {
@@ -563,7 +553,7 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                 checkDisplay.setChecked(false);
                 checkEnabled.setChecked(false);
                 checkSearch.setChecked(false);
-                break ;
+                break;
             case R.id.textApply:
                 if (!cd.isConnectedToInternet()) return;
                 offset = 0;

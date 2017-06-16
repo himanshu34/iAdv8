@@ -32,6 +32,10 @@
         <item name="colorAccent">@color/colorPrimary</item> <!-- Whatever color you want-->
     </style>
 
+    <style name="CustomCheckBox" parent="AppTheme">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
