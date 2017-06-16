@@ -67,7 +67,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
     private HorizontalScrollView hrone, hrsecond,hrbottom;
     Session session;
     HashMap<String, String> userData;
-    private int offset = 0,limit = 50;
+    private int offset = 0, limit = 50;
     private SwipeRefreshLayoutBottom swipeRefreshLayout;
     private int rowCount;
     private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange,textMessage;
@@ -85,11 +85,8 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
         cd = new ConnectionDetector( this );
 
         keywordsList = new ArrayList<Keywords>();
@@ -115,7 +112,6 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         filterPopup.setContentView(filterLayout);
         filterPopup.setBackgroundDrawable(new BitmapDrawable());
         filterPopup.setFocusable(true);
-
 
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
 
@@ -154,7 +150,6 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         toDateToShow = Utils.getDisplayCurrentDate();
         textSelectedDateRange.setText(fromDateToShow+" - "+toDateToShow);
         getKeywordsData();
-
     }
 
 
@@ -288,7 +283,6 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         Post apiAddClientService = ApiClient.getClient().create(Post.class);
         RequestDataKeywords requestKeywords = new RequestDataKeywords();
         requestKeywords.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
-
         requestKeywords.setpId("1");
         requestKeywords.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
         requestKeywords.setfDate(fromDate);
@@ -298,9 +292,7 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         requestKeywords.setSortBy("clicks");
         requestKeywords.setpId("1");
         requestKeywords.setOffset(offset);
-
-        if( offset == 0 ){
-            // Show loading on first time
+        if(offset == 0) {
             llDataContainer.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
             textMessage.setVisibility(View.GONE);
@@ -332,41 +324,35 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
                                     }
                                 }
                             }
-
-
                         } catch (Exception e) {
                             e.printStackTrace();
-                            if( offset == 0 ){
+                            if(offset == 0) {
                                 llDataContainer.setVisibility(View.INVISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.VISIBLE);
                                 textMessage.setText("Some error occured.");
-                            }else {
+                            } else {
                                 Toast.makeText(KeywordsActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
                             }
-
                         }
                     } else {
-                        if( offset == 0 ){
+                        if(offset == 0) {
                             llDataContainer.setVisibility(View.INVISIBLE);
                             progressBar.setVisibility(View.GONE);
                             textMessage.setVisibility(View.VISIBLE);
                             textMessage.setText("Some error occured.");
-                        }else Toast.makeText(KeywordsActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-
+                        } else Toast.makeText(KeywordsActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    if( offset == 0 ){
+                    if(offset == 0){
                         llDataContainer.setVisibility(View.INVISIBLE);
                         progressBar.setVisibility(View.GONE);
                         textMessage.setVisibility(View.VISIBLE);
                         textMessage.setText("Some error occured.");
-                    }else {
+                    } else {
                         Toast.makeText(KeywordsActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
                     }
-
                 }
-
             }
 
             @Override
@@ -397,35 +383,22 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void setKeywordsOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Keywords keyword) {
-
         setKeywordName( i,keyword);
 
-        LinearLayout.LayoutParams  layoutParams = new LinearLayout.LayoutParams( 20,LinearLayout.LayoutParams.WRAP_CONTENT);
-
         View view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
-
-        TextView textView2 = new TextView(this);
-        textView2.setBackgroundResource(R.drawable.cell_shape);
-        textView2.setPadding(20, 20, 20, 20);
-        textView2.setLayoutParams(layoutParams);
-        textView2.setGravity(Gravity.CENTER_VERTICAL);
-
-        textView2 = (TextView) view.findViewById(R.id.text_view);
+        TextView textView2 = (TextView) view.findViewById(R.id.text_view);
         textView2.setText(keyword.getClicks());
         row.addView(textView2);
-
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView1 = (TextView) view.findViewById(R.id.text_view);
         textView1.setText(keyword.getImpressions());
         row.addView(textView1);
 
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(keyword.getAvg_cpc());
         row.addView(textView5);
-
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView3 = (TextView) view.findViewById(R.id.text_view);
@@ -439,22 +412,15 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         row.addView(textView10);
 
         // Conv
-
-
-
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView4 = (TextView) view.findViewById(R.id.text_view);
         textView4.setText(keyword.getConverted_clicks());
         row.addView(textView4);
 
-
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView6 = (TextView) view.findViewById(R.id.text_view);
         textView6.setText(keyword.getCpa());
         row.addView(textView6);
-
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
         TextView textView7 = (TextView) view.findViewById(R.id.text_view);
