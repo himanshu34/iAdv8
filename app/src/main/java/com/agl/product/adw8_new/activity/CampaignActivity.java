@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -189,49 +188,59 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textApply.setOnClickListener(this);
 
 
-        checkDisplay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        checkDisplay.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onClick(View view) {
                 checkEnabled.setChecked(false);
                 checkSearch.setChecked(false);
-                if (b) {
+                if (checkDisplay.isChecked()) {
                     filterNetwork = "advertising_channel";
                     filterNetworkValue = "Display";
+                    filterEnable = null;
+                    filterEnableValue = null;
                 } else {
                     filterNetwork = null;
                     filterNetworkValue = null;
+                    filterEnableValue = null ;
+                    filterEnable = null;
                 }
             }
         });
 
-
-        checkEnabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        checkEnabled.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onClick(View view) {
                 checkDisplay.setChecked(false);
                 checkSearch.setChecked(false);
-                if (b) {
+                if (checkEnabled.isChecked()) {
                     filterEnable = "campaign_state";
                     filterEnableValue = "enabled";
+                    filterNetwork = null;
+                    filterNetworkValue = null;
                 } else {
                     filterEnable = null;
                     filterEnableValue = null;
+                    filterNetwork = null;
+                    filterNetworkValue = null;
                 }
             }
         });
 
-
-        checkSearch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        checkSearch.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            public void onClick(View view) {
                 checkEnabled.setChecked(false);
                 checkDisplay.setChecked(false);
-                if (b) {
+                if (checkSearch.isChecked()) {
                     filterNetwork = "advertising_channel";
                     filterNetworkValue = "Search";
+                    filterEnable = null;
+                    filterEnableValue = null;
                 } else {
                     filterNetwork = null;
                     filterNetworkValue = null;
+                    filterEnableValue = null ;
+                    filterEnable = null ;
                 }
             }
         });
@@ -273,8 +282,8 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         requestDataCampaignDetails.setOffset(offset);
         if (filterEnableValue != null && filterEnable != null)
             requestDataCampaignDetails.setCampaign_state(filterEnableValue);
-        if( filterNetwork != null && filterNetworkValue != null )
-            requestDataCampaignDetails.setAdvertising_channel(filterEnableValue);
+        if (filterNetwork != null && filterNetworkValue != null)
+            requestDataCampaignDetails.setAdvertising_channel(filterNetworkValue);
 
         if (offset == 0) {
             // Show loading on first time
@@ -550,6 +559,10 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             case R.id.textBudget:
                 break;
             case R.id.textClear:
+                filterEnable = null;
+                filterEnableValue = null;
+                filterNetworkValue = null;
+                filterNetwork = null;
                 checkDisplay.setChecked(false);
                 checkEnabled.setChecked(false);
                 checkSearch.setChecked(false);
