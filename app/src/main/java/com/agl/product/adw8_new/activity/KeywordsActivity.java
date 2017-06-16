@@ -403,12 +403,9 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         textView10.setText(keyword.getCtr());
         row.addView(textView10);
 
-        // Avg Pos
+        // Conv
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
-        TextView textView8 = (TextView) view.findViewById(R.id.text_view);
-        textView8.setText(keyword.getAvg_position());
-        row.addView(textView8);
+
 
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );

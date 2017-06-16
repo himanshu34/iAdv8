@@ -66,14 +66,13 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private LinearLayout llDateLayout,llDataContainer;
     Session session;
     HashMap<String, String> userData;
-    private String campaignType;
     private int offset = 0,limit = 50;
     private SwipeRefreshLayoutBottom swipeRefreshLayout;
     private int rowCount;
     private TableLayout tlName, tlValues;
     private TextView textYesterday,textLastSevenDays,textLastThirtyDays,textCustom,textSelectedDateRange,textMessage;
     private ProgressBar progressBar;
-    private String fromDate,toDate;
+    private String fromDate,toDate, fromDateToShow, toDateToShow;
     private ConnectionDetector cd;
 
     @Override
@@ -82,17 +81,12 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_campaign);
         session = new Session(this);
 
-        Intent intent = getIntent();
-        if (intent != null)
-            campaignType = intent.getStringExtra("type");
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
-        actionBar.setTitle(campaignType.toUpperCase());
 
         cd = new ConnectionDetector(this);
 
@@ -152,7 +146,10 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
+        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+
+        textSelectedDateRange.setText(fromDateToShow+" - "+toDateToShow);
         getCampaignData();
     }
 
@@ -343,10 +340,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textView7.setGravity(Gravity.CENTER);
         textView7.setBackgroundResource(R.drawable.cell_shape);
 
-        view = LayoutInflater.from(this).inflate(R.layout.row_textview,row,false );
-        textView7 = (TextView) view.findViewById(R.id.text_view);
-        textView7.setText(campaignData.getAvg_position());
-        row.addView(textView7);
 
 
         TextView textView8 = new TextView(this);
@@ -405,7 +398,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.textYesterday :
                 setYesterday();
-
                 break;
             case R.id.textLastSevenDays :
                 setLastSeven();
@@ -426,7 +418,9 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getYesterdayDate();
         toDate = Utils.getYesterdayDate();
-        textSelectedDateRange.setText(Utils.getDisplayYesterdayDate());
+        fromDateToShow = Utils.getDisplayYesterdayDate();
+        toDateToShow = Utils.getDisplayYesterdayDate();
+        textSelectedDateRange.setText(fromDateToShow);
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -441,7 +435,9 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
+        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+        textSelectedDateRange.setText(fromDateToShow+" - "+toDateToShow);
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -455,6 +451,8 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
+        fromDateToShow = Utils.getDisplayThirtyDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
         textSelectedDateRange.setText(Utils.getDisplayThirtyDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
         customDatePopup.dismiss();
         offset = 0;
