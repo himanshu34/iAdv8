@@ -89,33 +89,24 @@ public class DataAdsFragment extends Fragment {
         textView4.setText(adsData.getCost());
         row.addView(textView4);
 
-
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(adsData.getCtr());
         row.addView(textView5);
-
-
-        view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
-        TextView textView6 = (TextView) view.findViewById(R.id.text_view);
-        textView6.setText("");
-        row.addView(textView6);
-
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView7 = (TextView) view.findViewById(R.id.text_view);
         textView7.setText(adsData.getConverted_clicks());
         row.addView(textView7);
 
-
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView8 = (TextView) view.findViewById(R.id.text_view);
-        textView8.setText("");
+        textView8.setText(adsData.getCpa());
         row.addView(textView8);
 
         view = LayoutInflater.from(getActivity()).inflate(R.layout.top_row_textview,row,false );
         TextView textView9 = (TextView) view.findViewById(R.id.text_view);
-        textView9.setText("");
+        textView9.setText(adsData.getConversion_rate());
         row.addView(textView9);
 
         tlDataTable.addView(row, pos, new TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.MATCH_PARENT));

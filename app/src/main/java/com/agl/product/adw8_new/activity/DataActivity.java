@@ -559,7 +559,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         ft.commitAllowingStateLoss();
     }
 
-
     private class showErrorDialog extends AlertDialog {
         protected showErrorDialog(Context context, String message) {
             super(context);
