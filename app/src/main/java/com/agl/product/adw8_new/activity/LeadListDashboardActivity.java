@@ -153,9 +153,9 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
                 }
 
                 if (!Utils.isEmptyString(leadId)) {
-                    Intent intentLeadDetails = new Intent(LeadListDashboardActivity.this, LeadDetailsActivity.class);
-                    intentLeadDetails.putExtra(Utils.LEAD_ID, leadId);
-                    startActivity(intentLeadDetails);
+//                    Intent intentLeadDetails = new Intent(LeadListDashboardActivity.this, LeadDetailsActivity.class);
+//                    intentLeadDetails.putExtra(Utils.LEAD_ID, leadId);
+//                    startActivity(intentLeadDetails);
                 } else {
                     Log.e(TAG, "Lead id is null");
                 }

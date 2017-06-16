@@ -15,7 +15,7 @@
         <RelativeLayout
             android:id="@+id/rl_lead_header"
             android:layout_width="fill_parent"
-            android:layout_height="40dp"
+            android:layout_height="45dp"
             android:layout_alignParentTop="true"
             android:background="#424242"
             android:gravity="center_vertical" >
@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/txt_lms_lead_date"
                     android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:textSize="@dimen/_10sdp" />
 
                 <TextView
                     android:id="@+id/txt_lms_lead_time"
@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/txt_lms_lead_time"
                     android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:textSize="@dimen/_10sdp" />
             </LinearLayout>
 
             <ImageView
@@ -66,7 +66,7 @@
                 android:text="MBA"
                 android:textColor="@color/white"
                 android:layout_marginRight="5dp"
-                android:textSize="12sp" />
+                android:textSize="@dimen/_12sdp" />
         </RelativeLayout>
 
         <LinearLayout

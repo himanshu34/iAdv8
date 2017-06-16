@@ -13,19 +13,19 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1.2"
-            android:background="@drawable/lms_lead_row_left"
+            android:layout_weight="1.3"
+            android:background="#f7f7f7"
             android:gravity="center_vertical"
             android:paddingLeft="@dimen/margin_small"
             android:text="Follow Up"
             android:textColor="@color/black"
-            android:textSize="@dimen/lms_lead_row_left"
+            android:textSize="@dimen/_12sdp"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2.8"
+            android:layout_weight="2.7"
             android:background="@drawable/lms_lead_row_right"
             android:gravity="center_vertical"
             android:weightSum="2" >
@@ -34,7 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="#FF906D"
+                android:background="#f69b55"
                 android:gravity="center" >
 
                 <TextView
@@ -42,14 +42,14 @@
                     android:layout_height="wrap_content"
                     android:text="Last: "
                     android:textColor="@color/white"
-                    android:textSize="@dimen/lms_lead_row_right" />
+                    android:textSize="@dimen/_10sdp" />
 
                 <TextView
                     android:id="@+id/txt_last_follow_val"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nov 8, 2014"
-                    android:textSize="@dimen/lms_lead_row_right"
+                    android:textSize="@dimen/_10sdp"
                     android:textColor="@color/white"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -58,7 +58,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="#FE7246"
+                android:background="@color/colorPrimary"
                 android:gravity="center" >
 
                 <TextView
@@ -66,7 +66,7 @@
                     android:layout_height="wrap_content"
                     android:text="Next: "
                     android:textColor="@color/white"
-                    android:textSize="@dimen/lms_lead_row_right" />
+                    android:textSize="@dimen/_10sdp" />
 
                 <TextView
                     android:id="@+id/txt_next_follow_val"
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:text="Nov 8, 2014"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/lms_lead_row_right"
+                    android:textSize="@dimen/_10sdp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>

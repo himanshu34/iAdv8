@@ -40,7 +40,7 @@
 
     <!-- lms -->
     <dimen name="header_height_lms">30dp</dimen>
-    <dimen name="lms_lead_row_height">40dp</dimen>
+    <dimen name="lms_lead_row_height">45dp</dimen>
     <dimen name="lms_lead_row_left">13sp</dimen>
     <dimen name="lms_lead_row_right">12sp</dimen>
     <dimen name="txt_follow_time">10dp</dimen>

@@ -22,7 +22,8 @@
             android:id="@+id/txt_name"
             android:textColor="@color/black"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/_12sdp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -39,7 +40,7 @@
 
             <ImageView
                 android:gravity="center"
-                android:textSize="19dp"
+                android:textSize="@dimen/_14sdp"
                 android:layout_centerInParent="true"
                 android:background="@drawable/circle"
                 android:textColor="#424242"
@@ -60,12 +61,12 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:gravity="right|center_vertical">
 
             <TextView
                 android:layout_gravity="center"
                 android:gravity="center_horizontal"
-                android:textSize="19dp"
+                android:textSize="@dimen/_12sdp"
                 android:text="kk"
                 android:textColor="#424242"
                 android:id="@+id/txt_per"
