@@ -1,8 +1,13 @@
 package com.agl.product.adw8_new.activity;
 
+import android.app.DatePickerDialog;
+import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -14,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.DatePicker;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
@@ -35,8 +41,13 @@ import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,8 +68,9 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
     HashMap<String, String> userData;
     private int rowCount;
     private int offset = 0, limit = 50;
-    private String fromDate, toDate;
+    private String fromDate, toDate, fromDateToShow, toDateToShow;
     private ConnectionDetector cd;
+    private DatePickerDialog datePickerDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +146,10 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         });
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate()+" - "+Utils.getDisplayCurrentDate());
+        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+
+        textSelectedDateRange.setText(fromDateToShow+" - "+toDateToShow);
         getAdGroupData();
 
     }
@@ -189,6 +204,12 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                 setLastThirty();
                 break;
             case R.id.textCustom:
+                customDatePopup.dismiss();
+                AlertDialog builder = new ShowDateRangeDialog(AdgroupActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                builder.setCanceledOnTouchOutside(false);
+                builder.setCancelable(false);
+                builder.show();
                 break;
 
         }
@@ -201,7 +222,9 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getYesterdayDate();
         toDate = Utils.getYesterdayDate();
-        textSelectedDateRange.setText(Utils.getDisplayYesterdayDate());
+        fromDateToShow = Utils.getDisplayYesterdayDate();
+        toDateToShow = Utils.getDisplayYesterdayDate();
+        textSelectedDateRange.setText(fromDateToShow);
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -215,7 +238,9 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate() + " - " + Utils.getDisplayCurrentDate());
+        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+        textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
@@ -229,8 +254,17 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
-        textSelectedDateRange.setText(Utils.getDisplayThirtyDayBeforeDate() + " - " + Utils.getDisplayCurrentDate());
+        fromDateToShow = Utils.getDisplayThirtyDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+        textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         customDatePopup.dismiss();
+        offset = 0;
+        rowCount = 0;
+        getAdGroupData();
+    }
+    private void setCustomDay() {
+        if (!cd.isConnectedToInternet()) return;
+        textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         offset = 0;
         rowCount = 0;
         getAdGroupData();
@@ -419,5 +453,106 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onRefresh() {
         getAdGroupData();
+    }
+
+
+    private class ShowDateRangeDialog extends AlertDialog {
+        String fromDisplay, toDisplay;
+        String fromDay, toDay;
+
+        protected ShowDateRangeDialog(Context context, String message) {
+            super(context);
+            LayoutInflater inflater = getLayoutInflater();
+            final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
+            setView(dialogLayout);
+
+            LinearLayout llStartDate = (LinearLayout) dialogLayout.findViewById(R.id.llStartDate);
+            final TextView textStartDate = (TextView) dialogLayout.findViewById(R.id.textStartDate);
+
+            LinearLayout llEndDate = (LinearLayout) dialogLayout.findViewById(R.id.llEndDate);
+            final TextView textEndDate = (TextView) dialogLayout.findViewById(R.id.textEndDate);
+
+            TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
+            TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
+
+
+            textStartDate.setText(fromDateToShow);
+            textEndDate.setText(toDateToShow);
+            llStartDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    datePickerDialog = new DatePickerDialog(AdgroupActivity.this, R.style.datepicker, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                            DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+                            Date date = new Date(calendar.getTimeInMillis());
+                            fromDisplay = dateFormat.format(date);
+
+                            DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                            Date date1 = new Date(calendar.getTimeInMillis());
+                            textStartDate.setText(fromDisplay);
+                            fromDay = dateFormat1.format(date1);
+
+                        }
+
+
+                    }, 2017, 05, 15);
+
+                    datePickerDialog.show();
+
+                }
+            });
+
+            llEndDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    datePickerDialog = new DatePickerDialog(AdgroupActivity.this, R.style.datepicker, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                            DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+                            Date date = new Date(calendar.getTimeInMillis());
+                            toDisplay = dateFormat.format(date);
+
+                            DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                            Date date1 = new Date(calendar.getTimeInMillis());
+                            textEndDate.setText(toDisplay);
+                            toDay = dateFormat1.format(date1);
+
+                        }
+
+
+                    }, 2017, 05, 15);
+
+                    datePickerDialog.show();
+                }
+            });
+
+            textCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+
+            textOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (fromDay != null && toDay != null && fromDisplay != null && toDisplay != null) {
+                        fromDate = fromDay;
+                        toDate = toDay;
+                        fromDateToShow = fromDisplay;
+                        toDateToShow = toDisplay;
+                    }
+                    setCustomDay();
+                    dismiss();
+                }
+            });
+
+
+        }
     }
 }

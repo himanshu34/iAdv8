@@ -49,6 +49,23 @@ public class Utils {
     public static final String TAG_LIST_ADD_TASK_PAGE = "tagListAddTaskPage";
     public static final String TAG_ADD_TASK_DATE_TIME = "tagAddTaskDateTime";
 
+    public static final String CAMPAIGN = "campaign";
+    public static final String NAME = "name";
+    public static final String AD = "ad";
+    public static final String CLICKS = "clicks";
+    public static final String BUDGET = "budget";
+    public static final String IMPRESSIONS = "impressions";
+    public static final String COST = "cost";
+    public static final String CTR = "ctr";
+    public static final String CONVERTED_CLICKS = "converted_clicks";
+    public static final String CPA = "cpa";
+    public static final String CONVERSION_RATE = "conversion_rate";
+    public static final String KEYWORD_STATE = "keyword_state";
+
+    public static final String DESC = "DESC";
+    public static final String ASSC = "ASC";
+
+
     public static boolean closeKeyboard(Context context, View view) {
         InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if(imm != null) {
