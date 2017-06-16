@@ -40,14 +40,8 @@ public class Keywords implements Parcelable {
     @SerializedName("cost")
     private String cost;
 
-    @SerializedName("publisher_account_id")
-    private String publisher_account_id;
-
-    @SerializedName("businessunitid")
-    private String businessunitid;
-
-    @SerializedName("business_unit_name")
-    private String business_unit_name;
+    @SerializedName("conversion_rate")
+    private String conversion_rate;
 
     @SerializedName("avg_cpc")
     private String avg_cpc;
@@ -57,11 +51,6 @@ public class Keywords implements Parcelable {
 
     @SerializedName("cpa")
     private String cpa;
-
-    @SerializedName("avg_position")
-    private String avg_position;
-
-
 
     public Keywords() {
 
@@ -155,30 +144,6 @@ public class Keywords implements Parcelable {
         this.cost = cost;
     }
 
-    public String getPublisher_account_id() {
-        return publisher_account_id;
-    }
-
-    public void setPublisher_account_id(String publisher_account_id) {
-        this.publisher_account_id = publisher_account_id;
-    }
-
-    public String getBusinessunitid() {
-        return businessunitid;
-    }
-
-    public void setBusinessunitid(String businessunitid) {
-        this.businessunitid = businessunitid;
-    }
-
-    public String getBusiness_unit_name() {
-        return business_unit_name;
-    }
-
-    public void setBusiness_unit_name(String business_unit_name) {
-        this.business_unit_name = business_unit_name;
-    }
-
     public String getAvg_cpc() {
         return avg_cpc;
     }
@@ -209,6 +174,7 @@ public class Keywords implements Parcelable {
     }
 
     private void readFromParcel(Parcel in) {
+        this.conversion_rate = in.readString();
         this.adgroup_id = in.readString();
         this.keyword_state = in.readString();
         this.currency = in.readString();
@@ -220,13 +186,9 @@ public class Keywords implements Parcelable {
         this.impressions = in.readString();
         this.converted_clicks = in.readString();
         this.cost = in.readString();
-        this.publisher_account_id = in.readString();
-        this.businessunitid = in.readString();
-        this.business_unit_name = in.readString();
         this.avg_cpc = in.readString();
         this.ctr = in.readString();
         this.cpa = in.readString();
-        this.avg_position = in.readString();
     }
 
     @Override
@@ -242,19 +204,15 @@ public class Keywords implements Parcelable {
         parcel.writeString(id);
         parcel.writeString(match_type);
         parcel.writeString(keyword_id);
+        parcel.writeString(conversion_rate);
         parcel.writeString(keyword_name);
         parcel.writeString(clicks);
         parcel.writeString(impressions);
         parcel.writeString(converted_clicks);
         parcel.writeString(cost);
-        parcel.writeString(publisher_account_id);
-        parcel.writeString(businessunitid);
-        parcel.writeString(business_unit_name);
         parcel.writeString(avg_cpc);
         parcel.writeString(ctr);
         parcel.writeString(cpa);
-        parcel.writeString(avg_position);
-
     }
 
     public static final Creator<Keywords> CREATOR = new Creator<Keywords>() {
@@ -267,11 +225,11 @@ public class Keywords implements Parcelable {
         }
     };
 
-    public String getAvg_position() {
-        return avg_position;
+    public String getConversion_rate() {
+        return conversion_rate;
     }
 
-    public void setAvg_position(String avg_position) {
-        this.avg_position = avg_position;
+    public void setConversion_rate(String conversion_rate) {
+        this.conversion_rate = conversion_rate;
     }
 }
