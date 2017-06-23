@@ -55,5 +55,7 @@
     <string name="txt_lms_lead_time">2h ago</string>
     <string name="txt_name">Name</string>
     <string name="txt_campany">Campany name</string>
+    <string name="title_activity_lead_dashboard1">LeadDashboardActivity1</string>
+    <string name="title_activity_insight">InsightActivity</string>
 
 </resources>

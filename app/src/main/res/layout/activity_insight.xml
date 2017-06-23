@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.agl.product.adw8_new.activity.InsightActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <LinearLayout
+                android:id="@+id/lldefaultSpends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Insight"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_16sdp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textSelectedDateRange"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jun 2 - Jun 8,2017"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_10sdp" />
+
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="1dp" />
+
+                    <ImageView
+                        android:id="@+id/editIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icon_edit" />
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_2sdp"
+        app:cardCornerRadius="@dimen/_4sdp"
+        app:cardElevation="@dimen/_3sdp"
+        app:cardUseCompatPadding="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        <LinearLayout
+            android:id="@+id/llDataContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:background="#f7f7f7"
+                    android:gravity="center"
+                    android:minHeight="50dp"
+                    android:padding="5dp"
+                    android:text="Device"
+                    android:textColor="@color/black" />
+
+                <HorizontalScrollView
+                    android:id="@+id/hrone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text="USERS"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text="VISITS"
+                            android:textColor="@color/black" />
+
+
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text="SESS"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text="ORG_SRC"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text="NEW"
+                            android:textColor="@color/black" />
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom
+                android:id="@+id/swipeRefresh"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <android.support.v4.widget.NestedScrollView
+                    android:id="@+id/scrollview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fillViewport="true"
+                    android:scrollbarStyle="outsideInset"
+                    android:scrollbars="horizontal|vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TableLayout
+                            android:id="@+id/tlName"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content">
+
+                        </TableLayout>
+
+                        <HorizontalScrollView
+                            android:id="@+id/hrsecond"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:scrollbars="none">
+
+                            <TableLayout
+                                android:id="@+id/tlValues"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"></TableLayout>
+                        </HorizontalScrollView>
+                    </LinearLayout>
+                </android.support.v4.widget.NestedScrollView>
+            </com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textTotal"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:background="#f7f7f7"
+                    android:gravity="center"
+                    android:minHeight="50dp"
+                    android:padding="5dp"
+                    android:text="Total"
+                    android:textColor="@color/black" />
+
+                <HorizontalScrollView
+                    android:id="@+id/hrbottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textUsersTotal"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/textVisitsTotal"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/textSessTotal"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/black" />
+
+
+                        <TextView
+                            android:id="@+id/textOrgScrTotal"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/textNewTotal"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/black" />
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="No Data Found"
+            android:textSize="@dimen/_15sdp"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:max="500"
+            android:progress="0"
+            android:theme="@style/AppTheme.PrimaryAccent" />
+    </android.support.v7.widget.CardView>
+
+
+</android.support.design.widget.CoordinatorLayout>

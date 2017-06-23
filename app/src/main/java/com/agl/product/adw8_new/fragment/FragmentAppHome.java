@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.activity.DataActivity;
+import com.agl.product.adw8_new.activity.InsightActivity;
 import com.agl.product.adw8_new.activity.LeadDashBoardActivity;
 import com.agl.product.adw8_new.adapter.AdapterAppHome;
 import com.agl.product.adw8_new.model.BeanAppHomeGrid;
@@ -92,8 +93,8 @@ public class FragmentAppHome extends Fragment {
                 break;
 
             case 1:
-//                Intent intentLms = new Intent(activity, InsightsActivity.class);
-//                startActivity(intentLms);
+                Intent intentLms = new Intent(activity, InsightActivity.class);
+                startActivity(intentLms);
                 break;
 
             case 2:
