@@ -1,83 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rlMain"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/device_item_back"
-    android:clickable="true"
-    android:orientation="vertical" >
+    card_view:cardUseCompatPadding="true"
+    card_view:cardCornerRadius="@dimen/_4sdp"
+    card_view:cardElevation="@dimen/_2sdp">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/rlMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/black" >
+        android:background="@color/white"
+        android:clickable="true"
+        android:orientation="vertical" >
 
-        <RelativeLayout
-            android:id="@+id/rl_lead_header"
-            android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:layout_alignParentTop="true"
-            android:background="#424242"
-            android:gravity="center_vertical" >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/_5sdp"
+            android:weightSum="3"
+            android:background="#7D7D7D">
 
             <LinearLayout
-                android:id="@+id/ll_head_txt"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginLeft="5dp"
+                android:id="@+id/ll_date"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lead_date"
+                    android:textColor="@color/white"
+                    android:singleLine="true"
+                    android:textSize="@dimen/_10sdp" />
 
                 <TextView
                     android:id="@+id/txt_lms_lead_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/txt_lms_lead_date"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/Roboto-Bold.ttf"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/_10sdp" />
-
-                <TextView
-                    android:id="@+id/txt_lms_lead_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/txt_lms_lead_time"
-                    android:textColor="@color/white"
+                    android:singleLine="true"
                     android:textSize="@dimen/_10sdp" />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/img_lead_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginRight="@dimen/margin_small"
-                android:src="@drawable/ic_web" />
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:background="@color/white">
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/txt_business_unit"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/ll_status"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/img_lead_type"
-                android:text="MBA"
-                android:textColor="@color/white"
-                android:layout_marginRight="5dp"
-                android:textSize="@dimen/_12sdp" />
-        </RelativeLayout>
+                android:gravity="center_horizontal"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lead_status"
+                    android:textColor="@color/white"
+                    android:singleLine="true"
+                    android:textSize="@dimen/_10sdp" />
+
+                <TextView
+                    android:id="@+id/txt_lms_lead_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:singleLine="true"
+                    android:textSize="@dimen/_10sdp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:background="@color/white">
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_source"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lead_source"
+                    android:textColor="@color/white"
+                    android:singleLine="true"
+                    android:textSize="@dimen/_10sdp" />
+
+                <TextView
+                    android:id="@+id/txt_lms_lead_source"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:singleLine="true"
+                    tools:ignore="MissingPrefix"
+                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:textSize="@dimen/_10sdp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/lin_child"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/rl_lead_header"
             android:orientation="vertical" >
 
         </LinearLayout>
-    </RelativeLayout>
-</RelativeLayout>
+    </LinearLayout>
+</android.support.v7.widget.CardView>

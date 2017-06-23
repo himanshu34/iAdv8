@@ -31,7 +31,6 @@
         app:cardUseCompatPadding="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-
         <LinearLayout
             android:id="@+id/llContainer"
             android:layout_width="match_parent"

@@ -13,21 +13,51 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
+            android:layout_height="@dimen/_50sdp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
+            <LinearLayout
+                android:id="@+id/ll_leadsOverview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="@string/lead_overview"
+                    android:textSize="@dimen/_16sdp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/textSelectedDateRange"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Jun 2 - Jun 8,2017"
+                        android:textSize="@dimen/_10sdp"
+                        android:textColor="@color/white" />
+
+                    <View
+                        android:layout_width="5dp"
+                        android:layout_height="1dp"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/icon_edit" />
+                </LinearLayout>
+            </LinearLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <Spinner
-        android:id="@+id/spinner_datepicker"
-        android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:layout_margin="5dp"
-        android:background="@drawable/spinner_bg"
-        android:gravity="center" />
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
@@ -65,7 +95,6 @@
             android:id="@+id/rl_leads_main_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/rl_return_view"
             android:visibility="visible" >
 
             <com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom
@@ -76,7 +105,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_leads"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="wrap_content" />
             </com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom>
         </RelativeLayout>
     </RelativeLayout>

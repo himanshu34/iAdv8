@@ -31,16 +31,14 @@ public class AdapterLeads extends RecyclerView.Adapter<AdapterLeads.MyViewHolder
 
 	class MyViewHolder extends RecyclerView.ViewHolder{
 		
-		private TextView txtHeaderDate, txtHeaderTime, txtBusinessUnit;
-		private ImageView imgLeadType;
+		private TextView txtHeaderDate, txtStatus, txtSource;
 		ViewGroup linChild;
 
 		public MyViewHolder(View view) {
 			super(view);
 			txtHeaderDate = (TextView) view.findViewById(R.id.txt_lms_lead_date);
-			txtHeaderTime = (TextView) view.findViewById(R.id.txt_lms_lead_time);
-			txtBusinessUnit = (TextView) view.findViewById(R.id.txt_business_unit);
-			imgLeadType = (ImageView) view.findViewById(R.id.img_lead_type);
+			txtStatus = (TextView) view.findViewById(R.id.txt_lms_lead_status);
+			txtSource = (TextView) view.findViewById(R.id.txt_lms_lead_source);
 			linChild = (ViewGroup) view.findViewById(R.id.lin_child);
 		}
 	}
@@ -58,31 +56,25 @@ public class AdapterLeads extends RecyclerView.Adapter<AdapterLeads.MyViewHolder
 //			viewHolder.llRecording.setVisibility(View.GONE);
 		}
 		viewHolder.txtHeaderDate.setText(currentLmsLead.getSubmitted_on());
-		viewHolder.txtHeaderTime.setText(currentLmsLead.getLead_age());
-		viewHolder.txtBusinessUnit.setText(currentLmsLead.getBusiness_unit_name());
+		viewHolder.txtStatus.setText(currentLmsLead.getLead_status());
+		viewHolder.txtSource.setText(currentLmsLead.getLead_type());
 
 		viewHolder.linChild.removeAllViews();
 		for(FieldsData u: currentLmsLead.getFieldsDataList()) {
 			View layout = inflater.inflate(R.layout.leads_item_row, viewHolder.linChild, false);
 			TextView textLabel = (TextView) layout.findViewById(R.id.txt_label);
 			TextView textValue = (TextView) layout.findViewById(R.id.txt_val);
-			textLabel.setText(u.getLable());
+			textLabel.setText(u.getLable()+":");
 			textValue.setText(u.getValue());
 			viewHolder.linChild.addView(layout);
 		}
 
-		View layout_fixed = inflater.inflate(R.layout.leads_item_fixed, viewHolder.linChild, false);
-		TextView textLastFollowValue = (TextView) layout_fixed.findViewById(R.id.txt_last_follow_val);
-		TextView textNextFollowValue = (TextView) layout_fixed.findViewById(R.id.txt_next_follow_val);
-		textLastFollowValue.setText(currentLmsLead.getLast_followup());
-		textNextFollowValue.setText(currentLmsLead.getNext_followup());
-		viewHolder.linChild.addView(layout_fixed);
-
-		if(currentLmsLead.getLead_type().equalsIgnoreCase(Utils.TYPE_LEAD_WEB)){
-			viewHolder.imgLeadType.setImageResource(R.drawable.ic_web);
-		}else if(currentLmsLead.getLead_type().equalsIgnoreCase(Utils.TYPE_LEAD_CALL)){
-			viewHolder.imgLeadType.setImageResource(R.drawable.ic_call);
-		}
+//		View layout_fixed = inflater.inflate(R.layout.leads_item_fixed, viewHolder.linChild, false);
+//		TextView textLastFollowValue = (TextView) layout_fixed.findViewById(R.id.txt_last_follow_val);
+//		TextView textNextFollowValue = (TextView) layout_fixed.findViewById(R.id.txt_next_follow_val);
+//		textLastFollowValue.setText(currentLmsLead.getLast_followup());
+//		textNextFollowValue.setText(currentLmsLead.getNext_followup());
+//		viewHolder.linChild.addView(layout_fixed);
 	}
 
 	@Override

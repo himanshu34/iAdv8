@@ -1,5 +1,6 @@
 package com.agl.product.adw8_new.activity;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -7,11 +8,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +29,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.ListPopupWindow;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -43,22 +50,26 @@ import com.agl.product.adw8_new.model.LmsLead;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Get;
 import com.agl.product.adw8_new.service.data.ResponseDataLeadsListing;
+import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.OnCustomDateDialogClick;
 import com.agl.product.adw8_new.utils.RecyclerTouchListener;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class LeadListDashboardActivity extends ActivityBase implements SwipeRefreshLayoutBottom.OnRefreshListener,
-        AdapterView.OnItemSelectedListener, OnCustomDateDialogClick, SearchView.OnQueryTextListener {
+        SearchView.OnQueryTextListener, View.OnClickListener {
 
     private static final String TAG = "LeadsListPage :: ";
     private ProgressBar progressLeads;
@@ -66,11 +77,12 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
     private SwipeRefreshLayoutBottom swipeRefreshLayoutBottom;
     private RecyclerView rvLeads;
     private AdapterLeads adapterLeads;
-    private Spinner spinnerDateSelector;
-    private String arrDateSelector[];
-    private AdapterSpinnerDateSelector adapterSpinnerDateSelector;
-    private String currentToDate = "";
-    private String currentFromDate = "";
+    private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange;
+    private LinearLayout ll_leadsOverview;
+    private ConnectionDetector cd;
+    private DatePickerDialog datePickerDialog;
+    private PopupWindow customDatePopup;
+    private View customPopupLayout;
     private String dataType = "";
     private CustomDateSelectorDialog customDateSelectorDialog;
     private FragmentManager fragmentManager;
@@ -84,7 +96,7 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
     String campaignIds="";
     String landingPageIds="";
     String statusIds="";
-    String ownerIds="";
+    String ownerIds="", fromDate, toDate, fromDateToShow, toDateToShow;
     private String currentSearchString = "";
     Cursor curCampaign,curLanding,curOwners,curStatus;
     SearchView searchView;
@@ -98,18 +110,21 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         setContentView(R.layout.leads_list_page);
         session = new Session(this);
 
-        statusId=getIntent().getStringExtra(Utils.ID_TYPE_STATUS);
-        currentFromDate = getIntent().getStringExtra(Utils.CURRENT__FROM_DATE);
-        currentToDate = getIntent().getStringExtra(Utils.CURRENT_TO_DATE);
-        dateType = getIntent().getStringExtra(Utils.DATE_TYPE);
-        Resources res = getResources();
-        intent=getIntent();
-        WEB_FORM_ID=intent.getStringExtra(Utils.WEB_FORM_ID);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle("Lead Overview");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        cd = new ConnectionDetector(this);
+        statusId = getIntent().getStringExtra(Utils.ID_TYPE_STATUS);
+        fromDate = getIntent().getStringExtra(Utils.CURRENT__FROM_DATE);
+        toDate = getIntent().getStringExtra(Utils.CURRENT_TO_DATE);
+        dateType = getIntent().getStringExtra(Utils.DATE_TYPE);
+        Resources res = getResources();
+        intent = getIntent();
+        WEB_FORM_ID=intent.getStringExtra(Utils.WEB_FORM_ID);
+
         fragmentManager = getSupportFragmentManager();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -123,6 +138,9 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         leadsListing = new ArrayList<LmsLead>();
         swipeRefreshLayoutBottom = (SwipeRefreshLayoutBottom) findViewById(R.id.swipe_leads_list);
         swipeRefreshLayoutBottom.setOnRefreshListener(this);
+        ll_leadsOverview = (LinearLayout) findViewById(R.id.ll_leadsOverview);
+        ll_leadsOverview.setOnClickListener(this);
+        textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
         progressLeads = (ProgressBar) findViewById(R.id.progress_leads);
         rlMainLayout = (RelativeLayout) findViewById(R.id.rl_leads_main_layout);
         rlDefaultLayout = (RelativeLayout) findViewById(R.id.rl_leads_default_layout);
@@ -132,13 +150,23 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         rvLeads.setAdapter(adapterLeads);
         rvLeads.setLayoutManager(linearLayoutManager);
 
-        arrDateSelector = getResources().getStringArray(R.array.spinner_date_selector);
-        spinnerDateSelector = (Spinner) findViewById(R.id.spinner_datepicker);
-        adapterSpinnerDateSelector = new AdapterSpinnerDateSelector(LeadListDashboardActivity.this, getSupportFragmentManager(),
-                R.layout.spinner_text_item, arrDateSelector, arrDateSelector.length - 1, spinnerDateSelector);
-        adapterSpinnerDateSelector.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerDateSelector.setAdapter(adapterSpinnerDateSelector);
-        spinnerDateSelector.setOnItemSelectedListener(LeadListDashboardActivity.this);
+        customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
+        customDatePopup = new PopupWindow(this);
+        customDatePopup.setWidth(400);
+        customDatePopup.setHeight(ListPopupWindow.WRAP_CONTENT);
+        customDatePopup.setOutsideTouchable(true);
+        customDatePopup.setContentView(customPopupLayout);
+        customDatePopup.setBackgroundDrawable(new BitmapDrawable());
+        customDatePopup.setFocusable(true);
+
+        textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
+        textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
+        textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
+        textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
+        textYesterday.setOnClickListener(this);
+        textLastSevenDays.setOnClickListener(this);
+        textLastThirtyDays.setOnClickListener(this);
+        textCustom.setOnClickListener(this);
 
         SpacesItemDecoration spacesItemDecoration = new SpacesItemDecoration((int) res.getDimension(R.dimen.list_item_top_margin), (int) res.getDimension(R.dimen.list_item_bottom_margin), (int) res.getDimension(R.dimen.list_item_left_margin), (int) res.getDimension(R.dimen.list_item_right_margin));
         rvLeads.addItemDecoration(spacesItemDecoration);
@@ -167,6 +195,13 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
             }
         }));
 
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+
+        textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
+
         if (dateType.equalsIgnoreCase(Utils.TYPE_LAST_MONTH)) {
             showData();
         }
@@ -177,19 +212,17 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
             showDataWeek();
         }
         if (dateType.equalsIgnoreCase(Utils.TYPE_CUSTOM_DATE)) {
-            String[] arrCurrentDate=currentFromDate.split("-");
-            String strMonth=arrCurrentDate[1];
-            String strMonthLocal=getMonthShortName(Integer.valueOf(strMonth)-1);
-            String strCurrentDateValue=arrCurrentDate[2];
-            String[] arrCurrentDate1=currentToDate.split("-");
-            String strMonth1=arrCurrentDate1[1];
-            // Util.showToast(getApplicationContext(),strMonth1);
-            String strMonthLocal1=getMonthShortName(Integer.valueOf(strMonth1)-1);
-            String strCurrentDateValue1=arrCurrentDate1[2];
-            // arrDateSelector[arrDateSelector.length - 1] = String.valueOf("Custom : ");
-            arrDateSelector[arrDateSelector.length - 1] = String.valueOf("Custom : "+strMonthLocal+" - "+strCurrentDateValue + "  -  " + strMonthLocal1+" - "+strCurrentDateValue1);
-            spinnerDateSelector.setSelection(arrDateSelector.length - 1);
-            getLeadsData(currentToDate, currentFromDate, false,"");
+            textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
+
+            String[] arrCurrentDate = fromDate.split("-");
+            String strMonth = arrCurrentDate[1];
+            String strMonthLocal = getMonthShortName(Integer.valueOf(strMonth)-1);
+            String strCurrentDateValue = arrCurrentDate[2];
+            String[] arrCurrentDate1 = toDate.split("-");
+            String strMonth1 = arrCurrentDate1[1];
+            String strMonthLocal1 = getMonthShortName(Integer.valueOf(strMonth1)-1);
+            String strCurrentDateValue1 = arrCurrentDate1[2];
+            getLeadsData(toDate, fromDate, false,"");
         }
     }
 
@@ -208,6 +241,32 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         return true;
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ll_leadsOverview:
+                customDatePopup.showAsDropDown(ll_leadsOverview, -5, -5);
+                break;
+            case R.id.textYesterday:
+                showDataYesterday();
+                break;
+            case R.id.textLastSevenDays:
+                showDataWeek();
+                break;
+            case R.id.textLastThirtyDays:
+                showData();
+                break;
+            case R.id.textCustom:
+                customDatePopup.dismiss();
+                AlertDialog builder = new ShowDateRangeDialog(LeadListDashboardActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                builder.setCanceledOnTouchOutside(false);
+                builder.setCancelable(false);
+                builder.show();
+                break;
+        }
+    }
+
     private void setupSearchView() {
         searchView.setIconifiedByDefault(true);
         searchView.setOnQueryTextListener(this);
@@ -222,7 +281,7 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        getLeadsData(currentToDate, currentFromDate, false, newText);
+        getLeadsData(toDate, fromDate, false, newText);
         return false;
     }
 
@@ -402,129 +461,64 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
     public void onRefresh() {
         if (ifMoreData) {
             OFFSET_PAGE++;
-            getMoreLeadsData(currentToDate, currentFromDate, true);
+            getMoreLeadsData(toDate, fromDate, true);
         } else {
             swipeRefreshLayoutBottom.setRefreshing(false);
         }
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        System.out.println("Id " + id + parent.getItemAtPosition(position));
-        System.out.println("pos " + position + " arrDateSelector.length-1" + (arrDateSelector.length - 2));
-        switch (position) {
-            case 0:
-                // adapterSpinnerDateSelector.getYesterday();
-                OFFSET_PAGE = 0;
-                ifMoreData = true;
-                showYesterdayDate();
-                break;
-            case 1:
-                // adapterSpinnerDateSelector.getLastWeek();
-                showLastWeekData();
-                OFFSET_PAGE = 0;
-                ifMoreData = true;
-                break;
-            case 2:
-                // adapterSpinnerDateSelector.getLastMonth();
-                showLastMonthData();
-                OFFSET_PAGE = 0;
-                ifMoreData = true;
-                break;
-            case 3:
-                showCustomDateSelectorDialog();
-                OFFSET_PAGE = 0;
-                ifMoreData = true;
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // TODO Auto-generated method stub
-    }
-
     public void showData() {
-        String[] arrDates = adapterSpinnerDateSelector.getLastMonth();
+        if (!cd.isConnectedToInternet()) return;
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        fromDate = Utils.getThirtyDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        fromDateToShow = Utils.getDisplayThirtyDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+        textSelectedDateRange.setText(Utils.getDisplayThirtyDayBeforeDate() + " - " + Utils.getDisplayCurrentDate());
+        customDatePopup.dismiss();
+
         if (!dataType.equalsIgnoreCase(Utils.TYPE_LAST_MONTH)) {
             dataType = Utils.TYPE_LAST_MONTH;
-            getLeadsData(currentToDate, currentFromDate, false, "");
+            getLeadsData(toDate, fromDate, false, "");
         }
     }
 
     public void showDataWeek() {
-        String[] arrDates = adapterSpinnerDateSelector.getLastWeek();
+        if (!cd.isConnectedToInternet()) return;
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        fromDate = Utils.getSevenDayBeforeDate();
+        toDate = Utils.getCurrentDate();
+        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
+        toDateToShow = Utils.getDisplayCurrentDate();
+        textSelectedDateRange.setText(Utils.getDisplaySevenDayBeforeDate() + " - " + Utils.getDisplayCurrentDate());
+        customDatePopup.dismiss();
+
         if (!dataType.equalsIgnoreCase(Utils.TYPE_LAST_WEEK)) {
             dataType = Utils.TYPE_LAST_WEEK;
-            getLeadsData(currentToDate, currentFromDate, false, "");
+            getLeadsData(toDate, fromDate, false, "");
         }
     }
 
     public void showDataYesterday() {
-        String[] arrDates = adapterSpinnerDateSelector.getYesterday();
+        if (!cd.isConnectedToInternet()) return;
+        textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        fromDate = Utils.getYesterdayDate();
+        toDate = Utils.getYesterdayDate();
+        fromDateToShow = Utils.getDisplayYesterdayDate();
+        toDateToShow = Utils.getDisplayYesterdayDate();
+        textSelectedDateRange.setText(Utils.getDisplayYesterdayDate());
+        customDatePopup.dismiss();
+
         if (!dataType.equalsIgnoreCase(Utils.TYPE_YESTERDAY)) {
             dataType = Utils.TYPE_YESTERDAY;
-            getLeadsData(currentToDate, currentFromDate, false, "");
+            getLeadsData(toDate, fromDate, false, "");
         }
-    }
-
-    public void showYesterdayDate() {
-        String[] arrDates = adapterSpinnerDateSelector.getYesterday();
-        currentFromDate = arrDates[0];
-        currentToDate = arrDates[1];
-        if (!dataType.equalsIgnoreCase(Utils.TYPE_YESTERDAY)) {
-            dataType = Utils.TYPE_YESTERDAY;
-            getLeadsData(currentToDate, currentFromDate, false,"");
-        }
-    }
-
-    public void showLastWeekData() {
-        String[] arrDates = adapterSpinnerDateSelector.getLastWeek();
-        currentFromDate = arrDates[0];
-        currentToDate = arrDates[1];
-        if (!dataType.equalsIgnoreCase(Utils.TYPE_LAST_WEEK)) {
-            dataType = Utils.TYPE_LAST_WEEK;
-            getLeadsData(currentToDate, currentFromDate, false,"");
-        }
-    }
-
-    public void showLastMonthData() {
-        String[] arrDates = adapterSpinnerDateSelector.getLastMonth();
-        currentFromDate = arrDates[0];
-        currentToDate = arrDates[1];
-        if (!dataType.equalsIgnoreCase(Utils.TYPE_LAST_MONTH)) {
-            dataType = Utils.TYPE_LAST_MONTH;
-            getLeadsData(currentToDate, currentFromDate, false,"");
-        }
-    }
-
-    @Override
-    public void onCustomDatePickerSelected(int[] date, Integer mTAG) {
-        int day = date[0];
-        int month = date[1];
-        int year = date[2];
-        customDateSelectorDialog.setFromDate(date, mTAG);
-    }
-
-    @Override
-    public void onCustomDateSelectorSelected(String toDate, String fromDate, String toCmpDate, String fromCmpDate) {
-        currentToDate = toDate;
-        currentFromDate = fromDate;
-        String[] arrCurrentDate=currentFromDate.split("-");
-        String strMonth=arrCurrentDate[1];
-        String strMonthLocal=getMonthShortName(Integer.valueOf(strMonth)-1);
-        String strCurrentDateValue=arrCurrentDate[2];
-        String[] arrCurrentDate1=currentToDate.split("-");
-        String strMonth1=arrCurrentDate1[1];
-        // Util.showToast(getApplicationContext(),strMonth1);
-        String strMonthLocal1=getMonthShortName(Integer.valueOf(strMonth1)-1);
-        String strCurrentDateValue1=arrCurrentDate1[2];
-        arrDateSelector[arrDateSelector.length - 1] = String.valueOf("Custom : "+strMonthLocal+"  "+strCurrentDateValue + "  -  " + strMonthLocal1+"  "+strCurrentDateValue1);
-        spinnerDateSelector.setSelection(arrDateSelector.length - 1);
-        getLeadsData(currentToDate, currentFromDate, false,"");
     }
 
     //month*************************
@@ -603,5 +597,106 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
             paramOwners.append(curOwners.getString(4)+",");
         }
         return paramOwners;
+    }
+
+    private class ShowDateRangeDialog extends AlertDialog {
+        String fromDisplay, toDisplay;
+        String fromDay, toDay;
+
+        protected ShowDateRangeDialog(Context context, String message) {
+            super(context);
+            LayoutInflater inflater = getLayoutInflater();
+            final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
+            setView(dialogLayout);
+
+            LinearLayout llStartDate = (LinearLayout) dialogLayout.findViewById(R.id.llStartDate);
+            final TextView textStartDate = (TextView) dialogLayout.findViewById(R.id.textStartDate);
+
+            LinearLayout llEndDate = (LinearLayout) dialogLayout.findViewById(R.id.llEndDate);
+            final TextView textEndDate = (TextView) dialogLayout.findViewById(R.id.textEndDate);
+
+            TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
+            TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
+
+            textStartDate.setText(fromDateToShow);
+            textEndDate.setText(toDateToShow);
+            llStartDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    datePickerDialog = new DatePickerDialog(LeadListDashboardActivity.this, R.style.datepicker, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                            DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+                            Date date = new Date(calendar.getTimeInMillis());
+                            fromDisplay = dateFormat.format(date);
+
+                            DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                            Date date1 = new Date(calendar.getTimeInMillis());
+                            textStartDate.setText(fromDisplay);
+                            fromDay = dateFormat1.format(date1);
+                        }
+                    }, 2017, 05, 15);
+
+                    datePickerDialog.show();
+
+                }
+            });
+
+            llEndDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    datePickerDialog = new DatePickerDialog(LeadListDashboardActivity.this, R.style.datepicker, new DatePickerDialog.OnDateSetListener() {
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+                            DateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.US);
+                            Date date = new Date(calendar.getTimeInMillis());
+                            toDisplay = dateFormat.format(date);
+
+                            DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                            Date date1 = new Date(calendar.getTimeInMillis());
+                            textEndDate.setText(toDisplay);
+                            toDay = dateFormat1.format(date1);
+                        }
+                    },2017, 05, 15);
+
+                    datePickerDialog.show();
+                }
+            });
+
+            textCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dismiss();
+                }
+            });
+
+            textOk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if( fromDay != null && toDay != null && fromDisplay != null && toDisplay!= null  ){
+                        fromDate = fromDay;
+                        toDate = toDay;
+                        fromDateToShow = fromDisplay;
+                        toDateToShow = toDisplay;
+                    }
+
+                    textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
+                    String[] arrCurrentDate = fromDate.split("-");
+                    String strMonth = arrCurrentDate[1];
+                    String strMonthLocal = getMonthShortName(Integer.valueOf(strMonth)-1);
+                    String strCurrentDateValue = arrCurrentDate[2];
+                    String[] arrCurrentDate1 = toDate.split("-");
+                    String strMonth1 = arrCurrentDate1[1];
+                    String strMonthLocal1 = getMonthShortName(Integer.valueOf(strMonth1)-1);
+                    String strCurrentDateValue1 = arrCurrentDate1[2];
+                    getLeadsData(toDate, fromDate, false,"");
+                    dismiss();
+                }
+            });
+        }
     }
 }

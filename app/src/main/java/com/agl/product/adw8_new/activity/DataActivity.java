@@ -415,7 +415,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         setList();
         requestDashboardData();
         requestGraphDashboardData();
-
     }
 
     private void setLastSeven() {
@@ -580,7 +579,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
         }
     }
 
-
     private class ShowDateRangeDialog extends AlertDialog {
         String fromDisplay, toDisplay;
         String fromDay, toDay;
@@ -599,9 +597,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
 
             TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
             TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
-
-
-
 
             textStartDate.setText(fromDateToShow);
             textEndDate.setText(toDateToShow);
@@ -678,10 +673,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                     dismiss();
                 }
             });
-
-
         }
     }
-
-
 }
