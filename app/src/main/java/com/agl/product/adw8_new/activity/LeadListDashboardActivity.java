@@ -28,30 +28,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.adapter.AdapterLeads;
-import com.agl.product.adw8_new.adapter.AdapterSpinnerDateSelector;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
 import com.agl.product.adw8_new.database.IAdv8Database;
-import com.agl.product.adw8_new.fragment.CustomDateSelectorDialog;
 import com.agl.product.adw8_new.fragment.FragmentAppHome;
 import com.agl.product.adw8_new.model.LmsLead;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Get;
 import com.agl.product.adw8_new.service.data.ResponseDataLeadsListing;
 import com.agl.product.adw8_new.utils.ConnectionDetector;
-import com.agl.product.adw8_new.utils.OnCustomDateDialogClick;
 import com.agl.product.adw8_new.utils.RecyclerTouchListener;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
@@ -84,7 +79,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
     private PopupWindow customDatePopup;
     private View customPopupLayout;
     private String dataType = "";
-    private CustomDateSelectorDialog customDateSelectorDialog;
     private FragmentManager fragmentManager;
     private int OFFSET_PAGE = 0;
     private boolean ifMoreData = true;
@@ -181,9 +175,9 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
                 }
 
                 if (!Utils.isEmptyString(leadId)) {
-//                    Intent intentLeadDetails = new Intent(LeadListDashboardActivity.this, LeadDetailsActivity.class);
-//                    intentLeadDetails.putExtra(Utils.LEAD_ID, leadId);
-//                    startActivity(intentLeadDetails);
+                    Intent intentLeadDetails = new Intent(LeadListDashboardActivity.this, LeadDetailsActivity.class);
+                    intentLeadDetails.putExtra(Utils.LEAD_ID, leadId);
+                    startActivity(intentLeadDetails);
                 } else {
                     Log.e(TAG, "Lead id is null");
                 }
@@ -322,7 +316,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
             if (parent.getChildPosition(view) == 0)
                 outRect.top = topMargin;
         }
-
     }
 
     private void setProgressLayout() {
@@ -342,7 +335,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         rlDefaultLayout.setVisibility(View.GONE);
         rlMainLayout.setVisibility(View.VISIBLE);
     }
-
 
     private void getLeadsData(String toDate, String fromDate, final boolean isLazyLoading, String searchKeyword) {
         setProgressLayout();
@@ -367,10 +359,14 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
                                 if(response.body().getLmsLeadsList().size() > 0) {
                                     leadsListing = response.body().getLmsLeadsList();
                                     adapterLeads.addData(leadsListing, isLazyLoading);
-                                }
-                            }
 
-                            setMainLayout();
+                                    setMainLayout();
+                                } else {
+                                    setDefaultLayout();
+                                }
+                            } else {
+                                setDefaultLayout();
+                            }
                         } else {
                             setDefaultLayout();
                         }
@@ -538,15 +534,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         return monthName;
     }
 
-    public void showCustomDateSelectorDialog() {
-        Log.e(TAG, "Show Custom Dialog date selector");
-        customDateSelectorDialog = (CustomDateSelectorDialog) fragmentManager.findFragmentByTag(Utils.TAG_DIALOG_DATE_SELECTOR);
-        if (customDateSelectorDialog == null) {
-            customDateSelectorDialog = CustomDateSelectorDialog.newInstance(false);
-        }
-        customDateSelectorDialog.show(fragmentManager, Utils.TAG_DIALOG_DATE_SELECTOR);
-    }
-
     public void onResume() {
         super.onResume();
         Cursor cur=getCount();
@@ -608,18 +595,20 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
             LayoutInflater inflater = getLayoutInflater();
             final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
             setView(dialogLayout);
-
             LinearLayout llStartDate = (LinearLayout) dialogLayout.findViewById(R.id.llStartDate);
             final TextView textStartDate = (TextView) dialogLayout.findViewById(R.id.textStartDate);
-
             LinearLayout llEndDate = (LinearLayout) dialogLayout.findViewById(R.id.llEndDate);
             final TextView textEndDate = (TextView) dialogLayout.findViewById(R.id.textEndDate);
-
             TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
             TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
 
+            fromDisplay = fromDateToShow;
+            toDisplay = toDateToShow;
+            fromDay = fromDate;
+            toDay = toDate;
             textStartDate.setText(fromDateToShow);
             textEndDate.setText(toDateToShow);
+
             llStartDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -638,9 +627,7 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
                             fromDay = dateFormat1.format(date1);
                         }
                     }, 2017, 05, 15);
-
                     datePickerDialog.show();
-
                 }
             });
 
@@ -662,7 +649,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
                             toDay = dateFormat1.format(date1);
                         }
                     },2017, 05, 15);
-
                     datePickerDialog.show();
                 }
             });

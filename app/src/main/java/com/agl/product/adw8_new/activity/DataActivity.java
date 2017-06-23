@@ -588,18 +588,20 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
             LayoutInflater inflater = getLayoutInflater();
             final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
             setView(dialogLayout);
-
             LinearLayout llStartDate = (LinearLayout) dialogLayout.findViewById(R.id.llStartDate);
             final TextView textStartDate = (TextView) dialogLayout.findViewById(R.id.textStartDate);
-
             LinearLayout llEndDate = (LinearLayout) dialogLayout.findViewById(R.id.llEndDate);
             final TextView textEndDate = (TextView) dialogLayout.findViewById(R.id.textEndDate);
-
             TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
             TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
 
+            fromDisplay = fromDateToShow;
+            toDisplay = toDateToShow;
+            fromDay = fromDate;
+            toDay = toDate;
             textStartDate.setText(fromDateToShow);
             textEndDate.setText(toDateToShow);
+
             llStartDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -616,10 +618,7 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                             Date date1 = new Date(calendar.getTimeInMillis());
                             textStartDate.setText(fromDisplay);
                             fromDay = dateFormat1.format(date1);
-
                         }
-
-
                     }, 2017, 05, 15);
 
                     datePickerDialog.show();
@@ -643,7 +642,6 @@ public class DataActivity extends ActivityBase implements TabLayout.OnTabSelecte
                             Date date1 = new Date(calendar.getTimeInMillis());
                             textEndDate.setText(toDisplay);
                             toDay = dateFormat1.format(date1);
-
                         }
 
 

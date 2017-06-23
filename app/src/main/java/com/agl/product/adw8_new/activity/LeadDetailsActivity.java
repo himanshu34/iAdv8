@@ -1,5 +1,6 @@
 package com.agl.product.adw8_new.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,13 +9,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
+import com.agl.product.adw8_new.adapter.AdapterLeadDetail;
 import com.agl.product.adw8_new.model.LeadsDetail;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Get;
@@ -23,7 +25,6 @@ import com.agl.product.adw8_new.utils.CustomDialogClickListner;
 import com.agl.product.adw8_new.utils.CustomDialogItemClickListner;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
-import com.bumptech.glide.Glide;
 
 import java.util.HashMap;
 
@@ -38,22 +39,13 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
     private static final String TAG_BTN_REMINDER = "btnReminder";
     private static final String TAG_BTN_HISTORY = "btnHistory";
     private RecyclerView recycleLmsDetail;
-    private Toolbar toolbar;
     private ProgressBar progressLeadDetail;
     private RelativeLayout rlMainLayout, rlDefaultLayout;
-//    private AdapterLeadDetail adapterLeadDetail;
-    private TextView txtOwner, txtDesignation;
+    private AdapterLeadDetail adapterLeadDetail;
     private String leadId;
     private String ownerId;
-    private ImageView imgUser;
-    private String imageurl;
-    private String twitter;
-    private String facebook;
-    private String linkdin;
-    ImageView imgFacebook,imgTwitter,imgLinked,imgGooglePlus;
     private String statusId="";
-    private String LeadName="NA";
-    private RelativeLayout rlSocialData;
+    private String LeadName = "NA";
     Session session;
     HashMap<String, String> userData;
 
@@ -63,43 +55,39 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
         setContentView(R.layout.lead_details_page);
         session = new Session(this);
         userData = session.getUsuarioDetails();
-    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Lead Detail");
+        getSupportActionBar().setTitle("Lead Details");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.setStatusBarColor(getResources().getColor(R.color.colorPrimaryDark));
+        }
+
+        initData();
 
         progressLeadDetail = (ProgressBar) findViewById(R.id.progress_lms_home);
         rlDefaultLayout = (RelativeLayout) findViewById(R.id.rl_lead_detail_default_layout);
         rlMainLayout = (RelativeLayout) findViewById(R.id.rl_lead_detail_main_layout);
-
-        imgUser = (ImageView) findViewById(R.id.lead_img_default);
-        imgFacebook=(ImageView)findViewById(R.id.img_facebook);
-        imgTwitter=(ImageView)findViewById(R.id.img_twitter);
-        imgLinked=(ImageView)findViewById(R.id.img_linked);
-        imgGooglePlus=(ImageView)findViewById(R.id.img_googleplus);
-        LeadName=getIntent().getStringExtra(Utils.LEAD_NAME);
-        rlSocialData=(RelativeLayout)findViewById(R.id.rl_social_data);
-
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            leadId = bundle.getString(Utils.LEAD_ID);
-        }
-
-        txtOwner = (TextView) findViewById(R.id.txt_name_owner);
-        txtDesignation = (TextView) findViewById(R.id.txt_designation);
-
         recycleLmsDetail = (RecyclerView) findViewById(R.id.rv_lmslead_detail);
 //        adapterLeadDetail = new AdapterLeadDetail(LeadDetailsActivity.this, LeadDetailsActivity.this, getSupportFragmentManager(),leadId);
 //        recycleLmsDetail.setAdapter(adapterLeadDetail);
         recycleLmsDetail.setLayoutManager(new LinearLayoutManager(LeadDetailsActivity.this));
 
         getLeadDetailData();
+    }
+
+    private void initData() {
+        LeadName = getIntent().getStringExtra(Utils.LEAD_NAME);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            leadId = bundle.getString(Utils.LEAD_ID);
+        }
     }
 
     @Override
@@ -136,30 +124,12 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
                                 if (leadDetail != null && leadDetail.getFieldsDataList().size() > 0) {
 //                                    adapterLeadDetail.addData(leadDetail.getFieldsDataList());
                                     if(leadDetail.getSocial_data() != null) {
-                                        twitter=leadDetail.getSocial_data().getTwitter();
-                                        facebook=leadDetail.getSocial_data().getFacebook();
-                                        linkdin=leadDetail.getSocial_data().getLinkedin();
-                                        imageurl=leadDetail.getSocial_data().getUserImage();
-
-                                        Glide.with(LeadDetailsActivity.this).load(imageurl).asBitmap().error(R.drawable.lead_img_default)
-                                                .into(imgUser);
-
-                                        if(!twitter.isEmpty()) {
-                                            imgTwitter.setBackground(getResources().getDrawable(R.drawable.ic_twitter_active));
-                                        } else if(!linkdin.isEmpty()) {
-                                            imgLinked.setBackground(getResources().getDrawable(R.drawable.ic_linked_active));
-                                        } else if(!facebook.isEmpty()) {
-                                            imgFacebook.setBackground(getResources().getDrawable(R.drawable.ic_facebook_active));
-                                        }
+                                        String twitter=leadDetail.getSocial_data().getTwitter();
+                                        String facebook=leadDetail.getSocial_data().getFacebook();
+                                        String linkdin=leadDetail.getSocial_data().getLinkedin();
+                                        String imageurl=leadDetail.getSocial_data().getUserImage();
                                     }
                                     setMainLayout();
-                                    if(leadDetail.getLead_type().equalsIgnoreCase("Call")) {
-                                        // setData(leadDetail);
-                                        rlSocialData.setVisibility(View.INVISIBLE);
-                                    } else {
-                                        rlSocialData.setVisibility(View.VISIBLE);
-                                        setData(leadDetail);
-                                    }
                                 } else {
                                     setDefaultLayout();
                                 }
@@ -181,13 +151,6 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
                 }
             }
         });
-    }
-
-    private void setData(LeadsDetail leadDetail) {
-        if (leadDetail != null) {
-            txtOwner.setText(LeadName);
-            txtDesignation.setText(leadDetail.getUser_designation());
-        }
     }
 
     private void setProgressLayout() {

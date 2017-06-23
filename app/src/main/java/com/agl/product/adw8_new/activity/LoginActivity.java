@@ -20,6 +20,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.ActivityBase;
@@ -50,7 +51,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
     public String TAG = "LoginActivity";
     private final int RC_SIGN_IN = 0x1;
     GoogleApiClient mGoogleApiClient;
-    SignInButton signInButton;
+    LinearLayout signInButton;
     Button loginButton;
     EditText emailEditText, passwordEditText;
     Session session;
@@ -60,13 +61,6 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         session = new Session(this);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        setTitle(getResources().getString(R.string.login_title));
-        toolbar.setTitleTextColor(Color.WHITE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -88,8 +82,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        signInButton = (SignInButton) findViewById(R.id.btn_sign_in_google);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        signInButton = (LinearLayout) findViewById(R.id.btn_sign_in_google);
         loginButton = (Button) findViewById(R.id.login_btn);
         emailEditText = (EditText) findViewById(R.id.editText_email);
         passwordEditText = (EditText) findViewById(R.id.editText_password);
@@ -102,6 +95,9 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_sign_in_google:
+                emailEditText.clearFocus();
+                passwordEditText.clearFocus();
+                Utils.closeKeyboard(LoginActivity.this, v);
                 signIn();
                 break;
 
@@ -197,6 +193,9 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
             serviceGoogleSignUp(acct.getDisplayName(), acct.getEmail(), acct.getId());
         } else {
             // Signed out, show unauthenticated UI.
+            if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+            }
         }
     }
 
@@ -218,6 +217,10 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
         call.enqueue(new Callback<ResponseDataAddCient>() {
             @Override
             public void onResponse(Call<ResponseDataAddCient>call, Response<ResponseDataAddCient> response) {
+                if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                }
+
                 if(response.isSuccessful()) {
                     if(response != null) {
                         Log.e(TAG, response.body().getMessage());

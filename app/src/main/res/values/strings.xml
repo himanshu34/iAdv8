@@ -9,10 +9,11 @@
     <string name="login_title">Login</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
-    <string name="login_button">Login</string>
+    <string name="login_button">Sign In</string>
     <string name="digiteEmail">Please enter email address</string>
     <string name="digiteValidEmail">Please enter a valid email address</string>
     <string name="digitePassword">Please enter password</string>
+    <string name="sign_in_google">Sign in with Google</string>
 
     <string name="details">DETAILS</string>
     <string name="impression">IMPRESSION</string>
