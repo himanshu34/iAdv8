@@ -151,8 +151,6 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
             requestGraphData();
             requestLeadMatrics();
         } else Toast.makeText(this, "Not Connected to Internet", Toast.LENGTH_SHORT).show();
-
-
     }
 
     private void requestGraphData() {

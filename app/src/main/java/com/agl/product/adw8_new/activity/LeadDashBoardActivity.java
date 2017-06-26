@@ -183,7 +183,7 @@ public class LeadDashBoardActivity extends ActivityBase implements OnCustomDateD
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Leads leadsData = leadsArrayList.get(position);
                 startActivity(new Intent(LeadDashBoardActivity.this, LeadListDashboardActivity.class)
-                        .putExtra(Utils.CURRENT__FROM_DATE, currentFromDate)
+                        .putExtra(Utils.CURRENT_FROM_DATE, currentFromDate)
                         .putExtra(Utils.CURRENT_TO_DATE, currentToDate)
                         .putExtra(Utils.DATE_TYPE, dataType)
                         .putExtra(Utils.ID_TYPE_STATUS, leadsData.getStatus_id()+","));

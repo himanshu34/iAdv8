@@ -114,7 +114,7 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         fromDate = getIntent().getStringExtra(Utils.CURRENT_FROM_DATE);
         toDate = getIntent().getStringExtra(Utils.CURRENT_TO_DATE);
         fromDateToShow = getIntent().getStringExtra(Utils.CURRENT_FROM_DATE_TO_SHOW);
-        toDateToShow = getIntent().getStringExtra(Utils.CURRENT_FROM_DATE_TO_SHOW);
+        toDateToShow = getIntent().getStringExtra(Utils.CURRENT_TO_DATE_TO_SHOW);
         dateType = getIntent().getStringExtra(Utils.DATE_TYPE);
 
         Resources res = getResources();
@@ -193,15 +193,37 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
 
         if (dateType.equalsIgnoreCase(Utils.TYPE_LAST_MONTH)) {
-            showData();
-        }
-        if (dateType.equalsIgnoreCase(Utils.TYPE_YESTERDAY)) {
-            showDataYesterday();
-        }
-        if (dateType.equalsIgnoreCase(Utils.TYPE_LAST_WEEK)) {
-            showDataWeek();
-        }
-        if (dateType.equalsIgnoreCase(Utils.TYPE_CUSTOM_DATE)) {
+            if (!cd.isConnectedToInternet()) return;
+            textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+            textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+            textYesterday.setTextColor(getResources().getColor(R.color.black));
+
+            textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
+            customDatePopup.dismiss();
+            dataType = Utils.TYPE_LAST_MONTH;
+            getLeadsData(toDate, fromDate, false, "");
+        } else if (dateType.equalsIgnoreCase(Utils.TYPE_YESTERDAY)) {
+            if (!cd.isConnectedToInternet()) return;
+            textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
+            textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+            textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+
+            textSelectedDateRange.setText(fromDateToShow);
+            customDatePopup.dismiss();
+            dataType = Utils.TYPE_YESTERDAY;
+            getLeadsData(toDate, fromDate, false, "");
+        } else if (dateType.equalsIgnoreCase(Utils.TYPE_LAST_WEEK)) {
+            if (!cd.isConnectedToInternet()) return;
+            textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+            textYesterday.setTextColor(getResources().getColor(R.color.black));
+            textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+
+            textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
+            customDatePopup.dismiss();
+
+            dataType = Utils.TYPE_LAST_WEEK;
+            getLeadsData(toDate, fromDate, false, "");
+        } else if (dateType.equalsIgnoreCase(Utils.TYPE_CUSTOM_DATE)) {
             textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
 
             String[] arrCurrentDate = fromDate.split("-");
@@ -244,7 +266,7 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
                 showDataWeek();
                 break;
             case R.id.textLastThirtyDays:
-                showData();
+                showDataMonth();
                 break;
             case R.id.textCustom:
                 customDatePopup.dismiss();
@@ -459,11 +481,12 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         }
     }
 
-    public void showData() {
+    public void showDataMonth() {
         if (!cd.isConnectedToInternet()) return;
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
+
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplayThirtyDayBeforeDate();
