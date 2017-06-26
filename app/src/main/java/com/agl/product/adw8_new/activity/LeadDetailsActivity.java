@@ -1,22 +1,24 @@
 package com.agl.product.adw8_new.activity;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
-import com.agl.product.adw8_new.adapter.AdapterLeadDetail;
+import com.agl.product.adw8_new.model.FieldsData;
 import com.agl.product.adw8_new.model.LeadsDetail;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Get;
@@ -26,6 +28,7 @@ import com.agl.product.adw8_new.utils.CustomDialogItemClickListner;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import retrofit2.Call;
@@ -38,10 +41,10 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
     private static final String TAG_BTN_EDIT = "btnEdit";
     private static final String TAG_BTN_REMINDER = "btnReminder";
     private static final String TAG_BTN_HISTORY = "btnHistory";
-    private RecyclerView recycleLmsDetail;
     private ProgressBar progressLeadDetail;
     private RelativeLayout rlMainLayout, rlDefaultLayout;
-    private AdapterLeadDetail adapterLeadDetail;
+    private LinearLayout linChild;
+    private ArrayList<FieldsData> fieldsDataList;
     private String leadId;
     private String ownerId;
     private String statusId="";
@@ -74,15 +77,13 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
         progressLeadDetail = (ProgressBar) findViewById(R.id.progress_lms_home);
         rlDefaultLayout = (RelativeLayout) findViewById(R.id.rl_lead_detail_default_layout);
         rlMainLayout = (RelativeLayout) findViewById(R.id.rl_lead_detail_main_layout);
-        recycleLmsDetail = (RecyclerView) findViewById(R.id.rv_lmslead_detail);
-//        adapterLeadDetail = new AdapterLeadDetail(LeadDetailsActivity.this, LeadDetailsActivity.this, getSupportFragmentManager(),leadId);
-//        recycleLmsDetail.setAdapter(adapterLeadDetail);
-        recycleLmsDetail.setLayoutManager(new LinearLayoutManager(LeadDetailsActivity.this));
+        linChild = (LinearLayout) findViewById(R.id.lin_child);
 
         getLeadDetailData();
     }
 
     private void initData() {
+        fieldsDataList = new ArrayList<FieldsData>();
         LeadName = getIntent().getStringExtra(Utils.LEAD_NAME);
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -114,6 +115,8 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
             @Override
             public void onResponse(Call<ResponseDataLeadsDetails>call, Response<ResponseDataLeadsDetails> response) {
                 if (response != null) {
+                    Log.e(TAG, response.body().getMessage());
+                    Log.e(TAG, response.body().getLeadsDetail().toString());
                     if (response.isSuccessful()) {
                         if (response.body().getError() == 0) {
                             Log.d(TAG, response.body().toString());
@@ -121,24 +124,22 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
                                 LeadsDetail leadDetail = response.body().getLeadsDetail();
                                 ownerId = leadDetail.getOwner_id();
                                 statusId = leadDetail.getStatus_id();
-                                if (leadDetail != null && leadDetail.getFieldsDataList().size() > 0) {
-//                                    adapterLeadDetail.addData(leadDetail.getFieldsDataList());
-                                    if(leadDetail.getSocial_data() != null) {
-                                        String twitter=leadDetail.getSocial_data().getTwitter();
-                                        String facebook=leadDetail.getSocial_data().getFacebook();
-                                        String linkdin=leadDetail.getSocial_data().getLinkedin();
-                                        String imageurl=leadDetail.getSocial_data().getUserImage();
+
+                                if(leadDetail.getFieldsDataList() != null) {
+                                    if(leadDetail.getFieldsDataList().size() > 0) {
+                                        fieldsDataList = leadDetail.getFieldsDataList();
                                     }
-                                    setMainLayout();
-                                } else {
-                                    setDefaultLayout();
                                 }
+
+                                setMainLayout();
                             } else {
                                 setDefaultLayout();
                             }
                         } else {
                             setDefaultLayout();
                         }
+                    } else {
+                        setDefaultLayout();
                     }
                 }
             }
@@ -169,6 +170,17 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
         progressLeadDetail.setVisibility(View.GONE);
         rlDefaultLayout.setVisibility(View.GONE);
         rlMainLayout.setVisibility(View.VISIBLE);
+
+        linChild.removeAllViews();
+        LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        for(FieldsData u: fieldsDataList) {
+            View layout = inflater.inflate(R.layout.leads_item_row, linChild, false);
+            TextView textLabel = (TextView) layout.findViewById(R.id.txt_label);
+            TextView textValue = (TextView) layout.findViewById(R.id.txt_val);
+            textLabel.setText(u.getLable()+":");
+            textValue.setText(u.getValue());
+            linChild.addView(layout);
+        }
     }
 
     @Override

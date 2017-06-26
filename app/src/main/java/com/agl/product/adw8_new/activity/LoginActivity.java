@@ -268,8 +268,8 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
             @Override
             public void onResponse(Call<ResponseDataLogin>call, Response<ResponseDataLogin> response) {
                 signInButton.setEnabled(true);
-                if(response.isSuccessful()) {
-                    if(response != null) {
+                if(response != null) {
+                    if(response.isSuccessful()) {
                         Log.e(TAG, response.body().getMessage());
                         if(response.body().getError() == 0) {
                             PermissionData permissionData = response.body().getPermission_array();
@@ -288,6 +288,12 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
                             builder.setCancelable(false);
                             builder.show();
                         }
+                    } else {
+                        AlertDialog builder = new showErrorDialog(LoginActivity.this, response.body().getMessage());
+                        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        builder.setCanceledOnTouchOutside(false);
+                        builder.setCancelable(false);
+                        builder.show();
                     }
                 } else {
                     AlertDialog builder = new showErrorDialog(LoginActivity.this, getResources().getString(R.string.instabilidade_servidor));

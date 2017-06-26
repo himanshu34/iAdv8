@@ -91,12 +91,12 @@ public class AdapterLeads extends RecyclerView.Adapter<AdapterLeads.MyViewHolder
 		return viewHolder;
 	}
 
-	public void addData(ArrayList<LmsLead> parserArrLmsLead, boolean isLazyLoading) {
+	public void addData(ArrayList<LmsLead> ArrLmsLead, boolean isLazyLoading) {
 		if(isLazyLoading){
-			arrLmsLead=parserArrLmsLead;
+			arrLmsLead = ArrLmsLead;
             notifyDataSetChanged();
-		} else{
-			arrLmsLead = parserArrLmsLead;
+		} else {
+			arrLmsLead = ArrLmsLead;
             notifyDataSetChanged();
 		}
 	}
