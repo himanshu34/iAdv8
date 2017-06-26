@@ -28,8 +28,10 @@ public class Utils {
     public static final int BTN_FROM_START = 1;
     public static final int BTN_FROM_END = 2;
     public static final int BTN_TO_START = 3;
-    public static final String CURRENT__FROM_DATE="current_from_date";
+    public static final String CURRENT_FROM_DATE="current_from_date";
     public static final String CURRENT_TO_DATE="current_to_date";
+    public static final String CURRENT_FROM_DATE_TO_SHOW="current_from_date_to_show";
+    public static final String CURRENT_TO_DATE_TO_SHOW="current_to_date_to_show";
     public static final String DATE_TYPE="date_type";
     public static final String WEB_FORM_ID="wId";
     public static final String LEAD_ID = "leadId";
