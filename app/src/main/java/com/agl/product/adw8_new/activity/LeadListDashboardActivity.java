@@ -111,12 +111,14 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
 
         cd = new ConnectionDetector(this);
         statusIds = getIntent().getStringExtra(Utils.ID_TYPE_STATUS);
-        fromDate = getIntent().getStringExtra(Utils.CURRENT__FROM_DATE);
+        fromDate = getIntent().getStringExtra(Utils.CURRENT_FROM_DATE);
         toDate = getIntent().getStringExtra(Utils.CURRENT_TO_DATE);
+        fromDateToShow = getIntent().getStringExtra(Utils.CURRENT_FROM_DATE_TO_SHOW);
+        toDateToShow = getIntent().getStringExtra(Utils.CURRENT_FROM_DATE_TO_SHOW);
         dateType = getIntent().getStringExtra(Utils.DATE_TYPE);
+
         Resources res = getResources();
-        intent = getIntent();
-        WEB_FORM_ID=intent.getStringExtra(Utils.WEB_FORM_ID);
+        WEB_FORM_ID = getIntent().getStringExtra(Utils.WEB_FORM_ID);
 
         fragmentManager = getSupportFragmentManager();
 
@@ -187,11 +189,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
                 // TODO Auto-generated method stub
             }
         }));
-
-        fromDate = Utils.getSevenDayBeforeDate();
-        toDate = Utils.getCurrentDate();
-        fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
-        toDateToShow = Utils.getDisplayCurrentDate();
 
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
 

@@ -145,7 +145,6 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
             public void onResponse(Call<ResponseDataLeadsDetails>call, Response<ResponseDataLeadsDetails> response) {
                 if (response != null) {
                     Log.e(TAG, response.body().getMessage());
-                    Log.e(TAG, response.body().getLeadsDetail().toString());
                     if (response.isSuccessful()) {
                         if (response.body().getError() == 0) {
                             Log.d(TAG, response.body().toString());
