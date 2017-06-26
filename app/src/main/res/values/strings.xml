@@ -57,5 +57,6 @@
     <string name="txt_campany">Campany name</string>
     <string name="title_activity_lead_dashboard1">LeadDashboardActivity1</string>
     <string name="title_activity_insight">InsightActivity</string>
+    <string name="title_activity_lead_source">LeadSourceActivity</string>
 
 </resources>

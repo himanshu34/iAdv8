@@ -23,8 +23,8 @@
         <activity
             android:name=".activity.LoginActivity"
             android:label="@string/app_name"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme.Login" />
+            android:theme="@style/AppTheme.Login"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_campaign"
@@ -72,6 +72,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.InsightActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.LeadSourceActivity"
+            android:label="@string/title_activity_lead_source"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

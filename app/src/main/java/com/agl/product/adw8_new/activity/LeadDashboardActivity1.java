@@ -21,10 +21,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.DatePicker;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +38,8 @@ import com.agl.product.adw8_new.adapter.LeadDashboardAdditionalAdapter;
 import com.agl.product.adw8_new.adapter.LeadDashboardHeaderAdapter;
 import com.agl.product.adw8_new.adapter.LeadsGraphAdapter;
 import com.agl.product.adw8_new.database.IAdv8Database;
+import com.agl.product.adw8_new.model.InsightDimension;
+import com.agl.product.adw8_new.model.LeadSource;
 import com.agl.product.adw8_new.model.LeadsGraphData;
 import com.agl.product.adw8_new.model.MainLeads;
 import com.agl.product.adw8_new.retrofit.ApiClient;
@@ -41,6 +47,7 @@ import com.agl.product.adw8_new.service.Get;
 import com.agl.product.adw8_new.service.Post;
 import com.agl.product.adw8_new.service.data.ResponseDataLeads;
 import com.agl.product.adw8_new.service.data.ResponseLeadsGraph;
+import com.agl.product.adw8_new.service.data.ResponseLeadsSource;
 import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
@@ -77,6 +84,10 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
     ArrayList<MainLeads> additionalLeads;
     private ProgressDialog pd;
     private String dateType = "";
+    private TextView textReject, textClosedLost, textCloseWon, textProposalSent,viewAll;
+    private TableLayout tlName,tlValues;
+    private int rowCount = 0 ;
+    private HorizontalScrollView hrone, hrsecond, hrbottom;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +101,20 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         session = new Session(this);
         cd = new ConnectionDetector(this);
         pd = new ProgressDialog(this);
+
+        tlName = (TableLayout) findViewById(R.id.tlName);
+        tlValues = (TableLayout) findViewById(R.id.tlValues);
+
+        textReject = (TextView) findViewById(R.id.textReject);
+        textClosedLost = (TextView) findViewById(R.id.textClosedLost);
+        textCloseWon = (TextView) findViewById(R.id.textCloseWon);
+        textProposalSent = (TextView) findViewById(R.id.textProposalSent);
+
+        viewAll = (TextView) findViewById(R.id.viewAll);
+        hrone = (HorizontalScrollView) findViewById(R.id.hrone);
+        hrsecond = (HorizontalScrollView) findViewById(R.id.hrsecond);
+        hrbottom = (HorizontalScrollView) findViewById(R.id.hrbottom);
+
         rvHeaderData = (RecyclerView) findViewById(R.id.rvHeaderData);
         rvHeaderData.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -125,6 +150,14 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
         toDateToShow = Utils.getDisplayCurrentDate();
 
+        hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            @Override
+            public void onScrollChanged() {
+                hrone.scrollTo(hrsecond.getScrollX(), hrsecond.getScrollY());
+                hrbottom.scrollTo(hrsecond.getScrollX(), hrsecond.getScrollY());
+            }
+        });
+
 
         textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
         textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
@@ -145,33 +178,137 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         textLastSevenDays.setOnClickListener(this);
         textLastThirtyDays.setOnClickListener(this);
         textCustom.setOnClickListener(this);
+        viewAll.setOnClickListener(this);
 
 
         userData = session.getUsuarioDetails();
         campaignIds = getCampaignCount().toString();
         landingPageIds = getLandingCount().toString();
         ownerIds = getOwnerCount().toString();
+        getAllData();
+    }
+
+
+
+    private void getAllData(){
         if (cd.isConnectedToInternet()) {
             pd.show();
             requestGraphData();
             requestLeadMatrics();
+            requestLeadSource();
         } else Toast.makeText(this, "Not Connected to Internet", Toast.LENGTH_SHORT).show();
+    }
+
+    private void requestLeadSource() {
+        Get apiLeadsService = ApiClient.getClientEarlier().create(Get.class);
+        String url = "http://adv8kuber.in/webforms/get-Lead-Utm-Wise/userEmail/" + userData.get(Session.KEY_EMAIL)
+                + "/password/" + userData.get(Session.KEY_PASSWORD) + "/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"
+                + userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/utm_source,status/fromDate/" + fromDate + "/toDate/" + toDate;
+
+        Call<ResponseLeadsSource> graphCall = apiLeadsService.getLeadSource(url);
+        graphCall.enqueue(new Callback<ResponseLeadsSource>() {
+            @Override
+            public void onResponse(Call<ResponseLeadsSource> call, Response<ResponseLeadsSource> response) {
+                if( response != null ){
+                    if( response.isSuccessful() ){
+                        ResponseLeadsSource res= response.body();
+                        ArrayList<LeadSource> list = res.getData();
+                        if( list != null && list.size() > 0  ){
+                            createLeadSourceTable(list);
+                            setTotalRow(list);
+                        }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseLeadsSource> call, Throwable t) {
+
+                if ( t != null ) {
+                    Log.d("TAG",t.getMessage());
+                }
+            }
+        });
+
+    }
+
+    private void setTotalRow(ArrayList<LeadSource> list) {
+        try {
+            LeadSource leadSouce = list.get(0);
+            textReject.setText("2");
+            textClosedLost.setText("0");
+            textCloseWon.setText("0");
+            textProposalSent.setText("0");
+        } catch (Exception e ){
+            e.printStackTrace();
+        }
+    }
+
+    private void createLeadSourceTable(ArrayList<LeadSource> list) {
+        for (int i = 0; i < list.size(); i++) {
+            LeadSource leadSource = list.get(i );
+            TableRow row1 = new TableRow(this);
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+            lp.span = 1;
+            row1.setLayoutParams(lp);
+            setFirstColumn(leadSource);
+            setAdsOtherRow(leadSource);
+        }
+    }
+
+    private void setAdsOtherRow(LeadSource insightDimension) {
+        TableRow row = new TableRow(this);
+        TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
+        lp.span = 1;
+        row.setLayoutParams(lp);
+
+        View view = LayoutInflater.from(this).inflate(R.layout.row_lead_source_tv, row, false);
+        TextView textView7 = (TextView) view.findViewById(R.id.text_view);
+        textView7.setText(insightDimension.getClosedLost());
+        row.addView(textView7);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_lead_source_tv, row, false);
+        TextView textView6 = (TextView) view.findViewById(R.id.text_view);
+        textView6.setText(insightDimension.getClosedWon());
+        row.addView(textView6);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_lead_source_tv, row, false);
+        TextView textView5 = (TextView) view.findViewById(R.id.text_view);
+        textView5.setText(insightDimension.getProsopalSent());
+        row.addView(textView5);
+
+        view = LayoutInflater.from(this).inflate(R.layout.row_lead_source_tv, row, false);
+        TextView textView8 = (TextView) view.findViewById(R.id.text_view);
+        textView8.setText(insightDimension.getRejected());
+        row.addView(textView8);
+
+        tlValues.addView(row, rowCount);
+        rowCount++;
+    }
+
+    private void setFirstColumn(LeadSource lead){
+        TableRow row = new TableRow(this);
+        View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
+        TextView tv = (TextView) v.findViewById(R.id.text_view);
+        tv.setText(lead.getUtm_source());
+        tlName.addView(v, rowCount);
     }
 
     private void requestGraphData() {
         Get apiLeadsService = ApiClient.getClientEarlier().create(Get.class);
-        String url = "webforms/get-Lead-Status-Wise-Graph/userEmail/"+userData.get(Session.KEY_EMAIL)
-                +"/password/"+userData.get(Session.KEY_PASSWORD)+"/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"
-                +userData.get(Session.KEY_AGENCY_CLIENT_ID)+"/groupBy/status/fromDate/"+fromDate+"/toDate/"+toDate;
+        String url = "webforms/get-Lead-Status-Wise-Graph/userEmail/" + userData.get(Session.KEY_EMAIL)
+                + "/password/" + userData.get(Session.KEY_PASSWORD) + "/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"
+                + userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/status/fromDate/" + fromDate + "/toDate/" + toDate;
         Call<ResponseLeadsGraph> graphCall = apiLeadsService.getLeadGraph(url);
         graphCall.enqueue(new Callback<ResponseLeadsGraph>() {
             @Override
             public void onResponse(Call<ResponseLeadsGraph> call, Response<ResponseLeadsGraph> response) {
-                if( response != null ) {
-                    if(response.isSuccessful()) {
-                        if(response.body().getError() == 0) {
-                            if(response.body().getData() != null) {
-                                if(response.body().getData().size() > 0) {
+                if (response != null) {
+                    if (response.isSuccessful()) {
+                        if (response.body().getError() == 0) {
+                            if (response.body().getData() != null) {
+                                if (response.body().getData().size() > 0) {
                                     data = response.body().getData();
                                     rvGraph.setVisibility(View.VISIBLE);
                                     LeadsGraphAdapter leadsGraphAdapter = new LeadsGraphAdapter(LeadDashboardActivity1.this, data);
@@ -194,8 +331,8 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
             @Override
             public void onFailure(Call<ResponseLeadsGraph> call, Throwable t) {
 
-                if( t!= null ){
-                    Log.d("TAG",t.getMessage());
+                if (t != null) {
+                    Log.d("TAG", t.getMessage());
                 }
             }
         });
@@ -334,6 +471,9 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
                 builder.setCancelable(false);
                 builder.show();
                 break;
+            case R.id.viewAll:
+                startActivity(new Intent(this,LeadSourceActivity.class));
+                break;
         }
     }
 
@@ -455,6 +595,7 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         /*offset = 0;
         rowCount = 0;
         requestInsightData();*/
+        getAllData();
 
     }
 
@@ -473,6 +614,7 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
        /* offset = 0;
         rowCount = 0;
         requestInsightData();*/
+        getAllData();
 
     }
 
@@ -491,6 +633,7 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         /*offset = 0;
         rowCount = 0;
         requestInsightData();*/
+        getAllData();
     }
 
     private void setCustomDay() {
@@ -500,5 +643,6 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
        /* offset = 0;
         rowCount = 0;
         requestInsightData();*/
+        getAllData();
     }
 }

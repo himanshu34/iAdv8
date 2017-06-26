@@ -6,6 +6,7 @@ import com.agl.product.adw8_new.service.data.ResponseDataLeadsListing;
 import com.agl.product.adw8_new.service.data.ResponseDataLeadsOwner;
 import com.agl.product.adw8_new.service.data.ResponseDataLeadsStatus;
 import com.agl.product.adw8_new.service.data.ResponseLeadsGraph;
+import com.agl.product.adw8_new.service.data.ResponseLeadsSource;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -30,4 +31,7 @@ public interface Get {
 
     @GET()
     Call<ResponseLeadsGraph> getLeadGraph(@Url String url);
+
+    @GET()
+    Call<ResponseLeadsSource> getLeadSource(@Url String url);
 }
