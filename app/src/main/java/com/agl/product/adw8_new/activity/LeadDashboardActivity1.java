@@ -14,7 +14,7 @@ import com.agl.product.adw8_new.adapter.LeadDashboardHeaderAdapter;
 
 public class LeadDashboardActivity1 extends AppCompatActivity {
 
-    private RecyclerView rvHeaderData, rvGraph;
+    private RecyclerView rvHeaderData,rvGraph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +36,6 @@ public class LeadDashboardActivity1 extends AppCompatActivity {
 
         LeadDashboardHeaderAdapter leadDashboardHeaderAdapter = new LeadDashboardHeaderAdapter();
         rvHeaderData.setAdapter(leadDashboardHeaderAdapter);
-
-
 
 
     }
