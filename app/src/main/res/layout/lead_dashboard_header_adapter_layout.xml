@@ -4,28 +4,30 @@
     android:id="@+id/parentView"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:minWidth="@dimen/_100sdp"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
     android:layout_marginLeft="0.25dp"
     android:layout_marginRight="0.25dp"
+    android:gravity="center_horizontal"
+    android:minWidth="@dimen/_100sdp"
+    android:orientation="vertical"
     android:padding="@dimen/_8sdp">
+
+    <TextView
+        android:id="@+id/textView_count"
+        fontPath="fonts/Roboto-Black.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/_14sdp"
+        tools:ignore="MissingPrefix" />
+
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="5dp" />
 
     <TextView
         android:id="@+id/textView_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/_14sdp" />
-
-    <View
-        android:layout_width="1dp"
-        android:layout_height="5dp"/>
-
-    <TextView
-        android:id="@+id/textView_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingPrefix"
-        fontPath="fonts/Roboto-Black.ttf"
         android:textSize="@dimen/_22sdp" />
+
 </LinearLayout>
