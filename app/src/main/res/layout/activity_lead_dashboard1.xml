@@ -40,7 +40,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_4sdp"
                 android:layout_marginTop="@dimen/_4sdp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <View
                     android:layout_width="match_parent"
@@ -64,66 +65,246 @@
                 android:id="@+id/rvGraph"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_250sdp"
-                android:scrollbars="none" />
+                android:scrollbars="none"
+                android:visibility="gone" />
 
-            <LinearLayout
-                android:id="@+id/tabs_layout"
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginLeft="@dimen/_2sdp"
+                android:layout_marginRight="@dimen/_2sdp"
+                app:cardCornerRadius="@dimen/_4sdp"
+                app:cardElevation="@dimen/_2sdp"
+                app:cardUseCompatPadding="true">
 
-                <TextView
-                    fontPath="fonts/Roboto-Black.ttf"
+
+                <LinearLayout
+                    android:id="@+id/llDataContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:paddingLeft="@dimen/_12sdp"
-                    android:paddingRight="@dimen/_12sdp"
-                    android:paddingTop="@dimen/_10sdp"
-                    android:text="Lead Source"
-                    android:textColor="#7a7a7a"
-                    android:textSize="@dimen/_16sdp"
-                    tools:ignore="MissingPrefix" />
+                    android:orientation="vertical"
+                    android:visibility="visible">
 
-                <android.support.v7.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/_2sdp"
-                    android:layout_marginRight="@dimen/_2sdp"
-                    app:cardCornerRadius="@dimen/_4sdp"
-                    app:cardElevation="@dimen/_2sdp"
-                    app:cardUseCompatPadding="true">
+                    <TextView
+                        fontPath="fonts/Roboto-Black.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:paddingLeft="@dimen/_12sdp"
+                        android:paddingRight="@dimen/_12sdp"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:text="Lead Source"
+                        android:textColor="#7a7a7a"
+                        android:textSize="@dimen/_16sdp"
+                        tools:ignore="MissingPrefix" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
-                        <android.support.design.widget.TabLayout
-                            android:id="@+id/tabs"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/spinner"
+                            android:layout_width="150dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="top"
-                            android:background="@drawable/bottom_border_white_background"
-                            app:tabGravity="fill"
-                            app:tabIndicatorColor="@color/colorPrimary"
-                            app:tabIndicatorHeight="2dp"
-                            app:tabMode="fixed"
-                            app:tabSelectedTextColor="@color/colorPrimary"
-                            app:tabTextAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-                            app:tabTextColor="@color/text_dark">
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:textColor="@color/black" />
 
-                        </android.support.design.widget.TabLayout>
+                        <HorizontalScrollView
+                            android:id="@+id/hrone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none">
 
-                        <FrameLayout
-                            android:id="@+id/frame_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
 
-                        </FrameLayout>
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text="USERS"
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text="VISITS"
+                                    android:textColor="@color/black" />
+
+
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text="SESS"
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text="ORG_SRC"
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text="NEW"
+                                    android:textColor="@color/black" />
+
+                            </LinearLayout>
+                        </HorizontalScrollView>
                     </LinearLayout>
-                </android.support.v7.widget.CardView>
-            </LinearLayout>
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TableLayout
+                            android:id="@+id/tlName"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content">
+
+                        </TableLayout>
+
+                        <HorizontalScrollView
+                            android:id="@+id/hrsecond"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:scrollbars="none">
+
+                            <TableLayout
+                                android:id="@+id/tlValues"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"></TableLayout>
+                        </HorizontalScrollView>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textTotal"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:background="#f7f7f7"
+                            android:gravity="center"
+                            android:minHeight="50dp"
+                            android:padding="5dp"
+                            android:text="Total"
+                            android:textColor="@color/black" />
+
+                        <HorizontalScrollView
+                            android:id="@+id/hrbottom"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scrollbars="none">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/textUsersTotal"
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text=""
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:id="@+id/textVisitsTotal"
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text=""
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:id="@+id/textSessTotal"
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text=""
+                                    android:textColor="@color/black" />
+
+
+                                <TextView
+                                    android:id="@+id/textOrgScrTotal"
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text=""
+                                    android:textColor="@color/black" />
+
+                                <TextView
+                                    android:id="@+id/textNewTotal"
+                                    android:layout_width="80dp"
+                                    android:layout_height="wrap_content"
+                                    android:background="#f7f7f7"
+                                    android:gravity="center"
+                                    android:minHeight="50dp"
+                                    android:padding="5dp"
+                                    android:singleLine="true"
+                                    android:text=""
+                                    android:textColor="@color/black" />
+
+                            </LinearLayout>
+                        </HorizontalScrollView>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -167,117 +348,6 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:padding="@dimen/_10sdp">
-
-                            <TextView
-                                fontPath="fonts/Roboto-Black.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Junk Lead"
-                                android:textSize="@dimen/_13sdp"
-                                tools:ignore="MissingPrefix" />
-
-                            <View
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                fontPath="fonts/Roboto-Black.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="12"
-                                android:textSize="@dimen/_15sdp"
-                                tools:ignore="MissingPrefix" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:padding="@dimen/_10sdp">
-
-                            <TextView
-                                fontPath="fonts/Roboto-Black.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Duplicate"
-                                android:textSize="@dimen/_13sdp"
-                                tools:ignore="MissingPrefix" />
-
-                            <View
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                fontPath="fonts/Roboto-Black.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="12"
-                                android:textSize="@dimen/_15sdp"
-                                tools:ignore="MissingPrefix" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:padding="@dimen/_10sdp">
-
-                            <TextView
-                                fontPath="fonts/Roboto-Black.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Junk Lead"
-                                android:textSize="@dimen/_13sdp"
-                                tools:ignore="MissingPrefix" />
-
-                            <View
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                fontPath="fonts/Roboto-Black.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="12"
-                                android:textSize="@dimen/_15sdp"
-                                tools:ignore="MissingPrefix" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:padding="@dimen/_10sdp">
-
-                            <TextView
-                                fontPath="fonts/Roboto-Black.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Junk Lead"
-                                android:textSize="@dimen/_13sdp"
-                                tools:ignore="MissingPrefix" />
-
-                            <View
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                fontPath="fonts/Roboto-Black.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="12"
-                                android:textSize="@dimen/_15sdp"
-                                tools:ignore="MissingPrefix" />
-                        </LinearLayout>
 
                         <TextView
                             fontPath="fonts/Roboto-Black.ttf"

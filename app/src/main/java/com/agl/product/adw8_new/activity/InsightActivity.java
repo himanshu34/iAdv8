@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -26,14 +27,17 @@ import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.agl.product.adw8_new.R;
+import com.agl.product.adw8_new.adapter.InsightGroupAdapter;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
 import com.agl.product.adw8_new.model.InsightDimension;
+import com.agl.product.adw8_new.model.InsightGroupType;
 import com.agl.product.adw8_new.model.InsightTotal;
 import com.agl.product.adw8_new.model.Keywords;
 import com.agl.product.adw8_new.retrofit.ApiClient;
@@ -58,7 +62,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class InsightActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
+public class InsightActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener, AdapterView.OnItemSelectedListener {
 
     private LinearLayout lldefaultSpends, llDataContainer;
     private PopupWindow customDatePopup;
@@ -72,12 +76,17 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
     private DatePickerDialog datePickerDialog;
     Session session;
     HashMap<String, String> userData;
-    private String rupeeSymbol, sortingOrder;
+    private String rupeeSymbol, sortingOrder, groupTypeId = "1";
     private ProgressBar progressBar;
     private SwipeRefreshLayoutBottom swipeRefreshLayout;
     private TableLayout tlName, tlValues;
     private ArrayList<InsightDimension> dimensionList;
-    private TextView textUsersTotal,textVisitsTotal,textSessTotal,textOrgScrTotal,textNewTotal;
+    private TextView textUsersTotal, textVisitsTotal, textSessTotal, textOrgScrTotal, textNewTotal;
+    private Spinner spinner;
+    private InsightGroupAdapter insightGroupAdapter;
+    private ArrayList<InsightGroupType> insightData;
+    int check = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +103,8 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         session = new Session(this);
         rupeeSymbol = getString(R.string.rupee);
         dimensionList = new ArrayList<InsightDimension>();
+        insightData = new ArrayList<InsightGroupType>();
+        insightGroupAdapter = new InsightGroupAdapter(this, insightData);
 
         lldefaultSpends = (LinearLayout) findViewById(R.id.lldefaultSpends);
         llDataContainer = (LinearLayout) findViewById(R.id.llDataContainer);
@@ -107,6 +118,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         tlName = (TableLayout) findViewById(R.id.tlName);
         tlValues = (TableLayout) findViewById(R.id.tlValues);
         textMessage = (TextView) findViewById(R.id.textMessage);
+        spinner = (Spinner) findViewById(R.id.spinner);
 
 
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
@@ -132,7 +144,8 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         textNewTotal = (TextView) findViewById(R.id.textNewTotal);
 
 
-
+        spinner.setAdapter(insightGroupAdapter);
+        spinner.setOnItemSelectedListener(this);
         userData = session.getUsuarioDetails();
 
         fromDate = Utils.getSevenDayBeforeDate();
@@ -187,7 +200,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         requestInsight.setOrder(sortingOrder);
         requestInsight.setCuId("0");
         requestInsight.setcId("196");
-        requestInsight.setGroup_type_id(1 + "");
+        requestInsight.setGroup_type_id(groupTypeId);
         if (offset == 0) {
             llDataContainer.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
@@ -205,7 +218,16 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                         ResponseInsightData responseInsightData = response.body();
                         try {
                             ArrayList<InsightDimension> dimensions = responseInsightData.getData().getDimensions();
-                            ArrayList<InsightTotal> insightTotal =  responseInsightData.getData().getTotal();
+                            ArrayList<InsightTotal> insightTotal = responseInsightData.getData().getTotal();
+                            ArrayList<InsightGroupType> insightGroupList = responseInsightData.getData().getGroup_type();
+                            if (insightGroupList != null && insightGroupList.size() > 0) {
+                                if (insightData.size() == 0) {
+                                    insightData = insightGroupList;
+                                    insightGroupAdapter = new InsightGroupAdapter(InsightActivity.this, insightData);
+                                    spinner.setAdapter(insightGroupAdapter);
+                                }
+                            }
+
                             if (dimensions.size() > 0) {
                                 llDataContainer.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
@@ -213,8 +235,8 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                                 dimensionList.addAll(dimensions);
                                 offset = offset + limit;
                                 setTable(dimensions);
-                                if( insightTotal != null && insightTotal.size() > 0 )
-                                setTotalRow(insightTotal);
+                                if (insightTotal != null && insightTotal.size() > 0)
+                                    setTotalRow(insightTotal);
                             } else {
                                 if (offset == 0) {
                                     llDataContainer.setVisibility(View.INVISIBLE);
@@ -268,7 +290,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setTotalRow(ArrayList<InsightTotal> insightTotal) {
-        InsightTotal insight =  insightTotal.get(0);
+        InsightTotal insight = insightTotal.get(0);
         textUsersTotal.setText(insight.getUsers());
         textVisitsTotal.setText(insight.getVisits());
         textSessTotal.setText(insight.getSess());
@@ -429,6 +451,22 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         requestInsightData();
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+        if (++check > 1) {
+            InsightGroupType item = (InsightGroupType) spinner.getSelectedItem();
+            groupTypeId = item.getId();
+            offset = 0;
+            rowCount = 0;
+            requestInsightData();
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
 
     private class ShowDateRangeDialog extends AlertDialog {
         String fromDisplay, toDisplay;
@@ -449,7 +487,10 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
             TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
             TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
 
-
+            /*fromDisplay = fromDateToShow;
+            toDisplay = toDateToShow;
+            fromDay = fromDate;
+            toDay = toDate;*/
             textStartDate.setText(fromDateToShow);
             textEndDate.setText(toDateToShow);
             llStartDate.setOnClickListener(new View.OnClickListener() {
