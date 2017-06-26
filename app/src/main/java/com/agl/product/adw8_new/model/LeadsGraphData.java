@@ -1,18 +1,18 @@
 package com.agl.product.adw8_new.model;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 
-
-public class LeadsGraphData implements Serializable {
+public class LeadsGraphData {
 
     @SerializedName("key")
     private String key;
 
     @SerializedName("hint")
     private String hint;
+
+    @SerializedName("total")
+    private String total;
 
     @SerializedName("statusData")
     private ArrayList<LeadsStatus> statusData;
@@ -39,5 +39,13 @@ public class LeadsGraphData implements Serializable {
 
     public void setStatusData(ArrayList<LeadsStatus> statusData) {
         this.statusData = statusData;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
     }
 }

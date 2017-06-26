@@ -17,6 +17,13 @@ public class MainLeads implements Serializable {
 
     private boolean isChecked;
 
+    public MainLeads(String status, String status_id, String cnt, boolean isChecked) {
+        this.status = status;
+        this.status_id = status_id;
+        this.cnt = cnt;
+        this.isChecked = isChecked;
+    }
+
     public String getStatus() {
         return status;
     }

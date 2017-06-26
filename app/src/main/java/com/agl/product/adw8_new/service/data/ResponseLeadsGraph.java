@@ -3,12 +3,9 @@ package com.agl.product.adw8_new.service.data;
 
 import com.agl.product.adw8_new.model.LeadsGraphData;
 import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ResponseLeadsGraph implements Serializable{
-
+public class ResponseLeadsGraph {
 
     @SerializedName("data")
     private ArrayList<LeadsGraphData> data;
