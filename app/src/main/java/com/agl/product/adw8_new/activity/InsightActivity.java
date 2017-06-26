@@ -303,7 +303,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
             setDimentionValue(dimenstionName, rowCount);
             setValuesRow(insightDimension, rowCount);
         }
-
     }
 
     private void setDimentionValue(String dimenstionName, int rowCount) {
