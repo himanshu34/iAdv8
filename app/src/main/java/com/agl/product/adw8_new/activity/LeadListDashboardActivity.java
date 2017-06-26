@@ -85,7 +85,6 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
     Intent intent;
     String WEB_FORM_ID=null;
     private String dateType = Utils.DATE_TYPE;
-    private String statusId="";
     IAdv8Database database = new IAdv8Database(this,"Iadv8.db",null,1);
     String campaignIds="";
     String landingPageIds="";
@@ -111,7 +110,7 @@ public class LeadListDashboardActivity extends ActivityBase implements SwipeRefr
         actionBar.setDisplayShowTitleEnabled(false);
 
         cd = new ConnectionDetector(this);
-        statusId = getIntent().getStringExtra(Utils.ID_TYPE_STATUS);
+        statusIds = getIntent().getStringExtra(Utils.ID_TYPE_STATUS);
         fromDate = getIntent().getStringExtra(Utils.CURRENT__FROM_DATE);
         toDate = getIntent().getStringExtra(Utils.CURRENT_TO_DATE);
         dateType = getIntent().getStringExtra(Utils.DATE_TYPE);

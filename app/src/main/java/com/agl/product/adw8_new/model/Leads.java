@@ -2,7 +2,16 @@ package com.agl.product.adw8_new.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Leads {
+import java.io.Serializable;
+import java.util.ArrayList;
+
+public class Leads implements Serializable{
+
+    @SerializedName("main")
+    private  ArrayList<MainLeads> main;
+
+    @SerializedName("additional")
+    private  ArrayList<MainLeads> additional;
 
     @SerializedName("status")
     private String status;
@@ -46,5 +55,21 @@ public class Leads {
 
     public void setPer(String per) {
         this.per = per;
+    }
+
+    public ArrayList<MainLeads> getMain() {
+        return main;
+    }
+
+    public void setMain(ArrayList<MainLeads> main) {
+        this.main = main;
+    }
+
+    public ArrayList<MainLeads> getAdditional() {
+        return additional;
+    }
+
+    public void setAdditional(ArrayList<MainLeads> additional) {
+        this.additional = additional;
     }
 }

@@ -29,13 +29,13 @@ public class DataActivityContentAdapter extends RecyclerView.Adapter<DataActivit
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.data_activity_content_adapter_layout, parent, false);
-        return new  MyViewHolder(itemView);
+        return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         final Graph graphData = list.get(position);
-        if(graphData.is_clicked()) {
+        if (graphData.is_clicked()) {
             holder.parentView.setBackgroundColor(activity.getResources().getColor(R.color.colorPrimary));
             holder.titleTextView.setTextColor(activity.getResources().getColor(R.color.white));
             holder.countTextView.setTextColor(activity.getResources().getColor(R.color.white));
@@ -46,10 +46,10 @@ public class DataActivityContentAdapter extends RecyclerView.Adapter<DataActivit
         }
 
         String textShow = "";
-        if(graphData.getKey().equalsIgnoreCase("cost")||graphData.getKey().equalsIgnoreCase("cpa") ){
-            textShow = rupeeSymbol+" ";
+        if (graphData.getKey().equalsIgnoreCase("cost") || graphData.getKey().equalsIgnoreCase("cpa")) {
+            textShow = rupeeSymbol + " ";
         }
-        textShow = textShow+graphData.getTotal();
+        textShow = textShow + graphData.getTotal();
         holder.titleTextView.setText(graphData.getKey());
         holder.countTextView.setText(textShow);
     }
@@ -59,16 +59,31 @@ public class DataActivityContentAdapter extends RecyclerView.Adapter<DataActivit
         return list.size();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         LinearLayout parentView;
         private TextView titleTextView, countTextView;
 
         public MyViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             parentView = (LinearLayout) itemView.findViewById(R.id.parentView);
             titleTextView = (TextView) itemView.findViewById(R.id.textView_title);
             countTextView = (TextView) itemView.findViewById(R.id.textView_count);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int position = getAdapterPosition();
+
+            if (!list.get(position).is_clicked()) {
+                for (int i = 0; i < list.size(); i++) {
+                    if (position == i) list.get(i).setIs_clicked(true);
+                    else list.get(i).setIs_clicked(false);
+                }
+                notifyDataSetChanged();
+            }
+
         }
     }
 

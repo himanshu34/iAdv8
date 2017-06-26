@@ -361,11 +361,11 @@ public class LeadDashBoardActivity extends ActivityBase implements OnCustomDateD
                         if (response.body().getError() == 0) {
                             Log.d(TAG, response.body().toString());
 
-                            if(response.body().getLeadsList()!= null) {
+                          /*  if(response.body().getLeadsList()!= null) {
                                 if(response.body().getLeadsList().size() > 0) {
                                     leadsArrayList = response.body().getLeadsList();
                                 }
-                            }
+                            }*/
 
                             setMainLayout();
                         } else {
