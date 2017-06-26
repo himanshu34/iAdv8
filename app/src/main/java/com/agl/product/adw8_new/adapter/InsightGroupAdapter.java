@@ -50,7 +50,7 @@ public class InsightGroupAdapter extends BaseAdapter implements SpinnerAdapter {
         TextView txt = new TextView(activity);
         txt.setGravity(Gravity.CENTER_VERTICAL);
         txt.setPadding(8, 8, 8, 8);
-        txt.setTextSize(18);
+        txt.setTextSize(14);
         txt.setMaxLines(1);
         txt.setText(asr.get(i).getGroup_name());
         txt.setTextColor(Color.parseColor("#3B3B3B"));

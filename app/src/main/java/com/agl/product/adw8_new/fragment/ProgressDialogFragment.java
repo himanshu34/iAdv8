@@ -21,7 +21,6 @@ public class ProgressDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         ProgressDialog dialog = new ProgressDialog(getActivity(), getTheme());
-        // dialog.setTitle(getString(R.string.pleaseWait));
         dialog.setMessage("Please wait ...");
         dialog.setCancelable(false);
         dialog.setIndeterminate(true);

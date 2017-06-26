@@ -6,6 +6,7 @@ import com.agl.product.adw8_new.service.data.RequestDataAds;
 import com.agl.product.adw8_new.service.data.RequestDataCampaignDetails;
 import com.agl.product.adw8_new.service.data.RequestDataGraphCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataKeywords;
+import com.agl.product.adw8_new.service.data.RequestDataLeadsStatusUpdate;
 import com.agl.product.adw8_new.service.data.RequestInsightData;
 import com.agl.product.adw8_new.service.data.ResponseDataAdgroup;
 import com.agl.product.adw8_new.service.data.ResponseDataAds;
@@ -16,6 +17,8 @@ import com.agl.product.adw8_new.service.data.ResponseDataAddCient;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaignDetails;
 import com.agl.product.adw8_new.service.data.ResponseDataGraphCampaign;
 import com.agl.product.adw8_new.service.data.ResponseDataKeywords;
+import com.agl.product.adw8_new.service.data.ResponseDataLeadsStatus;
+import com.agl.product.adw8_new.service.data.ResponseDataLeadsStatusUpdate;
 import com.agl.product.adw8_new.service.data.ResponseDataLogin;
 import com.agl.product.adw8_new.service.data.ResponseInsightData;
 
@@ -51,7 +54,9 @@ public interface Post {
     @POST("keyword/get_Paid_Keyword_detail")
     Call<ResponseDataKeywords> getKeywordsList(@Body RequestDataKeywords requestKeywords);
 
-
     @POST()
     Call<ResponseInsightData> getInsightData(@Url String url, @Body RequestInsightData requestInsight);
+
+    @POST()
+    Call<ResponseDataLeadsStatusUpdate> leadsStatusUpdate(@Url String url, @Body RequestDataLeadsStatusUpdate requestDataLeadsStatusUpdate);
 }

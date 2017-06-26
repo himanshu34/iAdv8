@@ -87,7 +87,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<InsightGroupType> insightData;
     int check = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +141,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         textSessTotal = (TextView) findViewById(R.id.textSessTotal);
         textOrgScrTotal = (TextView) findViewById(R.id.textOrgScrTotal);
         textNewTotal = (TextView) findViewById(R.id.textNewTotal);
-
 
         spinner.setAdapter(insightGroupAdapter);
         spinner.setOnItemSelectedListener(this);
@@ -380,7 +378,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                 break;
             case R.id.textCustom:
                 customDatePopup.dismiss();
-                AlertDialog builder = new ShowDateRangeDialog(InsightActivity.this, getResources().getString(R.string.instabilidade_servidor));
+                AlertDialog builder = new ShowDateRangeDialog(InsightActivity.this);
                 builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 builder.setCanceledOnTouchOutside(false);
                 builder.setCancelable(false);
@@ -472,7 +470,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         String fromDisplay, toDisplay;
         String fromDay, toDay;
 
-        protected ShowDateRangeDialog(Context context, String message) {
+        protected ShowDateRangeDialog(Context context) {
             super(context);
             LayoutInflater inflater = getLayoutInflater();
             final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
@@ -487,10 +485,10 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
             TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
             TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
 
-            /*fromDisplay = fromDateToShow;
+            fromDisplay = fromDateToShow;
             toDisplay = toDateToShow;
             fromDay = fromDate;
-            toDay = toDate;*/
+            toDay = toDate;
             textStartDate.setText(fromDateToShow);
             textEndDate.setText(toDateToShow);
             llStartDate.setOnClickListener(new View.OnClickListener() {
@@ -509,14 +507,9 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                             Date date1 = new Date(calendar.getTimeInMillis());
                             textStartDate.setText(fromDisplay);
                             fromDay = dateFormat1.format(date1);
-
                         }
-
-
                     }, 2017, 05, 15);
-
                     datePickerDialog.show();
-
                 }
             });
 
@@ -536,12 +529,10 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                             Date date1 = new Date(calendar.getTimeInMillis());
                             textEndDate.setText(toDisplay);
                             toDay = dateFormat1.format(date1);
-
                         }
 
 
                     }, 2017, 05, 15);
-
                     datePickerDialog.show();
                 }
             });
@@ -562,12 +553,11 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                         fromDateToShow = fromDisplay;
                         toDateToShow = toDisplay;
                     }
+
                     setCustomDay();
                     dismiss();
                 }
             });
-
-
         }
     }
 }

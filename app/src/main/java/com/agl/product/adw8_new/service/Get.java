@@ -3,6 +3,8 @@ package com.agl.product.adw8_new.service;
 import com.agl.product.adw8_new.service.data.ResponseDataLeads;
 import com.agl.product.adw8_new.service.data.ResponseDataLeadsDetails;
 import com.agl.product.adw8_new.service.data.ResponseDataLeadsListing;
+import com.agl.product.adw8_new.service.data.ResponseDataLeadsOwner;
+import com.agl.product.adw8_new.service.data.ResponseDataLeadsStatus;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -18,4 +20,10 @@ public interface Get {
 
     @GET()
     Call<ResponseDataLeadsDetails> getLeadsDetailsData(@Url String url);
+
+    @GET()
+    Call<ResponseDataLeadsOwner> getLeadsOwnerInfo(@Url String url);
+
+    @GET()
+    Call<ResponseDataLeadsStatus> getLeadsStatusInfo(@Url String url);
 }
