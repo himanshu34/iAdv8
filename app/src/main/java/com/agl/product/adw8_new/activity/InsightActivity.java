@@ -64,7 +64,7 @@ import retrofit2.Response;
 
 public class InsightActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener, AdapterView.OnItemSelectedListener {
 
-    private LinearLayout lldefaultSpends, llDataContainer;
+    private LinearLayout lldefaultSpends;
     private PopupWindow customDatePopup;
     private View customPopupLayout;
     private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange, textMessage;
@@ -76,7 +76,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
     private DatePickerDialog datePickerDialog;
     Session session;
     HashMap<String, String> userData;
-    private String rupeeSymbol, sortingOrder, groupTypeId = "1";
+    private String rupeeSymbol, sortingOrder, groupTypeId = "5";
     private ProgressBar progressBar;
     private SwipeRefreshLayoutBottom swipeRefreshLayout;
     private TableLayout tlName, tlValues;
@@ -106,7 +106,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         insightGroupAdapter = new InsightGroupAdapter(this, insightData);
 
         lldefaultSpends = (LinearLayout) findViewById(R.id.lldefaultSpends);
-        llDataContainer = (LinearLayout) findViewById(R.id.llDataContainer);
         textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
         editIcon = (ImageView) findViewById(R.id.editIcon);
         hrone = (HorizontalScrollView) findViewById(R.id.hrone);
@@ -119,7 +118,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         textMessage = (TextView) findViewById(R.id.textMessage);
         spinner = (Spinner) findViewById(R.id.spinner);
 
-
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
 
         customDatePopup = new PopupWindow(this);
@@ -129,7 +127,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         customDatePopup.setContentView(customPopupLayout);
         customDatePopup.setBackgroundDrawable(new BitmapDrawable());
         customDatePopup.setFocusable(true);
-
 
         textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
         textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
@@ -146,11 +143,12 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         spinner.setOnItemSelectedListener(this);
         userData = session.getUsuarioDetails();
 
-        fromDate = Utils.getSevenDayBeforeDate();
+        fromDate = "2016-06-01";
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
         toDateToShow = Utils.getDisplayCurrentDate();
 
+        textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
@@ -167,7 +165,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         swipeRefreshLayout.setOnRefreshListener(this);
 
         requestInsightData();
-
     }
 
 
@@ -200,7 +197,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         requestInsight.setcId("196");
         requestInsight.setGroup_type_id(groupTypeId);
         if (offset == 0) {
-            llDataContainer.setVisibility(View.INVISIBLE);
+            swipeRefreshLayout.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
             textMessage.setVisibility(View.GONE);
         }
@@ -227,7 +224,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                             }
 
                             if (dimensions.size() > 0) {
-                                llDataContainer.setVisibility(View.VISIBLE);
+                                swipeRefreshLayout.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.GONE);
                                 dimensionList.addAll(dimensions);
@@ -237,7 +234,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                                     setTotalRow(insightTotal);
                             } else {
                                 if (offset == 0) {
-                                    llDataContainer.setVisibility(View.INVISIBLE);
+                                    swipeRefreshLayout.setVisibility(View.INVISIBLE);
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.VISIBLE);
                                     textMessage.setText("No Data Found.");
@@ -246,7 +243,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                         } catch (Exception e) {
                             e.printStackTrace();
                             if (offset == 0) {
-                                llDataContainer.setVisibility(View.INVISIBLE);
+                                swipeRefreshLayout.setVisibility(View.INVISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.VISIBLE);
                                 textMessage.setText("Some error occured.");
@@ -257,13 +254,12 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
 
                     } else {
                         if (offset == 0) {
-                            llDataContainer.setVisibility(View.INVISIBLE);
+                            swipeRefreshLayout.setVisibility(View.INVISIBLE);
                             progressBar.setVisibility(View.GONE);
                             textMessage.setVisibility(View.VISIBLE);
                             textMessage.setText("Some error occured.");
                         } else
                             Toast.makeText(InsightActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-
                     }
                 }
             }
@@ -275,7 +271,7 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
                     Log.d("ERRROR", t.getMessage());
                 }
                 if (offset == 0) {
-                    llDataContainer.setVisibility(View.INVISIBLE);
+                    swipeRefreshLayout.setVisibility(View.INVISIBLE);
                     progressBar.setVisibility(View.GONE);
                     textMessage.setVisibility(View.VISIBLE);
                     textMessage.setText("There is some connectivity issue, please try again.");

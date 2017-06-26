@@ -99,7 +99,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
     private TextView textBudgetTotal, textClicksTotal,textImprTotal,textAvgCpcTotal,textCostTotal,textCtrTotal,textConvTotal,textCpaTotal;
     private String rupeeSymbol;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -138,7 +137,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textClicks = (TextView) findViewById(R.id.textClicks);
         textBudget = (TextView) findViewById(R.id.textBudget);
 
-//        , ,,,,,,;
         textBudgetTotal = (TextView) findViewById(R.id.textBudgetTotal);
         textClicksTotal = (TextView) findViewById(R.id.textClicksTotal);
         textImprTotal = (TextView) findViewById(R.id.textImprTotal);
@@ -147,7 +145,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textCtrTotal = (TextView) findViewById(R.id.textCtrTotal);
         textConvTotal = (TextView) findViewById(R.id.textConvTotal);
         textCpaTotal = (TextView) findViewById(R.id.textCpaTotal);
-
 
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
         filterLayout = getLayoutInflater().inflate(R.layout.custom_filter_layout, null);
