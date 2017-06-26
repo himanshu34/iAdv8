@@ -290,8 +290,7 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
             public void onClick(DialogInterface dialog,int which) {
                 if (owners != null) {
                     getLeadOwnerUpdate(owners.get(position), leadId);
-                }
-                else {
+                } else {
                     if (!Utils.isEmptyString(leadId)) {
                         String statusValue = status.get(position);
                         getLeadStatusUpdate(statusValue, leadId);
