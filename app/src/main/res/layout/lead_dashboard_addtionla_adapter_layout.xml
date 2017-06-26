@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:padding="@dimen/_10sdp"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textName"
+        fontPath="fonts/Roboto-Black.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingPrefix"
+        android:textSize="@dimen/_12sdp"
+        android:textColor="@color/black"
+        />
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_weight="1"
+        />
+
+    <TextView
+        android:id="@+id/textCount"
+        fontPath="fonts/Roboto-Black.ttf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingPrefix"
+        android:textSize="@dimen/_15sdp"
+        android:textColor="@color/black"
+        />
+</LinearLayout>

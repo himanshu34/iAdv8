@@ -14,7 +14,7 @@ public class ResponseDataLeads {
     private String message;
 
     @SerializedName("data")
-    private ArrayList<Leads> leadsList;
+    private Leads leads;
 
     public int getError() {
         return error;
@@ -32,11 +32,11 @@ public class ResponseDataLeads {
         this.message = message;
     }
 
-    public ArrayList<Leads> getLeadsList() {
-        return leadsList;
+    public Leads getLeads() {
+        return leads;
     }
 
-    public void setLeadsList(ArrayList<Leads> leadsList) {
-        this.leadsList = leadsList;
+    public void setLeads(Leads leads) {
+        this.leads = leads;
     }
 }

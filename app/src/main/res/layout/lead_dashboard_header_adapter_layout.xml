@@ -16,7 +16,8 @@
         fontPath="fonts/Roboto-Black.ttf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/_14sdp"
+        android:textSize="@dimen/_22sdp"
+
         tools:ignore="MissingPrefix" />
 
 
@@ -28,6 +29,7 @@
         android:id="@+id/textView_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/_22sdp" />
+        android:textSize="@dimen/_14sdp"
+         />
 
 </LinearLayout>
