@@ -55,10 +55,10 @@ import retrofit2.Response;
 
 public class LeadDashboardActivity1 extends AppCompatActivity implements View.OnClickListener {
 
-    private RecyclerView rvHeaderData,rvGraph,rvAdditionalDetail;
+    private RecyclerView rvHeaderData, rvGraph, rvAdditionalDetail;
     HashMap<String, String> userData;
     Session session;
-    String campaignIds="",landingPageIds="",ownerIds="",statusIds="";
+    String campaignIds = "", landingPageIds = "", ownerIds = "", statusIds = "";
     IAdv8Database database = new IAdv8Database(this, "Iadv8.db", null, 1);
     private LinearLayout lldefaultSpends;
     private PopupWindow customDatePopup;
@@ -70,7 +70,6 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
     private ArrayList<MainLeads> mainLeads;
     private ProgressDialog pd;
     private String dateType = "";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +94,7 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
         rvGraph.setLayoutManager(mLayoutManager2);
 
 
-        rvAdditionalDetail =  (RecyclerView) findViewById(R.id.rvAdditionalDetail);
+        rvAdditionalDetail = (RecyclerView) findViewById(R.id.rvAdditionalDetail);
         RecyclerView.LayoutManager mLayoutManager3 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvAdditionalDetail.setLayoutManager(mLayoutManager3);
         rvAdditionalDetail.setNestedScrollingEnabled(false);
@@ -122,7 +121,6 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
         toDateToShow = Utils.getDisplayCurrentDate();
 
 
-
         textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
         textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
         textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
@@ -137,7 +135,6 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
         dateType = Utils.TYPE_LAST_WEEK;
 
 
-
         lldefaultSpends.setOnClickListener(this);
         textYesterday.setOnClickListener(this);
         textLastSevenDays.setOnClickListener(this);
@@ -146,68 +143,74 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
 
 
         userData = session.getUsuarioDetails();
-        campaignIds= getCampaignCount().toString();
-        landingPageIds=  getLandingCount().toString();
-        ownerIds= getOwnerCount().toString();
-        if( cd.isConnectedToInternet() ){
+        campaignIds = getCampaignCount().toString();
+        landingPageIds = getLandingCount().toString();
+        ownerIds = getOwnerCount().toString();
+        if (cd.isConnectedToInternet()) {
             pd.show();
-            requestLeadMatrics( );
-        }
+            requestGraphData();
+            requestLeadMatrics();
+        } else Toast.makeText(this, "Not Connected to Internet", Toast.LENGTH_SHORT).show();
 
-        else Toast.makeText(this, "Not Connected to Internet", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void requestGraphData() {
+        Get apiLeadsService = ApiClient.getClientEarlier().create(Get.class);
+        String url = "http://adv8kuber.in/webforms/get-Lead-Status-Wise-Graph/userEmail/" + userData.get(Session.KEY_EMAIL) + "/password/" + userData.get(Session.KEY_PASSWORD)
+                + "/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/" + userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/status/fromDate/" + fromDate +
+                "/toDate/" + toDate;
+//        Call<>
 
 
     }
 
     private void requestLeadMatrics() {
         Get apiLeadsService = ApiClient.getClientEarlier().create(Get.class);
-        String url="http://adv8kuber.in/webforms/lead-Matrics-New/userEmail/"+userData.get(Session.KEY_EMAIL)+"/password/"+userData.get(Session.KEY_PASSWORD)
-                +"/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"+userData.get(Session.KEY_AGENCY_CLIENT_ID)+"/groupBy/status/fromDate/"+fromDate+
-                "/toDate/"+toDate+"/campaignIds/"+campaignIds+"/landingPageIds/"+landingPageIds+"/statusIds/"+statusIds+"/ownerIds/"
-                +ownerIds;
+        String url = "http://adv8kuber.in/webforms/lead-Matrics-New/userEmail/" + userData.get(Session.KEY_EMAIL) + "/password/" + userData.get(Session.KEY_PASSWORD)
+                + "/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/" + userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/status/fromDate/" + fromDate +
+                "/toDate/" + toDate + "/campaignIds/" + campaignIds + "/landingPageIds/" + landingPageIds + "/statusIds/" + statusIds + "/ownerIds/"
+                + ownerIds;
         Call<ResponseDataLeads> leadsCall = apiLeadsService.getLeadsData(url);
         leadsCall.enqueue(new Callback<ResponseDataLeads>() {
             @Override
             public void onResponse(Call<ResponseDataLeads> call, Response<ResponseDataLeads> response) {
                 pd.dismiss();
-                if( response != null ){
-                    if( response.isSuccessful() ){
+                if (response != null) {
+                    if (response.isSuccessful()) {
                         ResponseDataLeads responseDataLeads = response.body();
                         try {
                             ArrayList<MainLeads> leads = responseDataLeads.getLeads().getMain();
-                            if( leads!= null && leads.size() > 0  ){
+                            if (leads != null && leads.size() > 0) {
                                 mainLeads = leads;
                                 MainLeads lead = mainLeads.get(0);
                                 lead.setChecked(true);
-                                LeadDashboardHeaderAdapter leadDashboardHeaderAdapter = new LeadDashboardHeaderAdapter(LeadDashboardActivity1.this,mainLeads,fromDateToShow,toDateToShow,dateType);
+                                LeadDashboardHeaderAdapter leadDashboardHeaderAdapter = new LeadDashboardHeaderAdapter(LeadDashboardActivity1.this, mainLeads);
                                 rvHeaderData.setAdapter(leadDashboardHeaderAdapter);
-                            }else {
+                            } else {
 
                             }
 
                             try {
-                                ArrayList<MainLeads> additionalLeads =  responseDataLeads.getLeads().getAdditional();
-                                if( additionalLeads != null && additionalLeads.size() > 0 ){
-                                    LeadDashboardAdditionalAdapter leadDashboardAdditionalAdapter = new LeadDashboardAdditionalAdapter(LeadDashboardActivity1.this,additionalLeads,fromDateToShow,toDateToShow,dateType);
-                                    rvAdditionalDetail.setAdapter( leadDashboardAdditionalAdapter );
-                                }else {
+                                ArrayList<MainLeads> additionalLeads = responseDataLeads.getLeads().getAdditional();
+                                if (additionalLeads != null && additionalLeads.size() > 0) {
+                                    LeadDashboardAdditionalAdapter leadDashboardAdditionalAdapter = new LeadDashboardAdditionalAdapter(LeadDashboardActivity1.this, additionalLeads, fromDateToShow, toDateToShow, dateType);
+                                    rvAdditionalDetail.setAdapter(leadDashboardAdditionalAdapter);
+                                } else {
 
                                 }
 
-                            }catch (Exception e ){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
 
-
-
-
-                        }catch (Exception e ){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
 
-                    }else {
+                    } else {
 
                     }
                 }
@@ -216,47 +219,49 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
             @Override
             public void onFailure(Call<ResponseDataLeads> call, Throwable t) {
                 pd.dismiss();
-                if( t!= null ) Log.d("ERROR",t.getMessage());
+                if (t != null) Log.d("ERROR", t.getMessage());
             }
         });
     }
 
     public void openDashBoardListActivity(int position, MainLeads additionalLeads) {
         startActivity(new Intent(LeadDashboardActivity1.this, LeadListDashboardActivity.class)
-                .putExtra(Utils.CURRENT__FROM_DATE, fromDateToShow)
-                .putExtra(Utils.CURRENT_TO_DATE, toDateToShow)
+                .putExtra(Utils.CURRENT_FROM_DATE, fromDate)
+                .putExtra(Utils.CURRENT_TO_DATE, toDate)
+                .putExtra(Utils.CURRENT_FROM_DATE_TO_SHOW, fromDateToShow)
+                .putExtra(Utils.CURRENT_TO_DATE_TO_SHOW, toDateToShow)
                 .putExtra(Utils.DATE_TYPE, dateType)
-                .putExtra(Utils.ID_TYPE_STATUS, additionalLeads.getStatus_id()+","));
+                .putExtra(Utils.ID_TYPE_STATUS, additionalLeads.getStatus_id() + ","));
     }
 
     public StringBuffer getCampaignCount() {
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor curCampaign = db.query(IAdv8Database.FilterTable, null, "FilterFlag=? AND FilterChecked=?", new String[]{Utils.ID_TYPE_CAMPAIGN_UNITS,"true"}, null, null, null);
+        Cursor curCampaign = db.query(IAdv8Database.FilterTable, null, "FilterFlag=? AND FilterChecked=?", new String[]{Utils.ID_TYPE_CAMPAIGN_UNITS, "true"}, null, null, null);
         StringBuffer paramCampaignUnitIds = new StringBuffer();
         while (curCampaign.moveToNext()) {
-            paramCampaignUnitIds.append(curCampaign.getString(4)+",");
+            paramCampaignUnitIds.append(curCampaign.getString(4) + ",");
         }
-        return  paramCampaignUnitIds;
+        return paramCampaignUnitIds;
     }
 
     public StringBuffer getLandingCount() {
         //Landing********************
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor curLanding = db.query(IAdv8Database.FilterTable, null, "FilterFlag=? AND FilterChecked=?", new String[]{Utils.ID_TYPE_LANDING_PAGES,"true"}, null, null, null);
+        Cursor curLanding = db.query(IAdv8Database.FilterTable, null, "FilterFlag=? AND FilterChecked=?", new String[]{Utils.ID_TYPE_LANDING_PAGES, "true"}, null, null, null);
         StringBuffer paramLanding = new StringBuffer();
         while (curLanding.moveToNext()) {
-            paramLanding.append(curLanding.getString(4)+",");
+            paramLanding.append(curLanding.getString(4) + ",");
         }
         return paramLanding;
     }
 
-    public  StringBuffer getOwnerCount() {
+    public StringBuffer getOwnerCount() {
         //Owners
         SQLiteDatabase db = database.getReadableDatabase();
-        Cursor curOwners = db.query(IAdv8Database.FilterTable, null, "FilterFlag=? AND FilterChecked=?", new String[]{Utils.ID_TYPE_OWNERS,"true"}, null, null, null);
+        Cursor curOwners = db.query(IAdv8Database.FilterTable, null, "FilterFlag=? AND FilterChecked=?", new String[]{Utils.ID_TYPE_OWNERS, "true"}, null, null, null);
         StringBuffer paramOwners = new StringBuffer();
         while (curOwners.moveToNext()) {
-            paramOwners.append(curOwners.getString(4)+",");
+            paramOwners.append(curOwners.getString(4) + ",");
         }
         return paramOwners;
     }
@@ -406,6 +411,7 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
         /*offset = 0;
         rowCount = 0;
         requestInsightData();*/
+
     }
 
     private void setLastSeven() {

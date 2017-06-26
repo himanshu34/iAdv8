@@ -22,17 +22,12 @@ import java.util.ArrayList;
 
 public class LeadDashboardHeaderAdapter extends RecyclerView.Adapter<LeadDashboardHeaderAdapter.MyViewHolder> {
 
-
-    private Context context;
+    private LeadDashboardActivity1 activity;
     private ArrayList<MainLeads> mainLeads;
-    private String fromDateToShow, toDateToShow,dateType;
 
-    public LeadDashboardHeaderAdapter(Context context, ArrayList<MainLeads> mainLeads, String fromDateToShow, String toDateToShow,String dateType) {
-        this.context = context;
+    public LeadDashboardHeaderAdapter(LeadDashboardActivity1 activity, ArrayList<MainLeads> mainLeads) {
+        this.activity = activity;
         this.mainLeads = mainLeads;
-        this.fromDateToShow = fromDateToShow;
-        this.toDateToShow = toDateToShow;
-        this.dateType = dateType;
     }
 
     @Override
@@ -46,12 +41,12 @@ public class LeadDashboardHeaderAdapter extends RecyclerView.Adapter<LeadDashboa
         MainLeads mainLead = this.mainLeads.get(position);
 
         if (mainLead.isChecked()) {
-            holder.parentView.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-            holder.titleTextView.setTextColor(context.getResources().getColor(R.color.white));
-            holder.countTextView.setTextColor(context.getResources().getColor(R.color.white));
+            holder.parentView.setBackgroundColor(activity.getResources().getColor(R.color.colorPrimary));
+            holder.titleTextView.setTextColor(activity.getResources().getColor(R.color.white));
+            holder.countTextView.setTextColor(activity.getResources().getColor(R.color.white));
         } else {
-            holder.parentView.setBackgroundColor(context.getResources().getColor(R.color.white));
-            holder.titleTextView.setTextColor(context.getResources().getColor(R.color.black));
+            holder.parentView.setBackgroundColor(activity.getResources().getColor(R.color.white));
+            holder.titleTextView.setTextColor(activity.getResources().getColor(R.color.black));
             holder.countTextView.setTextColor(Color.parseColor("#9d9d9d"));
         }
 
@@ -90,11 +85,7 @@ public class LeadDashboardHeaderAdapter extends RecyclerView.Adapter<LeadDashboa
                 notifyDataSetChanged();
             }
 
-            context.startActivity(new Intent(context, LeadListDashboardActivity.class)
-                    .putExtra(Utils.CURRENT__FROM_DATE, fromDateToShow)
-                    .putExtra(Utils.CURRENT_TO_DATE, toDateToShow)
-                    .putExtra(Utils.DATE_TYPE, dateType)
-                    .putExtra(Utils.ID_TYPE_STATUS, mainLeads.get(position).getStatus_id()+","));
+            activity.openDashBoardListActivity(position, mainLeads.get(position));
         }
     }
 }
