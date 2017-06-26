@@ -28,15 +28,19 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.adapter.LeadDashboardAdditionalAdapter;
 import com.agl.product.adw8_new.adapter.LeadDashboardHeaderAdapter;
+import com.agl.product.adw8_new.adapter.LeadsGraphAdapter;
 import com.agl.product.adw8_new.database.IAdv8Database;
+import com.agl.product.adw8_new.model.LeadsGraphData;
 import com.agl.product.adw8_new.model.MainLeads;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Get;
 import com.agl.product.adw8_new.service.Post;
 import com.agl.product.adw8_new.service.data.ResponseDataLeads;
+import com.agl.product.adw8_new.service.data.ResponseLeadsGraph;
 import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
@@ -53,7 +57,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LeadDashboardActivity1 extends AppCompatActivity implements View.OnClickListener {
+public class LeadDashboardActivity1 extends ActivityBase implements View.OnClickListener {
 
     private RecyclerView rvHeaderData, rvGraph, rvAdditionalDetail;
     HashMap<String, String> userData;
@@ -68,6 +72,9 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
     private String fromDate, toDate, fromDateToShow, toDateToShow;
     private ConnectionDetector cd;
     private ArrayList<MainLeads> mainLeads;
+    private ArrayList<LeadsGraphData> data;
+    ArrayList<MainLeads> additionalLeadsTest;
+    ArrayList<MainLeads> additionalLeads;
     private ProgressDialog pd;
     private String dateType = "";
 
@@ -93,18 +100,16 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
         RecyclerView.LayoutManager mLayoutManager2 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         rvGraph.setLayoutManager(mLayoutManager2);
 
-
         rvAdditionalDetail = (RecyclerView) findViewById(R.id.rvAdditionalDetail);
         RecyclerView.LayoutManager mLayoutManager3 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvAdditionalDetail.setLayoutManager(mLayoutManager3);
         rvAdditionalDetail.setNestedScrollingEnabled(false);
 
-
         mainLeads = new ArrayList<MainLeads>();
-
+        data = new ArrayList<LeadsGraphData>();
+        additionalLeads = new ArrayList<MainLeads>();
 
         lldefaultSpends = (LinearLayout) findViewById(R.id.lldefaultSpends);
-
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
         customDatePopup = new PopupWindow(this);
         customDatePopup.setWidth(400);
@@ -155,12 +160,45 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
 
     private void requestGraphData() {
         Get apiLeadsService = ApiClient.getClientEarlier().create(Get.class);
-        String url = "http://adv8kuber.in/webforms/get-Lead-Status-Wise-Graph/userEmail/" + userData.get(Session.KEY_EMAIL) + "/password/" + userData.get(Session.KEY_PASSWORD)
-                + "/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/" + userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/status/fromDate/" + fromDate +
-                "/toDate/" + toDate;
-//        Call<>
+        String url = "webforms/get-Lead-Status-Wise-Graph/userEmail/"+userData.get(Session.KEY_EMAIL)
+                +"/password/"+userData.get(Session.KEY_PASSWORD)+"/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"
+                +userData.get(Session.KEY_AGENCY_CLIENT_ID)+"/groupBy/status/fromDate/"+fromDate+"/toDate/"+toDate;
+        Call<ResponseLeadsGraph> graphCall = apiLeadsService.getLeadGraph(url);
+        graphCall.enqueue(new Callback<ResponseLeadsGraph>() {
+            @Override
+            public void onResponse(Call<ResponseLeadsGraph> call, Response<ResponseLeadsGraph> response) {
+                if( response != null ) {
+                    if(response.isSuccessful()) {
+                        if(response.body().getError() == 0) {
+                            if(response.body().getData() != null) {
+                                if(response.body().getData().size() > 0) {
+                                    data = response.body().getData();
+                                    rvGraph.setVisibility(View.VISIBLE);
+                                    LeadsGraphAdapter leadsGraphAdapter = new LeadsGraphAdapter(LeadDashboardActivity1.this, data);
+                                    rvGraph.setAdapter(leadsGraphAdapter);
+                                } else {
+                                    rvGraph.setVisibility(View.GONE);
+                                }
+                            } else {
+                                rvGraph.setVisibility(View.GONE);
+                            }
+                        } else {
 
+                        }
+                    } else {
 
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseLeadsGraph> call, Throwable t) {
+
+                if( t!= null ){
+                    Log.d("TAG",t.getMessage());
+                }
+            }
+        });
     }
 
     private void requestLeadMatrics() {
@@ -190,8 +228,16 @@ public class LeadDashboardActivity1 extends AppCompatActivity implements View.On
                             }
 
                             try {
-                                ArrayList<MainLeads> additionalLeads = responseDataLeads.getLeads().getAdditional();
+                                additionalLeadsTest = new ArrayList<MainLeads>();
+                                additionalLeads = responseDataLeads.getLeads().getAdditional();
                                 if (additionalLeads != null && additionalLeads.size() > 0) {
+//                                    for(int i=0; i<4; i++) {
+//                                        MainLeads data = additionalLeads.get(i);
+//                                        additionalLeadsTest.add(new MainLeads(data.getStatus(), data.getStatus_id(), data.getCnt(), false));
+//                                    }
+//
+//                                    additionalLeadsTest.add(new MainLeads("View More", "", "", false));
+
                                     LeadDashboardAdditionalAdapter leadDashboardAdditionalAdapter = new LeadDashboardAdditionalAdapter(LeadDashboardActivity1.this, additionalLeads, fromDateToShow, toDateToShow, dateType);
                                     rvAdditionalDetail.setAdapter(leadDashboardAdditionalAdapter);
                                 } else {
