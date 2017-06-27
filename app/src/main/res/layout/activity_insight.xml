@@ -130,7 +130,6 @@
                             android:text="VISITS"
                             android:textColor="@color/black" />
 
-
                         <TextView
                             android:layout_width="80dp"
                             android:layout_height="wrap_content"
@@ -163,7 +162,6 @@
                             android:singleLine="true"
                             android:text="NEW"
                             android:textColor="@color/black" />
-
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
@@ -300,7 +298,6 @@
                             android:text=""
                             android:textColor="@color/black" />
 
-
                         <TextView
                             android:id="@+id/textOrgScrTotal"
                             android:layout_width="80dp"
@@ -324,7 +321,6 @@
                             android:singleLine="true"
                             android:text=""
                             android:textColor="@color/black" />
-
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>

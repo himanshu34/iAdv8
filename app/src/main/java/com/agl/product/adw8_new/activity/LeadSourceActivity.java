@@ -2,10 +2,7 @@ package com.agl.product.adw8_new.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -120,16 +117,15 @@ public class LeadSourceActivity extends ActivityBase implements SwipeRefreshLayo
                 }
             }
         });
-
     }
 
     private void setTotalRow(ArrayList<LeadSource> list) {
         try {
             LeadSource leadSouce = list.get(0);
-            textReject.setText("117");
+            textReject.setText("2");
             textClosedLost.setText("0");
-            textCloseWon.setText("1");
-            textProposalSent.setText("11");
+            textCloseWon.setText("0");
+            textProposalSent.setText("1");
         } catch (Exception e ){
             e.printStackTrace();
         }
@@ -184,7 +180,6 @@ public class LeadSourceActivity extends ActivityBase implements SwipeRefreshLayo
         tv.setText(lead.getUtm_source());
         tlName.addView(v, rowCount);
     }
-
 
     @Override
     public void onRefresh() {

@@ -10,10 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -38,13 +35,11 @@ import com.agl.product.adw8_new.adapter.LeadDashboardAdditionalAdapter;
 import com.agl.product.adw8_new.adapter.LeadDashboardHeaderAdapter;
 import com.agl.product.adw8_new.adapter.LeadsGraphAdapter;
 import com.agl.product.adw8_new.database.IAdv8Database;
-import com.agl.product.adw8_new.model.InsightDimension;
 import com.agl.product.adw8_new.model.LeadSource;
 import com.agl.product.adw8_new.model.LeadsGraphData;
 import com.agl.product.adw8_new.model.MainLeads;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Get;
-import com.agl.product.adw8_new.service.Post;
 import com.agl.product.adw8_new.service.data.ResponseDataLeads;
 import com.agl.product.adw8_new.service.data.ResponseLeadsGraph;
 import com.agl.product.adw8_new.service.data.ResponseLeadsSource;
@@ -203,7 +198,7 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         Get apiLeadsService = ApiClient.getClientEarlier().create(Get.class);
         String url = "http://adv8kuber.in/webforms/get-Lead-Utm-Wise/userEmail/" + userData.get(Session.KEY_EMAIL)
                 + "/password/" + userData.get(Session.KEY_PASSWORD) + "/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"
-                + userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/utm_source,status/fromDate/" + fromDate + "/toDate/" + toDate;
+                + userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/utm_source,status/fromDate/" + "2017-03-15" + "/toDate/" + toDate;
 
         Call<ResponseLeadsSource> graphCall = apiLeadsService.getLeadSource(url);
         graphCall.enqueue(new Callback<ResponseLeadsSource>() {
@@ -239,7 +234,7 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
             textReject.setText("2");
             textClosedLost.setText("0");
             textCloseWon.setText("0");
-            textProposalSent.setText("0");
+            textProposalSent.setText("1");
         } catch (Exception e ){
             e.printStackTrace();
         }

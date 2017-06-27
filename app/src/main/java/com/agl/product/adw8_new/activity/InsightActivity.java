@@ -6,15 +6,11 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,18 +29,16 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.adapter.InsightGroupAdapter;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
 import com.agl.product.adw8_new.model.InsightDimension;
 import com.agl.product.adw8_new.model.InsightGroupType;
 import com.agl.product.adw8_new.model.InsightTotal;
-import com.agl.product.adw8_new.model.Keywords;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
-import com.agl.product.adw8_new.service.data.RequestDataKeywords;
 import com.agl.product.adw8_new.service.data.RequestInsightData;
-import com.agl.product.adw8_new.service.data.ResponseDataKeywords;
 import com.agl.product.adw8_new.service.data.ResponseInsightData;
 import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
@@ -62,7 +56,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class InsightActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener, AdapterView.OnItemSelectedListener {
+public class InsightActivity extends ActivityBase implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener, AdapterView.OnItemSelectedListener {
 
     private LinearLayout lldefaultSpends;
     private PopupWindow customDatePopup;
@@ -91,12 +85,11 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insight);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
 
         cd = new ConnectionDetector(this);
         session = new Session(this);
@@ -165,22 +158,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         swipeRefreshLayout.setOnRefreshListener(this);
 
         requestInsightData();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-        }
-        return true;
     }
 
     private void requestInsightData() {
@@ -321,7 +298,6 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         String org_src = insightDimension.getOrg_src();
         String newData = insightDimension.getNewData();
 
-
         View view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView7 = (TextView) view.findViewById(R.id.text_view);
         textView7.setText(users);
@@ -332,24 +308,20 @@ public class InsightActivity extends AppCompatActivity implements View.OnClickLi
         textView6.setText(visits);
         row.addView(textView6);
 
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(sess);
         row.addView(textView5);
-
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView8 = (TextView) view.findViewById(R.id.text_view);
         textView8.setText(org_src);
         row.addView(textView8);
 
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView9 = (TextView) view.findViewById(R.id.text_view);
         textView9.setText(newData);
         row.addView(textView9);
-
 
         tlValues.addView(row, rowCount);
         rowCount++;

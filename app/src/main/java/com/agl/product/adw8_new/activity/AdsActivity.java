@@ -6,11 +6,8 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -34,6 +31,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
 import com.agl.product.adw8_new.model.AdListingData;
@@ -58,7 +56,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AdsActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
+public class AdsActivity extends ActivityBase implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
 
     private PopupWindow filterPopup, customDatePopup;
     private View filterLayout, customPopupLayout;
@@ -92,10 +90,8 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         keywordsList = new ArrayList<Keywords>();
         rupeeSymbol = getString(R.string.rupee);
@@ -580,8 +576,12 @@ public class AdsActivity extends AppCompatActivity implements View.OnClickListen
             case android.R.id.home:
                 finish();
                 break;
+
             case R.id.menu_filter:
                 displayFilterLayout();
+                break;
+
+            default:
                 break;
         }
         return true;

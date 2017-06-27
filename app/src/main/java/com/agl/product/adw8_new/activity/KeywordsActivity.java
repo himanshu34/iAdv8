@@ -2,16 +2,11 @@ package com.agl.product.adw8_new.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -36,9 +31,9 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
-import com.agl.product.adw8_new.model.Adgroup;
 import com.agl.product.adw8_new.model.Keywords;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
@@ -60,7 +55,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class KeywordsActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
+public class KeywordsActivity extends ActivityBase implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
 
     private PopupWindow filterPopup, customDatePopup;
     private View filterLayout, customPopupLayout;
@@ -95,7 +90,8 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
         cd = new ConnectionDetector( this );
         rupeeSymbol = getString(R.string.rupee);
 
@@ -281,8 +277,12 @@ public class KeywordsActivity extends AppCompatActivity implements View.OnClickL
             case android.R.id.home:
                 finish();
                 break;
+
             case R.id.menu_filter:
                 displayFilterLayout();
+                break;
+
+            default:
                 break;
         }
         return true;

@@ -2,14 +2,11 @@ package com.agl.product.adw8_new.activity;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
@@ -30,35 +26,22 @@ import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
-import com.agl.product.adw8_new.decoration.ActionItem;
-import com.agl.product.adw8_new.decoration.QuickAction;
-import com.agl.product.adw8_new.model.AdListingData;
-import com.agl.product.adw8_new.model.Adgroup;
 import com.agl.product.adw8_new.model.CampaignData;
-import com.agl.product.adw8_new.model.Keywords;
 import com.agl.product.adw8_new.retrofit.ApiClient;
 import com.agl.product.adw8_new.service.Post;
-import com.agl.product.adw8_new.service.data.RequestDataAdgroup;
-import com.agl.product.adw8_new.service.data.RequestDataAds;
 import com.agl.product.adw8_new.service.data.RequestDataCampaignDetails;
-import com.agl.product.adw8_new.service.data.RequestDataKeywords;
-import com.agl.product.adw8_new.service.data.ResponseDataAdgroup;
-import com.agl.product.adw8_new.service.data.ResponseDataAds;
 import com.agl.product.adw8_new.service.data.ResponseDataCampaignDetails;
-import com.agl.product.adw8_new.service.data.ResponseDataKeywords;
 import com.agl.product.adw8_new.utils.ConnectionDetector;
 import com.agl.product.adw8_new.utils.Session;
 import com.agl.product.adw8_new.utils.Utils;
-
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -72,8 +55,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
-public class CampaignActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
+public class CampaignActivity extends ActivityBase implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
 
     private PopupWindow filterPopup, customDatePopup;
     private HorizontalScrollView hrone, hrsecond, hrbottom;
@@ -107,13 +89,10 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         cd = new ConnectionDetector(this);
-
         rupeeSymbol = getString(R.string.rupee);
 
         swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
@@ -127,7 +106,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         hrsecond = (HorizontalScrollView) findViewById(R.id.hrsecond);
         hrbottom = (HorizontalScrollView) findViewById(R.id.hrbottom);
         editIcon = (ImageView) findViewById(R.id.edit_icon);
-
         textCpa = (TextView) findViewById(R.id.textCpa);
         textConv = (TextView) findViewById(R.id.textConv);
         textCtr = (TextView) findViewById(R.id.textCtr);
@@ -136,7 +114,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textImpr = (TextView) findViewById(R.id.textImpr);
         textClicks = (TextView) findViewById(R.id.textClicks);
         textBudget = (TextView) findViewById(R.id.textBudget);
-
         textBudgetTotal = (TextView) findViewById(R.id.textBudgetTotal);
         textClicksTotal = (TextView) findViewById(R.id.textClicksTotal);
         textImprTotal = (TextView) findViewById(R.id.textImprTotal);
@@ -145,28 +122,22 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textCtrTotal = (TextView) findViewById(R.id.textCtrTotal);
         textConvTotal = (TextView) findViewById(R.id.textConvTotal);
         textCpaTotal = (TextView) findViewById(R.id.textCpaTotal);
-
         llDateLayout = (LinearLayout) findViewById(R.id.llDateLayout);
         filterLayout = getLayoutInflater().inflate(R.layout.custom_filter_layout, null);
         filterPopup = new PopupWindow(this);
         filterPopup.setWidth(500);
-
         filterPopup.setHeight(ListPopupWindow.WRAP_CONTENT);
         filterPopup.setOutsideTouchable(true);
         filterPopup.setContentView(filterLayout);
         filterPopup.setBackgroundDrawable(new BitmapDrawable());
         filterPopup.setFocusable(true);
-
         textClear = (TextView) filterLayout.findViewById(R.id.textClear);
         textApply = (TextView) filterLayout.findViewById(R.id.textApply);
         checkDisplay = (CheckBox) filterLayout.findViewById(R.id.checkDisplay);
         checkEnabled = (CheckBox) filterLayout.findViewById(R.id.checkEnabled);
         checkSearch = (CheckBox) filterLayout.findViewById(R.id.checkSearch);
         checkDisabled = (CheckBox) filterLayout.findViewById(R.id.checkDisabled);
-
-
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
-
         customDatePopup = new PopupWindow(this);
         customDatePopup.setWidth(400);
         customDatePopup.setHeight(ListPopupWindow.WRAP_CONTENT);
@@ -186,8 +157,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textLastSevenDays.setOnClickListener(this);
         textLastThirtyDays.setOnClickListener(this);
         textCustom.setOnClickListener(this);
-
-
         textCpa.setOnClickListener(this);
         textConv.setOnClickListener(this);
         textCtr.setOnClickListener(this);
@@ -198,7 +167,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textBudget.setOnClickListener(this);
         textClear.setOnClickListener(this);
         textApply.setOnClickListener(this);
-
 
         checkDisplay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,7 +234,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                 checkSearch.setChecked(false);
                 checkDisplay.setChecked(false);
                 checkEnabled.setChecked(false);
-
                 if( checkDisabled.isChecked() ){
                     filterEnable = "campaign_state";
                     filterEnableValue = "disabled";
@@ -278,10 +245,8 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                     filterNetwork = null;
                     filterNetworkValue = null;
                 }
-
             }
         });
-
 
         userData = session.getUsuarioDetails();
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
@@ -294,7 +259,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
 
         sortBy = Utils.CLICKS;
         sortingOrder = Utils.DESC;
-
 
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
@@ -321,13 +285,13 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             requestDataCampaignDetails.setCampaign_state(filterEnableValue);
         if (filterNetwork != null && filterNetworkValue != null)
             requestDataCampaignDetails.setAdvertising_channel(filterNetworkValue);
-
         if (offset == 0) {
             // Show loading on first time
             llDataContainer.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
             textMessage.setVisibility(View.GONE);
         }
+
         Call<ResponseDataCampaignDetails> campaignCall = apiAddClientService.getCampaignData(requestDataCampaignDetails);
         campaignCall.enqueue(new Callback<ResponseDataCampaignDetails>() {
             @Override
@@ -362,8 +326,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                                 textMessage.setText("Some error occured");
                             }
                         }
-
-
                     } catch (Exception e) {
                         e.printStackTrace();
                         if (offset == 0) {
@@ -381,7 +343,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                         textMessage.setText("Some error occured");
                     } else
                         Toast.makeText(CampaignActivity.this, "Some error occured", Toast.LENGTH_SHORT).show();
-
                 }
             }
 
@@ -398,21 +359,11 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                     textMessage.setText("There is some connectivity issue.");
                 } else
                     Toast.makeText(CampaignActivity.this, "There is some connectivity issue.", Toast.LENGTH_SHORT).show();
-
             }
         });
-
     }
 
     private void setTotalRow(ResponseDataCampaignDetails campaignData) {
-       /*  = (TextView) findViewById(R.id.textBudgetTotal);
-         = (TextView) findViewById(R.id.textClicksTotal);
-         = (TextView) findViewById(R.id.textImprTotal);
-         = (TextView) findViewById(R.id.textAvgCpcTotal);
-         = (TextView) findViewById(R.id.textCostTotal);
-         = (TextView) findViewById(R.id.textCtrTotal);
-         = (TextView) findViewById(R.id.textConvTotal);
-         = (TextView) findViewById(R.id.textCpaTotal);*/
         textBudgetTotal.setText(rupeeSymbol+" "+campaignData.getTotal().getBudget());
         textClicksTotal.setText(campaignData.getTotal().getClicks());
         textImprTotal.setText(campaignData.getTotal().getImpressions());
@@ -437,24 +388,23 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             case android.R.id.home:
                 finish();
                 break;
+
             case R.id.menu_filter:
                 displayFilterLayout();
+                break;
+
+            default:
                 break;
         }
         return true;
     }
 
-
     private void setOtherRow(TableRow row, TableRow.LayoutParams lp, int i, CampaignData campaignData) {
-
         setCampaignName(i, campaignData);
-
         View view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
-
         TextView textView1 = (TextView) view.findViewById(R.id.text_view);
         textView1.setText(rupeeSymbol+" "+campaignData.getBudget());
         row.addView(textView1);
-
 
         TextView textView2 = new TextView(this);
         textView2.setBackgroundResource(R.drawable.cell_shape);
@@ -477,7 +427,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         textView3 = (TextView) view.findViewById(R.id.text_view);
         textView3.setText(campaignData.getImpressions());
         row.addView(textView3);
-
 
         TextView textView4 = new TextView(this);
         textView4.setPadding(20, 20, 20, 20);
@@ -513,12 +462,10 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         row.addView(textView6);
 
         TextView textView7 = new TextView(this);
-
         textView7.setPadding(20, 20, 20, 20);
         textView7.setLayoutParams(lp);
         textView7.setGravity(Gravity.CENTER);
         textView7.setBackgroundResource(R.drawable.cell_shape);
-
 
         TextView textView8 = new TextView(this);
         textView8.setPadding(20, 20, 20, 20);
@@ -597,8 +544,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                 builder.setCancelable(false);
                 builder.show();
                 break;
-
-
             case R.id.textCpa:
                 break;
             case R.id.textConv:
@@ -632,8 +577,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                 getCampaignData();
                 filterPopup.dismiss();
                 break;
-
-
         }
     }
 
@@ -651,7 +594,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         offset = 0;
         rowCount = 0;
         getCampaignData();
-
     }
 
     private void setLastSeven() {
@@ -694,7 +636,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
         getCampaignData();
     }
 
-
     private class ShowDateRangeDialog extends AlertDialog {
         String fromDisplay, toDisplay;
         String fromDay, toDay;
@@ -704,16 +645,12 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
             LayoutInflater inflater = getLayoutInflater();
             final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
             setView(dialogLayout);
-
             LinearLayout llStartDate = (LinearLayout) dialogLayout.findViewById(R.id.llStartDate);
             final TextView textStartDate = (TextView) dialogLayout.findViewById(R.id.textStartDate);
-
             LinearLayout llEndDate = (LinearLayout) dialogLayout.findViewById(R.id.llEndDate);
             final TextView textEndDate = (TextView) dialogLayout.findViewById(R.id.textEndDate);
-
             TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
             TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
-
 
             textStartDate.setText(fromDateToShow);
             textEndDate.setText(toDateToShow);
@@ -733,14 +670,11 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                             Date date1 = new Date(calendar.getTimeInMillis());
                             textStartDate.setText(fromDisplay);
                             fromDay = dateFormat1.format(date1);
-
                         }
 
 
                     }, 2017, 05, 15);
-
                     datePickerDialog.show();
-
                 }
             });
 
@@ -760,12 +694,10 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                             Date date1 = new Date(calendar.getTimeInMillis());
                             textEndDate.setText(toDisplay);
                             toDay = dateFormat1.format(date1);
-
                         }
 
 
                     }, 2017, 05, 15);
-
                     datePickerDialog.show();
                 }
             });
@@ -776,7 +708,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                     dismiss();
                 }
             });
-
             textOk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -790,8 +721,6 @@ public class CampaignActivity extends AppCompatActivity implements View.OnClickL
                     dismiss();
                 }
             });
-
-
         }
     }
 

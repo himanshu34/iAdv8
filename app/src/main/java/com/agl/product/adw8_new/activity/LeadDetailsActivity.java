@@ -120,20 +120,6 @@ public class LeadDetailsActivity extends ActivityBase implements View.OnClickLis
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                break;
-
-            default:
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void getLeadDetailData() {
         setProgressLayout();
         Get apiLeadsDetailsService = ApiClient.getClientEarlier().create(Get.class);

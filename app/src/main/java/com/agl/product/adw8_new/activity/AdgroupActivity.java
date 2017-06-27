@@ -6,9 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -32,6 +30,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.agl.product.adw8_new.ActivityBase;
 import com.agl.product.adw8_new.R;
 import com.agl.product.adw8_new.custom_view.SwipeRefreshLayoutBottom;
 import com.agl.product.adw8_new.model.Adgroup;
@@ -55,7 +54,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class AdgroupActivity extends AppCompatActivity implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
+public class AdgroupActivity extends ActivityBase implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener {
 
     private TableLayout tlName, tlValues;
     private HorizontalScrollView hrone, hrsecond, hrbottom;
@@ -88,9 +87,8 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_back);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         session = new Session(this);
         cd = new ConnectionDetector(this);
@@ -125,7 +123,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         checkDisplay.setVisibility(View.GONE);
         checkSearch.setVisibility(View.GONE);
 
-
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
 
         customDatePopup = new PopupWindow(this);
@@ -138,22 +135,16 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
 
         llDateLayout.setOnClickListener(this);
 
-
         hrone = (HorizontalScrollView) findViewById(R.id.hrone);
         hrsecond = (HorizontalScrollView) findViewById(R.id.hrsecond);
         hrbottom = (HorizontalScrollView) findViewById(R.id.hrbottom);
-
         tlValues = (TableLayout) findViewById(R.id.tlValues);
         tlName = (TableLayout) findViewById(R.id.tlName);
         text = (TextView) findViewById(R.id.text);
-
         textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
         textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
         textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
         textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
-
-
-//        ,,,,,,,;
         textClicksTotal = (TextView) findViewById(R.id.textClicksTotal);
         textImprTotal = (TextView) findViewById(R.id.textImprTotal);
         textAvgCpcTotal = (TextView) findViewById(R.id.textAvgCpcTotal);
@@ -163,7 +154,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         textCpaTotal = (TextView) findViewById(R.id.textCpaTotal);
         textConvRateTotal = (TextView) findViewById(R.id.textConvRateTotal);
 
-
         llDateLayout.setOnClickListener(this);
         textYesterday.setOnClickListener(this);
         textLastSevenDays.setOnClickListener(this);
@@ -172,7 +162,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         swipeRefreshLayout.setOnRefreshListener(this);
         textClear.setOnClickListener(this);
         textApply.setOnClickListener(this);
-
 
         checkDisplay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -249,10 +238,8 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                     filterNetwork = null;
                     filterNetworkValue = null;
                 }
-
             }
         });
-
 
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -268,7 +255,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
 
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         getAdGroupData();
-
     }
 
     @Override
@@ -284,8 +270,12 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
             case android.R.id.home:
                 finish();
                 break;
+
             case R.id.menu_filter:
                 displayFilterLayout();
+                break;
+
+            default:
                 break;
         }
         return true;
@@ -344,9 +334,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                     filterPopup.dismiss();
                     getAdGroupData();
                 }else Toast.makeText(this, "Not Connected to Internet.", Toast.LENGTH_SHORT).show();
-
                 break;
-
         }
     }
 
@@ -423,8 +411,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
             requestKeywords.setCampaign_state(filterEnableValue);
         if (filterNetwork != null && filterNetworkValue != null)
             requestKeywords.setAdvertising_channel(filterNetworkValue);
-
-
         if (offset == 0) {
             // Show loading on first time
             llDataContainer.setVisibility(View.INVISIBLE);
@@ -439,7 +425,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                 swipeRefreshLayout.setRefreshing(false);
                 if (response != null) {
                     if (response.isSuccessful()) {
-
                         try {
                             ResponseDataAdgroup body = response.body();
                             ArrayList<Adgroup> data = body.getData();
@@ -451,7 +436,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                                     setTotalRow(body);
                                     createAdgroupTable(data);
                                     offset = offset + limit;
-
                                 } else {
                                     if (offset == 0) {
                                         llDataContainer.setVisibility(View.INVISIBLE);
@@ -468,9 +452,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                                     textMessage.setText("Some error occured.");
                                 } else
                                     Toast.makeText(AdgroupActivity.this, "Some error occured.", Toast.LENGTH_SHORT).show();
-
                             }
-
                         } catch (Exception e) {
                             e.printStackTrace();
                             if (offset == 0) {
@@ -504,7 +486,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                     textMessage.setText("There is some connectivity issue, please try again.");
                 } else
                     Toast.makeText(AdgroupActivity.this, "There is some connectivity issue, please try again.", Toast.LENGTH_SHORT).show();
-
             }
         });
     }
@@ -531,16 +512,12 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private void setAdgroupOtherRow(TableRow row, TableRow.LayoutParams lp, int i, Adgroup data) {
-
         setAdName(i, data);
-
         View view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
-
 
         TextView textView3 = (TextView) view.findViewById(R.id.text_view);
         textView3.setText(data.getClicks());
         row.addView(textView3);
-
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView1 = (TextView) view.findViewById(R.id.text_view);
@@ -548,20 +525,16 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         row.addView(textView1);
 
         // Avg cpc
-
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView = (TextView) view.findViewById(R.id.text_view);
         textView.setText(rupeeSymbol+" "+data.getAvg_cpc());
         row.addView(textView);
 
         // Cost
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView4 = (TextView) view.findViewById(R.id.text_view);
         textView4.setText(rupeeSymbol+" "+data.getCost());
         row.addView(textView4);
-
 
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView2 = (TextView) view.findViewById(R.id.text_view);
@@ -569,22 +542,18 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         row.addView(textView2);
 
         // Conv
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView5 = (TextView) view.findViewById(R.id.text_view);
         textView5.setText(data.getConverted_clicks());
         row.addView(textView5);
 
         // Cost/ conv
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView7 = (TextView) view.findViewById(R.id.text_view);
         textView7.setText(rupeeSymbol+" "+data.getCpa());
         row.addView(textView7);
 
-
         // Conv Rate
-
         view = LayoutInflater.from(this).inflate(R.layout.row_textview, row, false);
         TextView textView8 = (TextView) view.findViewById(R.id.text_view);
         textView8.setText(data.getConversion_rate());
@@ -600,7 +569,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
         TextView tv = (TextView) v.findViewById(R.id.text_view);
         tv.setText(data.getAdgroup());
         tlName.addView(v, i);
-
     }
 
     @Override
@@ -618,16 +586,12 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
             LayoutInflater inflater = getLayoutInflater();
             final View dialogLayout = inflater.inflate(R.layout.custom_date_layout, (ViewGroup) getCurrentFocus());
             setView(dialogLayout);
-
             LinearLayout llStartDate = (LinearLayout) dialogLayout.findViewById(R.id.llStartDate);
             final TextView textStartDate = (TextView) dialogLayout.findViewById(R.id.textStartDate);
-
             LinearLayout llEndDate = (LinearLayout) dialogLayout.findViewById(R.id.llEndDate);
             final TextView textEndDate = (TextView) dialogLayout.findViewById(R.id.textEndDate);
-
             TextView textCancel = (TextView) dialogLayout.findViewById(R.id.textCancel);
             TextView textOk = (TextView) dialogLayout.findViewById(R.id.textOk);
-
 
             textStartDate.setText(fromDateToShow);
             textEndDate.setText(toDateToShow);
@@ -652,9 +616,7 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
 
 
                     }, 2017, 05, 15);
-
                     datePickerDialog.show();
-
                 }
             });
 
@@ -674,12 +636,10 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                             Date date1 = new Date(calendar.getTimeInMillis());
                             textEndDate.setText(toDisplay);
                             toDay = dateFormat1.format(date1);
-
                         }
 
 
                     }, 2017, 05, 15);
-
                     datePickerDialog.show();
                 }
             });
@@ -690,7 +650,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                     dismiss();
                 }
             });
-
             textOk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -704,8 +663,6 @@ public class AdgroupActivity extends AppCompatActivity implements View.OnClickLi
                     dismiss();
                 }
             });
-
-
         }
     }
 }
