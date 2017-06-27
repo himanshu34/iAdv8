@@ -212,6 +212,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
         requestDataAddCient.setUserEmail(accountEmail);
         requestDataAddCient.setName(accountName);
 
+        Log.i(TAG, requestDataAddCient.toString());
         Post apiAddClientService = ApiClient.getClient().create(Post.class);
         Call<ResponseDataAddCient> call = apiAddClientService.addClient(requestDataAddCient);
         call.enqueue(new Callback<ResponseDataAddCient>() {
