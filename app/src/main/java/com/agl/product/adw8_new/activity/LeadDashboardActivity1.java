@@ -104,6 +104,26 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         textClosedLost = (TextView) findViewById(R.id.textClosedLost);
         textCloseWon = (TextView) findViewById(R.id.textCloseWon);
         textProposalSent = (TextView) findViewById(R.id.textProposalSent);
+        textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
+
+
+        lldefaultSpends = (LinearLayout) findViewById(R.id.lldefaultSpends);
+        customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
+        customDatePopup = new PopupWindow(this);
+        customDatePopup.setWidth(400);
+        customDatePopup.setHeight(ListPopupWindow.WRAP_CONTENT);
+        customDatePopup.setOutsideTouchable(true);
+        customDatePopup.setContentView(customPopupLayout);
+        customDatePopup.setBackgroundDrawable(new BitmapDrawable());
+        customDatePopup.setFocusable(true);
+
+
+        textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
+        textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
+        textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
+        textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
+
+
 
         viewAll = (TextView) findViewById(R.id.viewAll);
         hrone = (HorizontalScrollView) findViewById(R.id.hrone);
@@ -129,21 +149,21 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         data = new ArrayList<LeadsGraphData>();
         additionalLeads = new ArrayList<MainLeads>();
 
-        lldefaultSpends = (LinearLayout) findViewById(R.id.lldefaultSpends);
-        customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
-        customDatePopup = new PopupWindow(this);
-        customDatePopup.setWidth(400);
-        customDatePopup.setHeight(ListPopupWindow.WRAP_CONTENT);
-        customDatePopup.setOutsideTouchable(true);
-        customDatePopup.setContentView(customPopupLayout);
-        customDatePopup.setBackgroundDrawable(new BitmapDrawable());
-        customDatePopup.setFocusable(true);
+
 
 
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
         toDateToShow = Utils.getDisplayCurrentDate();
+
+        // Set Seven days before
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.black));
+        dateType = Utils.TYPE_LAST_WEEK;
+
 
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -152,21 +172,6 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
                 hrbottom.scrollTo(hrsecond.getScrollX(), hrsecond.getScrollY());
             }
         });
-
-
-        textYesterday = (TextView) customPopupLayout.findViewById(R.id.textYesterday);
-        textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
-        textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
-        textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
-
-        textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
-
-        // Set Seven days before
-        textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
-        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
-        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
-        dateType = Utils.TYPE_LAST_WEEK;
-
 
         lldefaultSpends.setOnClickListener(this);
         textYesterday.setOnClickListener(this);
@@ -183,8 +188,6 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         getAllData();
     }
 
-
-
     private void getAllData(){
         if (cd.isConnectedToInternet()) {
             pd.show();
@@ -196,9 +199,10 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
 
     private void requestLeadSource() {
         Get apiLeadsService = ApiClient.getClientEarlier().create(Get.class);
-        String url = "http://adv8kuber.in/webforms/get-Lead-Utm-Wise/userEmail/" + userData.get(Session.KEY_EMAIL)
-                + "/password/" + userData.get(Session.KEY_PASSWORD) + "/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"
-                + userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/utm_source,status/fromDate/" + "2017-03-15" + "/toDate/" + toDate;
+        String url = "webforms/get-Lead-Utm-Wise/userEmail/" +userData.get(Session.KEY_EMAIL)+"/password/"
+                +userData.get(Session.KEY_PASSWORD)+"/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"+
+                userData.get(Session.KEY_AGENCY_CLIENT_ID)+"/groupBy/utm_source,status/fromDate/"
+                +fromDate+"/toDate/"+toDate;
 
         Call<ResponseLeadsSource> graphCall = apiLeadsService.getLeadSource(url);
         graphCall.enqueue(new Callback<ResponseLeadsSource>() {
@@ -212,7 +216,6 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
                             createLeadSourceTable(list);
                             setTotalRow(list);
                         }
-
                     }
                 }
             }
@@ -580,6 +583,8 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.black));
+
         fromDate = Utils.getYesterdayDate();
         toDate = Utils.getYesterdayDate();
         fromDateToShow = Utils.getDisplayYesterdayDate();
@@ -599,6 +604,7 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
@@ -618,6 +624,7 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplayThirtyDayBeforeDate();
@@ -633,6 +640,10 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
 
     private void setCustomDay() {
         if (!cd.isConnectedToInternet()) return;
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.colorPrimary));
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         dateType = Utils.TYPE_CUSTOM_DATE;
        /* offset = 0;

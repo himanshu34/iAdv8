@@ -1,126 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/white"
-    android:fillViewport="true"
-    tools:context="com.agl.product.adw8_new.activity.LoginActivity">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="10">
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"/>
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical"
+        tools:context="com.agl.product.adw8_new.activity.LoginActivity">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="8.4"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="10">
 
             <View
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/logo_default"
-                    android:layout_centerInParent="true"/>
-            </RelativeLayout>
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="?android:attr/actionBarSize"
-                android:layout_marginBottom="?android:attr/actionBarSize">
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.4"
+                android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="?android:attr/actionBarSize" />
 
-                    <EditText
-                        android:id="@+id/editText_email"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/email_hint"
-                        android:inputType="textEmailAddress" />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
 
-                    <EditText
-                        android:id="@+id/editText_password"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/password_hint"
-                        android:inputType="textPassword" />
-                </android.support.design.widget.TextInputLayout>
-
-                <Button
-                    android:id="@+id/login_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/login_button"
-                    android:textColor="@color/white"
-                    android:layout_marginTop="@dimen/_20sdp"
-                    android:layout_marginBottom="@dimen/_20sdp"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:background="@drawable/btn_bg"/>
-
-                <LinearLayout
-                    android:id="@+id/btn_sign_in_google"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="@dimen/_8sdp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/rounded_btn">
-
-                    <ImageButton
+                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
                         android:scaleType="fitCenter"
-                        android:src="@drawable/icon_google"
-                        android:background="@android:color/transparent"/>
+                        android:src="@drawable/logo_default" />
+                </RelativeLayout>
 
-                    <View
-                        android:layout_width="@dimen/_8sdp"
-                        android:layout_height="@dimen/_1sdp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="?android:attr/actionBarSize"
+                    android:layout_marginTop="?android:attr/actionBarSize"
+                    android:orientation="vertical">
 
-                    <TextView
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editText_email"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/email_hint"
+                            android:inputType="textEmailAddress" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editText_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/password_hint"
+                            android:inputType="textPassword" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <Button
+                        android:id="@+id/login_btn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:gravity="center"
-                        android:text="@string/sign_in_google"
-                        android:textColor="@color/colorPrimary"
-                        android:textAppearance="?android:textAppearanceMedium"/>
+                        android:layout_marginBottom="@dimen/_20sdp"
+                        android:layout_marginTop="@dimen/_20sdp"
+                        android:background="@drawable/btn_bg"
+                        android:text="@string/login_button"
+                        android:textAppearance="?android:textAppearanceMedium"
+                        android:textColor="@color/white" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_sign_in_google"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_btn"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/_8sdp">
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:scaleType="fitCenter"
+                            android:src="@drawable/icon_google" />
+
+                        <View
+                            android:layout_width="@dimen/_8sdp"
+                            android:layout_height="@dimen/_1sdp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:singleLine="true"
+                            android:text="@string/sign_in_google"
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@color/colorPrimary" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"/>
-    </LinearLayout>
-</ScrollView>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8" />
+        </LinearLayout>
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:max="500"
+        android:progress="0"
+        android:visibility="gone"
+        android:theme="@style/AppTheme.PrimaryAccent" />
+</FrameLayout>
+

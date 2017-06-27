@@ -136,12 +136,16 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         spinner.setOnItemSelectedListener(this);
         userData = session.getUsuarioDetails();
 
-        fromDate = "2016-06-01";
+        fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
         toDateToShow = Utils.getDisplayCurrentDate();
 
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+
         hrsecond.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
             public void onScrollChanged() {
@@ -171,7 +175,7 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         requestInsight.setRow_count(limit + "");
         requestInsight.setOrder(sortingOrder);
         requestInsight.setCuId("0");
-        requestInsight.setcId("196");
+        requestInsight.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
         requestInsight.setGroup_type_id(groupTypeId);
         if (offset == 0) {
             swipeRefreshLayout.setVisibility(View.INVISIBLE);
@@ -359,6 +363,7 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         textYesterday.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getYesterdayDate();
         toDate = Utils.getYesterdayDate();
         fromDateToShow = Utils.getDisplayYesterdayDate();
@@ -375,6 +380,7 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         textLastSevenDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
@@ -392,6 +398,7 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         textLastThirtyDays.setTextColor(getResources().getColor(R.color.colorPrimary));
         textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
         textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.black));
         fromDate = Utils.getThirtyDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplayThirtyDayBeforeDate();
@@ -405,6 +412,10 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
 
     private void setCustomDay() {
         if (!cd.isConnectedToInternet()) return;
+        textLastThirtyDays.setTextColor(getResources().getColor(R.color.black));
+        textLastSevenDays.setTextColor(getResources().getColor(R.color.black));
+        textYesterday.setTextColor(getResources().getColor(R.color.black));
+        textCustom.setTextColor(getResources().getColor(R.color.colorPrimary));
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         offset = 0;
         rowCount = 0;
