@@ -266,10 +266,10 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         toDateToShow = Utils.getDisplayCurrentDate();
 
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
-        getCampaignData();
+        getCampaignDataActual();
     }
 
-    private void getCampaignData() {
+    private void getCampaignDataActual() {
         Post apiAddClientService = ApiClient.getClient().create(Post.class);
         RequestDataCampaignDetails requestDataCampaignDetails = new RequestDataCampaignDetails();
         requestDataCampaignDetails.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
@@ -363,6 +363,99 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         });
     }
 
+    private void getCampaignDataOnRefresh() {
+        Post apiAddClientService = ApiClient.getClient().create(Post.class);
+        RequestDataCampaignDetails requestDataCampaignDetails = new RequestDataCampaignDetails();
+        requestDataCampaignDetails.setAccess_token(userData.get(Session.KEY_ACCESS_TOKEN));
+        requestDataCampaignDetails.setpId("1");
+        requestDataCampaignDetails.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
+        requestDataCampaignDetails.setfDate(fromDate);
+        requestDataCampaignDetails.settDate(toDate);
+        requestDataCampaignDetails.setLimit(limit + "");
+        requestDataCampaignDetails.setOrderBy(sortingOrder);
+        requestDataCampaignDetails.setSortBy(sortBy);
+        requestDataCampaignDetails.setOffset(offset);
+        if (filterEnableValue != null && filterEnable != null)
+            requestDataCampaignDetails.setCampaign_state(filterEnableValue);
+        if (filterNetwork != null && filterNetworkValue != null)
+            requestDataCampaignDetails.setAdvertising_channel(filterNetworkValue);
+        if (offset == 0) {
+            // Show loading on first time
+            llDataContainer.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+            textMessage.setVisibility(View.GONE);
+        }
+
+        Call<ResponseDataCampaignDetails> campaignCall = apiAddClientService.getCampaignData(requestDataCampaignDetails);
+        campaignCall.enqueue(new Callback<ResponseDataCampaignDetails>() {
+            @Override
+            public void onResponse(Call<ResponseDataCampaignDetails> call, Response<ResponseDataCampaignDetails> response) {
+                swipeRefreshLayout.setRefreshing(false);
+                if (response.isSuccessful()) {
+                    ResponseDataCampaignDetails campaignData = response.body();
+                    try {
+                        ArrayList<CampaignData> data = campaignData.getData();
+                        if (data != null) {
+                            if (data.size() > 0) {
+                                llDataContainer.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
+                                textMessage.setVisibility(View.GONE);
+                                setTotalRow(campaignData);
+                                createCampaignTableOnRefresh(data);
+                                offset = offset + limit;
+                            } else {
+                                if (offset == 0) {
+                                    llDataContainer.setVisibility(View.INVISIBLE);
+                                    progressBar.setVisibility(View.GONE);
+                                    textMessage.setVisibility(View.VISIBLE);
+                                    textMessage.setText("No Campaigns Found.");
+                                }
+                            }
+                        } else {
+                            if (offset == 0) {
+                                llDataContainer.setVisibility(View.INVISIBLE);
+                                progressBar.setVisibility(View.GONE);
+                                textMessage.setVisibility(View.VISIBLE);
+                                textMessage.setText("Some error occured");
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (offset == 0) {
+                            llDataContainer.setVisibility(View.INVISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            textMessage.setVisibility(View.VISIBLE);
+                            textMessage.setText("Some error occured");
+                        }
+                    }
+                } else {
+                    if (offset == 0) {
+                        llDataContainer.setVisibility(View.INVISIBLE);
+                        progressBar.setVisibility(View.GONE);
+                        textMessage.setVisibility(View.VISIBLE);
+                        textMessage.setText("Some error occured");
+                    } else
+                        Toast.makeText(CampaignActivity.this, "Some error occured", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseDataCampaignDetails> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
+                if (t != null) {
+                    Log.d("TAG", t.getMessage());
+                }
+                if (offset == 0) {
+                    llDataContainer.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                    textMessage.setVisibility(View.VISIBLE);
+                    textMessage.setText("There is some connectivity issue.");
+                } else
+                    Toast.makeText(CampaignActivity.this, "There is some connectivity issue.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     private void setTotalRow(ResponseDataCampaignDetails campaignData) {
         textBudgetTotal.setText(rupeeSymbol+" "+campaignData.getTotal().getBudget());
         textClicksTotal.setText(campaignData.getTotal().getClicks());
@@ -372,7 +465,6 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         textCtrTotal.setText(campaignData.getTotal().getCtr());
         textConvTotal.setText(campaignData.getTotal().getConverted_clicks());
         textCpaTotal.setText(rupeeSymbol+" "+campaignData.getTotal().getCpa());
-
     }
 
     @Override
@@ -574,7 +666,7 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
                 if (!cd.isConnectedToInternet()) return;
                 offset = 0;
                 rowCount = 0;
-                getCampaignData();
+                getCampaignDataActual();
                 filterPopup.dismiss();
                 break;
         }
@@ -593,7 +685,7 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
-        getCampaignData();
+        getCampaignDataActual();
     }
 
     private void setLastSeven() {
@@ -609,7 +701,7 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
-        getCampaignData();
+        getCampaignDataActual();
     }
 
     private void setLastThirty() {
@@ -625,7 +717,7 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
-        getCampaignData();
+        getCampaignDataActual();
     }
 
     private void setCustomDay() {
@@ -633,7 +725,7 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         offset = 0;
         rowCount = 0;
-        getCampaignData();
+        getCampaignDataActual();
     }
 
     private class ShowDateRangeDialog extends AlertDialog {
@@ -725,6 +817,17 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
     }
 
     private void createCampaignTable(ArrayList<CampaignData> campaignDatas) {
+        tlName.removeAllViews();
+        tlValues.removeAllViews();
+        for (int i = 0; i < campaignDatas.size(); i++) {
+            TableRow row1 = new TableRow(this);
+            TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
+            row1.setLayoutParams(lp);
+            setOtherRow(row1, lp, rowCount, campaignDatas.get(i));
+        }
+    }
+
+    private void createCampaignTableOnRefresh(ArrayList<CampaignData> campaignDatas) {
         for (int i = 0; i < campaignDatas.size(); i++) {
             TableRow row1 = new TableRow(this);
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT);
@@ -735,6 +838,6 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
 
     @Override
     public void onRefresh() {
-        getCampaignData();
+        getCampaignDataOnRefresh();
     }
 }
