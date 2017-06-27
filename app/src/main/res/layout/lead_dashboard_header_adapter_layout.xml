@@ -13,12 +13,11 @@
 
     <TextView
         android:id="@+id/textView_count"
-        fontPath="fonts/Roboto-Black.ttf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/_14sdp"
-        tools:ignore="MissingPrefix" />
-
+        android:textSize="@dimen/_22sdp"
+        tools:ignore="MissingPrefix"
+        fontPath="fonts/Roboto-Black.ttf" />
 
     <View
         android:layout_width="1dp"
@@ -28,9 +27,5 @@
         android:id="@+id/textView_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/_22sdp"
-        tools:ignore="MissingPrefix"
-        fontPath="fonts/Roboto-Black.ttf"
-         />
-
+        android:textSize="@dimen/_14sdp" />
 </LinearLayout>

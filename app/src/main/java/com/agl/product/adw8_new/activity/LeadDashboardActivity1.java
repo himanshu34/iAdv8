@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ListPopupWindow;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -66,10 +68,10 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
     Session session;
     String campaignIds = "", landingPageIds = "", ownerIds = "", statusIds = "";
     IAdv8Database database = new IAdv8Database(this, "Iadv8.db", null, 1);
-    private LinearLayout lldefaultSpends;
+    private LinearLayout lldefaultSpends, header_layout;
     private PopupWindow customDatePopup;
     private View customPopupLayout;
-    private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange, textMessage;
+    private TextView textYesterday, textLastSevenDays, textLastThirtyDays, textCustom, textSelectedDateRange;
     private DatePickerDialog datePickerDialog;
     private String fromDate, toDate, fromDateToShow, toDateToShow;
     private ConnectionDetector cd;
@@ -77,11 +79,12 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
     private ArrayList<LeadsGraphData> data;
     ArrayList<MainLeads> additionalLeadsTest;
     ArrayList<MainLeads> additionalLeads;
-    private ProgressDialog pd;
     private String dateType = "";
-    private TextView textReject, textClosedLost, textCloseWon, textProposalSent,viewAll;
-    private TableLayout tlName,tlValues;
-    private int rowCount = 0 ;
+    private TextView textReject, textClosedLost, textCloseWon, textProposalSent, viewAll, textMessage;
+    private TableLayout tlName, tlValues;
+    private int rowCount = 0;
+    private CardView cardLeadSource, cardAdditional;
+    private ProgressBar progressBar;
     private HorizontalScrollView hrone, hrsecond, hrbottom;
 
     @Override
@@ -95,19 +98,21 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
 
         session = new Session(this);
         cd = new ConnectionDetector(this);
-        pd = new ProgressDialog(this);
 
         tlName = (TableLayout) findViewById(R.id.tlName);
         tlValues = (TableLayout) findViewById(R.id.tlValues);
-
+        cardLeadSource = (CardView) findViewById(R.id.cardLeadSource);
+        cardAdditional = (CardView) findViewById(R.id.cardAdditional);
         textReject = (TextView) findViewById(R.id.textReject);
         textClosedLost = (TextView) findViewById(R.id.textClosedLost);
         textCloseWon = (TextView) findViewById(R.id.textCloseWon);
         textProposalSent = (TextView) findViewById(R.id.textProposalSent);
         textSelectedDateRange = (TextView) findViewById(R.id.textSelectedDateRange);
-
-
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        textMessage = (TextView) findViewById(R.id.textMessage);
         lldefaultSpends = (LinearLayout) findViewById(R.id.lldefaultSpends);
+        header_layout = (LinearLayout) findViewById(R.id.header_layout);
+
         customPopupLayout = getLayoutInflater().inflate(R.layout.date_range_layout, null);
         customDatePopup = new PopupWindow(this);
         customDatePopup.setWidth(400);
@@ -122,7 +127,6 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         textLastSevenDays = (TextView) customPopupLayout.findViewById(R.id.textLastSevenDays);
         textLastThirtyDays = (TextView) customPopupLayout.findViewById(R.id.textLastThirtyDays);
         textCustom = (TextView) customPopupLayout.findViewById(R.id.textCustom);
-
 
 
         viewAll = (TextView) findViewById(R.id.viewAll);
@@ -149,13 +153,12 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         data = new ArrayList<LeadsGraphData>();
         additionalLeads = new ArrayList<MainLeads>();
 
-
-
-
         fromDate = Utils.getSevenDayBeforeDate();
         toDate = Utils.getCurrentDate();
         fromDateToShow = Utils.getDisplaySevenDayBeforeDate();
         toDateToShow = Utils.getDisplayCurrentDate();
+
+        textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
 
         // Set Seven days before
         textYesterday.setTextColor(getResources().getColor(R.color.black));
@@ -185,36 +188,55 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         campaignIds = getCampaignCount().toString();
         landingPageIds = getLandingCount().toString();
         ownerIds = getOwnerCount().toString();
+
         getAllData();
     }
 
-    private void getAllData(){
+    private void getAllData() {
         if (cd.isConnectedToInternet()) {
-            pd.show();
+            progressBar.setVisibility(View.VISIBLE);
+            cardLeadSource.setVisibility(View.GONE);
+            cardAdditional.setVisibility(View.GONE);
+            header_layout.setVisibility(View.GONE);
+            rvGraph.setVisibility(View.GONE);
+            textMessage.setVisibility(View.GONE);
             requestGraphData();
             requestLeadMatrics();
             requestLeadSource();
-        } else Toast.makeText(this, "Not Connected to Internet", Toast.LENGTH_SHORT).show();
+        } else {
+            progressBar.setVisibility(View.GONE);
+            cardLeadSource.setVisibility(View.GONE);
+            cardAdditional.setVisibility(View.GONE);
+            header_layout.setVisibility(View.GONE);
+            rvGraph.setVisibility(View.GONE);
+            textMessage.setVisibility(View.VISIBLE);
+            textMessage.setText("Not Connected to Internet");
+        }
     }
 
     private void requestLeadSource() {
         Get apiLeadsService = ApiClient.getClientEarlier().create(Get.class);
-        String url = "webforms/get-Lead-Utm-Wise/userEmail/" +userData.get(Session.KEY_EMAIL)+"/password/"
-                +userData.get(Session.KEY_PASSWORD)+"/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/"+
-                userData.get(Session.KEY_AGENCY_CLIENT_ID)+"/groupBy/utm_source,status/fromDate/"
-                +fromDate+"/toDate/"+toDate;
+        String url = "webforms/get-Lead-Utm-Wise/userEmail/" + userData.get(Session.KEY_EMAIL) + "/password/"
+                + userData.get(Session.KEY_PASSWORD) + "/sKeys/1r2a3k4s5h6s7i8n9h10/clientId/" +
+                userData.get(Session.KEY_AGENCY_CLIENT_ID) + "/groupBy/utm_source,status/fromDate/"
+                + fromDate + "/toDate/" + toDate;
 
         Call<ResponseLeadsSource> graphCall = apiLeadsService.getLeadSource(url);
         graphCall.enqueue(new Callback<ResponseLeadsSource>() {
             @Override
             public void onResponse(Call<ResponseLeadsSource> call, Response<ResponseLeadsSource> response) {
-                if( response != null ){
-                    if( response.isSuccessful() ){
-                        ResponseLeadsSource res= response.body();
+                if (response != null) {
+                    if (response.isSuccessful()) {
+                        ResponseLeadsSource res = response.body();
                         ArrayList<LeadSource> list = res.getData();
-                        if( list != null && list.size() > 0  ){
+                        if (list != null && list.size() > 0) {
+                            cardLeadSource.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            textMessage.setVisibility(View.GONE);
                             createLeadSourceTable(list);
                             setTotalRow(list);
+                        } else {
+                            cardLeadSource.setVisibility(View.GONE);
                         }
                     }
                 }
@@ -222,9 +244,9 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
 
             @Override
             public void onFailure(Call<ResponseLeadsSource> call, Throwable t) {
-
-                if ( t != null ) {
-                    Log.d("TAG",t.getMessage());
+                cardLeadSource.setVisibility(View.GONE);
+                if (t != null) {
+                    Log.d("TAG", t.getMessage());
                 }
             }
         });
@@ -238,14 +260,14 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
             textClosedLost.setText("0");
             textCloseWon.setText("0");
             textProposalSent.setText("1");
-        } catch (Exception e ){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void createLeadSourceTable(ArrayList<LeadSource> list) {
         for (int i = 0; i < list.size(); i++) {
-            LeadSource leadSource = list.get(i );
+            LeadSource leadSource = list.get(i);
             TableRow row1 = new TableRow(this);
             TableRow.LayoutParams lp = new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT);
             lp.span = 1;
@@ -285,7 +307,7 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         rowCount++;
     }
 
-    private void setFirstColumn(LeadSource lead){
+    private void setFirstColumn(LeadSource lead) {
         TableRow row = new TableRow(this);
         View v = LayoutInflater.from(this).inflate(R.layout.first_row, row, false);
         TextView tv = (TextView) v.findViewById(R.id.text_view);
@@ -309,6 +331,8 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
                                 if (response.body().getData().size() > 0) {
                                     data = response.body().getData();
                                     rvGraph.setVisibility(View.VISIBLE);
+                                    progressBar.setVisibility(View.GONE);
+                                    textMessage.setVisibility(View.GONE);
                                     LeadsGraphAdapter leadsGraphAdapter = new LeadsGraphAdapter(LeadDashboardActivity1.this, data);
                                     rvGraph.setAdapter(leadsGraphAdapter);
                                 } else {
@@ -321,14 +345,14 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
 
                         }
                     } else {
-
+                        rvGraph.setVisibility(View.GONE);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseLeadsGraph> call, Throwable t) {
-
+                rvGraph.setVisibility(View.GONE);
                 if (t != null) {
                     Log.d("TAG", t.getMessage());
                 }
@@ -346,7 +370,6 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         leadsCall.enqueue(new Callback<ResponseDataLeads>() {
             @Override
             public void onResponse(Call<ResponseDataLeads> call, Response<ResponseDataLeads> response) {
-                pd.dismiss();
                 if (response != null) {
                     if (response.isSuccessful()) {
                         ResponseDataLeads responseDataLeads = response.body();
@@ -356,48 +379,54 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
                                 mainLeads = leads;
                                 MainLeads lead = mainLeads.get(0);
                                 lead.setChecked(true);
+                                header_layout.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.GONE);
+                                textMessage.setVisibility(View.GONE);
                                 LeadDashboardHeaderAdapter leadDashboardHeaderAdapter = new LeadDashboardHeaderAdapter(LeadDashboardActivity1.this, mainLeads);
                                 rvHeaderData.setAdapter(leadDashboardHeaderAdapter);
                             } else {
-
+                                header_layout.setVisibility(View.GONE);
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            header_layout.setVisibility(View.GONE);
+                        }
 
-                            try {
-                                additionalLeadsTest = new ArrayList<MainLeads>();
-                                additionalLeads = responseDataLeads.getLeads().getAdditional();
-                                if (additionalLeads != null && additionalLeads.size() > 0) {
+                        try {
+                            additionalLeadsTest = new ArrayList<MainLeads>();
+                            additionalLeads = responseDataLeads.getLeads().getAdditional();
+                            if (additionalLeads != null && additionalLeads.size() > 0) {
 //                                    for(int i=0; i<4; i++) {
 //                                        MainLeads data = additionalLeads.get(i);
 //                                        additionalLeadsTest.add(new MainLeads(data.getStatus(), data.getStatus_id(), data.getCnt(), false));
 //                                    }
 //
 //                                    additionalLeadsTest.add(new MainLeads("View More", "", "", false));
-
-                                    LeadDashboardAdditionalAdapter leadDashboardAdditionalAdapter = new LeadDashboardAdditionalAdapter(LeadDashboardActivity1.this, additionalLeads, fromDateToShow, toDateToShow, dateType);
-                                    rvAdditionalDetail.setAdapter(leadDashboardAdditionalAdapter);
-                                } else {
-
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                progressBar.setVisibility(View.GONE);
+                                textMessage.setVisibility(View.GONE);
+                                cardAdditional.setVisibility(View.VISIBLE);
+                                LeadDashboardAdditionalAdapter leadDashboardAdditionalAdapter = new LeadDashboardAdditionalAdapter(LeadDashboardActivity1.this, additionalLeads, fromDateToShow, toDateToShow, dateType);
+                                rvAdditionalDetail.setAdapter(leadDashboardAdditionalAdapter);
+                            } else {
+                                cardAdditional.setVisibility(View.GONE);
                             }
-
 
                         } catch (Exception e) {
                             e.printStackTrace();
+                            cardAdditional.setVisibility(View.GONE);
                         }
 
-
                     } else {
-
+                        cardAdditional.setVisibility(View.GONE);
+                        header_layout.setVisibility(View.GONE);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseDataLeads> call, Throwable t) {
-                pd.dismiss();
+                cardAdditional.setVisibility(View.GONE);
+                header_layout.setVisibility(View.GONE);
                 if (t != null) Log.d("ERROR", t.getMessage());
             }
         });
@@ -470,7 +499,13 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
                 builder.show();
                 break;
             case R.id.viewAll:
-                startActivity(new Intent(this,LeadSourceActivity.class));
+                startActivity(new Intent(LeadDashboardActivity1.this, LeadSourceActivity.class)
+                        .putExtra(Utils.CURRENT_FROM_DATE, fromDate)
+                        .putExtra(Utils.CURRENT_TO_DATE, toDate)
+                        .putExtra(Utils.CURRENT_FROM_DATE_TO_SHOW, fromDateToShow)
+                        .putExtra(Utils.CURRENT_TO_DATE_TO_SHOW, toDateToShow)
+                        .putExtra(Utils.DATE_TYPE, dateType)
+                );
                 break;
         }
     }

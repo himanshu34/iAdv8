@@ -1,5 +1,6 @@
 package com.agl.product.adw8_new.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.ActivityBase;
@@ -55,12 +57,15 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
     Button loginButton;
     EditText emailEditText, passwordEditText;
     Session session;
+    private ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         session = new Session(this);
+        pd = new ProgressDialog(this);
+        pd.setMessage("Please wait...");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -171,6 +176,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
     }
 
     private void signIn() {
+        pd.show();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -180,6 +186,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
         super.onActivityResult(requestCode, resultCode, data);
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            pd.dismiss();
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
@@ -258,6 +265,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
     }
 
     private void serviceLogin(String email, String password) {
+        pd.show();
         RequestDataLogin requestDataLogin = new RequestDataLogin();
         requestDataLogin.setsKeys("1r2a3k4s5h6s7i8n9h10");
         requestDataLogin.setUserEmail(email);
@@ -268,6 +276,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
         call.enqueue(new Callback<ResponseDataLogin>() {
             @Override
             public void onResponse(Call<ResponseDataLogin>call, Response<ResponseDataLogin> response) {
+                pd.dismiss();
                 signInButton.setEnabled(true);
                 if(response != null) {
                     if(response.isSuccessful()) {
@@ -307,6 +316,7 @@ public class LoginActivity extends ActivityBase implements GoogleApiClient.OnCon
 
             @Override
             public void onFailure(Call<ResponseDataLogin>call, Throwable t) {
+                pd.dismiss();
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
                 signInButton.setEnabled(true);
