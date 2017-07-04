@@ -40,6 +40,10 @@
         <item>Custom</item>
         <item></item>
     </string-array>
+    <string-array name="tabs_setting_page">
+        <item>Google Adwords</item>
+        <item>Google Analytics</item>
+    </string-array>
     <string name="NA">NA</string>
 
     <string name="text_title">Set time range</string>
@@ -58,5 +62,7 @@
     <string name="title_activity_lead_dashboard1">LeadDashboardActivity1</string>
     <string name="title_activity_insight">InsightActivity</string>
     <string name="title_activity_lead_source">LeadSourceActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

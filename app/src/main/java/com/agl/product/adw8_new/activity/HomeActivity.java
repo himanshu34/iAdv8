@@ -114,7 +114,7 @@ public class HomeActivity extends ActivityBase implements CustomDialogItemClickL
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.ll_setting:
-//                startActivity(new Intent(this, SettingPage.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }
     }

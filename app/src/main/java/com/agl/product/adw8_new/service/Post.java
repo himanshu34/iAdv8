@@ -7,6 +7,7 @@ import com.agl.product.adw8_new.service.data.RequestDataCampaignDetails;
 import com.agl.product.adw8_new.service.data.RequestDataGraphCampaign;
 import com.agl.product.adw8_new.service.data.RequestDataKeywords;
 import com.agl.product.adw8_new.service.data.RequestDataLeadsStatusUpdate;
+import com.agl.product.adw8_new.service.data.RequestGoogleAnalytics;
 import com.agl.product.adw8_new.service.data.RequestInsightData;
 import com.agl.product.adw8_new.service.data.ResponseDataAdgroup;
 import com.agl.product.adw8_new.service.data.ResponseDataAds;
@@ -23,6 +24,7 @@ import com.agl.product.adw8_new.service.data.ResponseDataLogin;
 import com.agl.product.adw8_new.service.data.ResponseInsightData;
 
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
@@ -59,4 +61,7 @@ public interface Post {
 
     @POST()
     Call<ResponseDataLeadsStatusUpdate> leadsStatusUpdate(@Url String url, @Body RequestDataLeadsStatusUpdate requestDataLeadsStatusUpdate);
+
+    @POST()
+    Call<ResponseBody> getGoogleAnalytics(@Body RequestGoogleAnalytics requestGoogleAnalytics,@Url String url);
 }

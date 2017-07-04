@@ -8,6 +8,7 @@ import com.agl.product.adw8_new.service.data.ResponseDataLeadsStatus;
 import com.agl.product.adw8_new.service.data.ResponseLeadsGraph;
 import com.agl.product.adw8_new.service.data.ResponseLeadsSource;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Url;
@@ -34,4 +35,7 @@ public interface Get {
 
     @GET()
     Call<ResponseLeadsSource> getLeadSource(@Url String url);
+
+    @GET()
+    Call<ResponseBody> getGoogleAdwords(@Url String url);
 }

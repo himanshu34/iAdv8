@@ -14,7 +14,7 @@ public class Session {
     SharedPreferences.Editor editor;
     Context _context;
     int PRIVATE_MODE = 0;
-    private static final String PREF_NAME = "iAdv8RecipeManager";
+    public static final String PREF_NAME = "iAdv8RecipeManager";
 
     // All Shared Preferences Keys
     private static final String IS_LOGIN = "IsLoggedIn";

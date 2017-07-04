@@ -76,6 +76,10 @@
         <activity
             android:name=".activity.LeadSourceActivity"
             android:label="@string/title_activity_lead_source"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

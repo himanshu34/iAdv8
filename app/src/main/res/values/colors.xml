@@ -13,4 +13,5 @@
     <color name="blue_color">#208FEB</color>
     <color name="grey">#EDEDED</color>
     <color name="filter_background">#F9F7F8</color>
+    <color name="default_back">#e2e2e2</color>
 </resources>
