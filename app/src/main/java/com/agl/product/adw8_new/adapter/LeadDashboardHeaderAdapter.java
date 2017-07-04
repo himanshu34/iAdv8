@@ -1,7 +1,5 @@
 package com.agl.product.adw8_new.adapter;
 
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,14 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.agl.product.adw8_new.R;
-import com.agl.product.adw8_new.activity.LeadDashBoardActivity;
 import com.agl.product.adw8_new.activity.LeadDashboardActivity1;
-import com.agl.product.adw8_new.activity.LeadListDashboardActivity;
 import com.agl.product.adw8_new.model.MainLeads;
-import com.agl.product.adw8_new.utils.Utils;
 
 import java.util.ArrayList;
-
 
 public class LeadDashboardHeaderAdapter extends RecyclerView.Adapter<LeadDashboardHeaderAdapter.MyViewHolder> {
 
@@ -52,9 +46,7 @@ public class LeadDashboardHeaderAdapter extends RecyclerView.Adapter<LeadDashboa
 
         holder.countTextView.setText(mainLead.getCnt());
         holder.titleTextView.setText(mainLead.getStatus());
-
     }
-
 
     @Override
     public int getItemCount() {

@@ -8,12 +8,9 @@
 
     <TextView
         android:id="@+id/textName"
-        fontPath="fonts/Roboto-Black.ttf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:ignore="MissingPrefix"
         android:textSize="@dimen/_12sdp"
-        android:textColor="@color/black"
         />
     <View
         android:layout_width="wrap_content"
@@ -23,10 +20,8 @@
 
     <TextView
         android:id="@+id/textCount"
-        fontPath="fonts/Roboto-Black.ttf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:ignore="MissingPrefix"
         android:textSize="@dimen/_15sdp"
         android:textColor="@color/black"
         />

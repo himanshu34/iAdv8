@@ -18,7 +18,9 @@ public class ApiClient {
 
     public static Retrofit getClient() {
         Retrofit retrofit = null;
-        final OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        final OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder().addInterceptor(interceptor);
         okHttpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
