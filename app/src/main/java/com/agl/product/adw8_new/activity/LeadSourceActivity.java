@@ -356,7 +356,6 @@ public class LeadSourceActivity extends ActivityBase implements SwipeRefreshLayo
         rowCount = 0;
         if(tlName.getChildCount() > 0 )tlName.removeAllViews();
         if(tlValues.getChildCount() > 0 )tlValues.removeAllViews();
-        tlValues.removeAllViews();
         requestLeadSource();
 
     }

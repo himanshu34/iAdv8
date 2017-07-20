@@ -627,9 +627,12 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         textSelectedDateRange.setText(fromDateToShow);
         customDatePopup.dismiss();
         dateType = Utils.TYPE_YESTERDAY;
+        rowCount = 0;
         /*offset = 0;
         rowCount = 0;
         requestInsightData();*/
+        if( tlName.getChildCount() > 0) tlName.removeAllViews();
+        if( tlValues.getChildCount() > 0) tlValues.removeAllViews();
         getAllData();
 
     }
@@ -650,6 +653,9 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
        /* offset = 0;
         rowCount = 0;
         requestInsightData();*/
+        rowCount = 0;
+        if( tlName.getChildCount() > 0) tlName.removeAllViews();
+        if( tlValues.getChildCount() > 0) tlValues.removeAllViews();
         getAllData();
 
     }
@@ -670,6 +676,9 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
         /*offset = 0;
         rowCount = 0;
         requestInsightData();*/
+        rowCount = 0;
+        if( tlName.getChildCount() > 0) tlName.removeAllViews();
+        if( tlValues.getChildCount() > 0) tlValues.removeAllViews();
         getAllData();
     }
 
@@ -684,6 +693,9 @@ public class LeadDashboardActivity1 extends ActivityBase implements View.OnClick
        /* offset = 0;
         rowCount = 0;
         requestInsightData();*/
+        rowCount = 0;
+        if( tlName.getChildCount() > 0) tlName.removeAllViews();
+        if( tlValues.getChildCount() > 0) tlValues.removeAllViews();
         getAllData();
     }
 }
