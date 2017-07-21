@@ -56,7 +56,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class InsightActivity extends ActivityBase implements View.OnClickListener, SwipeRefreshLayoutBottom.OnRefreshListener, AdapterView.OnItemSelectedListener {
+public class InsightActivity extends ActivityBase implements View.OnClickListener,  AdapterView.OnItemSelectedListener {
 
     private LinearLayout lldefaultSpends;
     private PopupWindow customDatePopup;
@@ -72,7 +72,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
     HashMap<String, String> userData;
     private String rupeeSymbol, sortingOrder, groupTypeId = "5";
     private ProgressBar progressBar;
-    private SwipeRefreshLayoutBottom swipeRefreshLayout;
     private TableLayout tlName, tlValues;
     private ArrayList<InsightDimension> dimensionList;
     private TextView textUsersTotal, textVisitsTotal, textSessTotal, textOrgScrTotal, textNewTotal;
@@ -105,7 +104,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         hrsecond = (HorizontalScrollView) findViewById(R.id.hrsecond);
         hrbottom = (HorizontalScrollView) findViewById(R.id.hrbottom);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        swipeRefreshLayout = (SwipeRefreshLayoutBottom) findViewById(R.id.swipeRefresh);
         tlName = (TableLayout) findViewById(R.id.tlName);
         tlValues = (TableLayout) findViewById(R.id.tlValues);
         textMessage = (TextView) findViewById(R.id.textMessage);
@@ -159,7 +157,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         textLastSevenDays.setOnClickListener(this);
         textLastThirtyDays.setOnClickListener(this);
         textCustom.setOnClickListener(this);
-        swipeRefreshLayout.setOnRefreshListener(this);
 
         requestInsightData();
     }
@@ -178,7 +175,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         requestInsight.setcId(userData.get(Session.KEY_AGENCY_CLIENT_ID));
         requestInsight.setGroup_type_id(groupTypeId);
         if (offset == 0) {
-            swipeRefreshLayout.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
             textMessage.setVisibility(View.GONE);
         }
@@ -188,7 +184,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         adsCall.enqueue(new Callback<ResponseInsightData>() {
             @Override
             public void onResponse(Call<ResponseInsightData> call, Response<ResponseInsightData> response) {
-                swipeRefreshLayout.setRefreshing(false);
                 if (response != null) {
                     if (response.isSuccessful()) {
                         ResponseInsightData responseInsightData = response.body();
@@ -205,7 +200,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
                             }
 
                             if (dimensions.size() > 0) {
-                                swipeRefreshLayout.setVisibility(View.VISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.GONE);
                                 dimensionList.addAll(dimensions);
@@ -215,7 +209,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
                                     setTotalRow(insightTotal);
                             } else {
                                 if (offset == 0) {
-                                    swipeRefreshLayout.setVisibility(View.INVISIBLE);
                                     progressBar.setVisibility(View.GONE);
                                     textMessage.setVisibility(View.VISIBLE);
                                     textMessage.setText("No Data Found.");
@@ -224,7 +217,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
                         } catch (Exception e) {
                             e.printStackTrace();
                             if (offset == 0) {
-                                swipeRefreshLayout.setVisibility(View.INVISIBLE);
                                 progressBar.setVisibility(View.GONE);
                                 textMessage.setVisibility(View.VISIBLE);
                                 textMessage.setText("Some error occured.");
@@ -235,7 +227,6 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
 
                     } else {
                         if (offset == 0) {
-                            swipeRefreshLayout.setVisibility(View.INVISIBLE);
                             progressBar.setVisibility(View.GONE);
                             textMessage.setVisibility(View.VISIBLE);
                             textMessage.setText("Some error occured.");
@@ -247,12 +238,10 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
 
             @Override
             public void onFailure(Call<ResponseInsightData> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
                 if (t != null) {
                     Log.d("ERRROR", t.getMessage());
                 }
                 if (offset == 0) {
-                    swipeRefreshLayout.setVisibility(View.INVISIBLE);
                     progressBar.setVisibility(View.GONE);
                     textMessage.setVisibility(View.VISIBLE);
                     textMessage.setText("There is some connectivity issue, please try again.");
@@ -372,6 +361,8 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
+        if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
+        if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
         requestInsightData();
     }
 
@@ -389,6 +380,8 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
+        if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
+        if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
         requestInsightData();
 
     }
@@ -407,6 +400,8 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
+        if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
+        if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
         requestInsightData();
     }
 
@@ -419,11 +414,8 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         offset = 0;
         rowCount = 0;
-        requestInsightData();
-    }
-
-    @Override
-    public void onRefresh() {
+        if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
+        if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
         requestInsightData();
     }
 
@@ -434,6 +426,8 @@ public class InsightActivity extends ActivityBase implements View.OnClickListene
             groupTypeId = item.getId();
             offset = 0;
             rowCount = 0;
+            if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
+            if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
             requestInsightData();
         }
     }

@@ -666,6 +666,8 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
                 if (!cd.isConnectedToInternet()) return;
                 offset = 0;
                 rowCount = 0;
+                if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
+                if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
                 getCampaignDataActual();
                 filterPopup.dismiss();
                 break;
@@ -685,6 +687,8 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
+        if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
+        if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
         getCampaignDataActual();
     }
 
@@ -701,6 +705,8 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
+        if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
+        if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
         getCampaignDataActual();
     }
 
@@ -717,6 +723,8 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         customDatePopup.dismiss();
         offset = 0;
         rowCount = 0;
+        if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
+        if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
         getCampaignDataActual();
     }
 
@@ -725,6 +733,8 @@ public class CampaignActivity extends ActivityBase implements View.OnClickListen
         textSelectedDateRange.setText(fromDateToShow + " - " + toDateToShow);
         offset = 0;
         rowCount = 0;
+        if( tlValues.getChildCount() > 0 ) tlValues.removeAllViews();
+        if( tlName.getChildCount() > 0 ) tlName.removeAllViews();
         getCampaignDataActual();
     }
 
